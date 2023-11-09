@@ -1,0 +1,15 @@
+argo-cd:
+  dex:
+    enabled: false
+  notifications:
+    enabled: false
+  applicationSet:
+    enabled: false
+  server:
+    extraArgs:
+      - --insecure
+    service:
+      ports:
+        http: 8081
+        https: 8443
+      type: LoadBalancer
