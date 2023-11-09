@@ -1,0 +1,7 @@
+apiVersion: v2
+name: openfaas
+version: 1.0.0
+dependencies:
+  - name: openfaas
+    version: 14.1.19
+    repository: https://openfaas.github.io/faas-netes/
