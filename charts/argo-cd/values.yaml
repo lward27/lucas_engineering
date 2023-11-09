@@ -9,7 +9,6 @@ argo-cd:
     extraArgs:
       - --insecure
     service:
-      ports:
-        http: 8081
-        https: 8443
       type: LoadBalancer
+      servicePortHttp: 8081
+      servicePortHttps: 8443
