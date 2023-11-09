@@ -1,0 +1,5 @@
+prometheus:
+  server:
+    service: 
+      servicePort: 8082
+      type: LoadBalancer
