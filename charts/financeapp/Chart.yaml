@@ -1,7 +1,0 @@
-apiVersion: v2
-name: financeapp
-version: 1.0.0
-dependencies:
-  - name: financeapp
-    version: 0.1
-    repository: https://docker.lucas.engineering
