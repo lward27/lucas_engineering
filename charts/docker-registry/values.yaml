@@ -1,3 +1,6 @@
 docker-registry:
   service:
     type: LoadBalancer
+  persistence:
+    enabled: true
+    size: 10Gi
