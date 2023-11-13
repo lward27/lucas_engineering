@@ -26,10 +26,11 @@ spec:
     metadata:
       labels:
         app: financeapp
+
     spec:
       containers:
       - name: financeapp
-        image: docker.lucas.engineering/financeapp:0.2
+        image: docker.lucas.engineering/financeapp:0.3
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
