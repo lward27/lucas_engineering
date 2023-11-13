@@ -1,0 +1,7 @@
+postgresql:
+  auth:
+    postgresPassword: "topsecretpassword"
+    database: "testdb"
+  primary:
+    service:
+      type: LoadBalancer
