@@ -9,7 +9,7 @@ spec:
   - protocol: "TCP"
     port: 8090
     targetPort: 8000
-  type: ClusterIP
+  type: LoadBalancer
 
 ---
 
@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: financeapp
-        image: docker.lucas.engineering/financeapp:0.3
+        image: docker.lucas.engineering/financeapp:0.4
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
