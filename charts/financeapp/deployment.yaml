@@ -21,7 +21,7 @@ spec:
   selector:
     matchLabels:
       app: financeapp
-  replicas: 1
+  replicas: 0
   template:
     metadata:
       labels:
