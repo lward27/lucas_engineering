@@ -1,0 +1,4 @@
+uptime-kuma:
+  service:
+    type: LoadBalancer
+    
