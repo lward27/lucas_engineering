@@ -30,7 +30,10 @@ spec:
     spec:
       containers:
       - name: yfinance-wrapper
-        image: docker.lucas.engineering/yfinance_wrapper:0.1
+        image: docker.lucas.engineering/yfinance_wrapper:0.2
         imagePullPolicy: IfNotPresent
+        env:
+        - name: TEST_VARIABLE
+          value: "Value of the test variable"
         ports:
         - containerPort: 8000
