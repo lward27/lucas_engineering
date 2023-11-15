@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: financeapp
-        image: docker.lucas.engineering/financeapp:0.4
+        image: docker.lucas.engineering/financeapp:0.5
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
