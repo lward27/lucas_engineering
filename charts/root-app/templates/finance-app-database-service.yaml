@@ -7,7 +7,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/lward27/finance_app_database_service.git
+    repoURL: https://github.com/lward27/lucas_engineering.git
     path: charts/finance-app-database-service
     targetRevision: HEAD
   destination:
