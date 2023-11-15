@@ -8,7 +8,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/lward27/finance_app_database_service.git
-    path: deployment.yaml
+    path: /
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
