@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: financeapp
+  name: yfinance_wrapper
 spec:
   selector:
-    app: financeapp
+    app: yfinance_wrapper
   ports:
   - protocol: "TCP"
     port: 8090
@@ -16,21 +16,21 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: financeapp
+  name: yfinance_wrapper
 spec:
   selector:
     matchLabels:
-      app: financeapp
+      app: yfinance_wrapper
   replicas: 1
   template:
     metadata:
       labels:
-        app: financeapp
+        app: yfinance_wrapper
 
     spec:
       containers:
-      - name: financeapp
-        image: docker.lucas.engineering/financeapp:0.5
+      - name: yfinance_wrapper
+        image: docker.lucas.engineering/yfinance_wrapper:0.1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
