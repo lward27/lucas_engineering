@@ -1,14 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: yfinance_wrapper
+  name: yfinance-wrapper
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
     repoURL: https://github.com/lward27/lucas_engineering.git
-    path: charts/yfinance_wrapper
+    path: charts/yfinance-wrapper
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
