@@ -1,7 +1,7 @@
 apiVersion: v2
-name: opencart
+name: magento
 version: 1.0.0
 dependencies:
-  - name: opencart
-    version: 16.1.1
+  - name: magento
+    version: 24.1.1
     repository: oci://registry-1.docker.io/bitnamicharts
