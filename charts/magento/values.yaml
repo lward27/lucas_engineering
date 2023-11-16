@@ -1,5 +1,6 @@
 magento:
   magentoHost: "store.reefusion.com"
+  magentoDeployStaticContent: true
   allowEmptyPassword: true
   service:
     type: LoadBalancer
