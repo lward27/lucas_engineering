@@ -1,0 +1,8 @@
+opencart:
+  service:
+    type: LoadBalancer
+    ports:
+      http: 9080
+      https: 9443
+  metrics:
+    enabled: "true"
