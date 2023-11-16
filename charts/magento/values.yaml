@@ -1,5 +1,5 @@
 magento:
-  magentoHost: "store.reefusion.com"
+  magentoHost: "172.19.0.2"
   magentoDeployStaticContent: true
   allowEmptyPassword: true
   service:
