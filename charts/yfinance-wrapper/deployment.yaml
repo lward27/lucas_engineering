@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: yfinance-wrapper
-        image: docker.lucas.engineering/yfinance_wrapper:0.2
+        image: docker.lucas.engineering/yfinance_wrapper:0.3
         imagePullPolicy: IfNotPresent
         env:
         - name: TEST_VARIABLE
