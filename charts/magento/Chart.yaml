@@ -1,7 +1,0 @@
-apiVersion: v2
-name: magento
-version: 1.0.0
-dependencies:
-  - name: magento
-    version: 24.1.1
-    repository: oci://registry-1.docker.io/bitnamicharts
