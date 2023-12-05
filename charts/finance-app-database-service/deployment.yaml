@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: finance-app-database-service
-        image: docker.lucas.engineering/finance_app_database_service:0.3
+        image: docker.lucas.engineering/finance_app_database_service:0.4
         imagePullPolicy: IfNotPresent
         env:
         - name: TEST_VARIABLE
