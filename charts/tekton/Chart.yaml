@@ -1,0 +1,7 @@
+apiVersion: v2
+name: tekton
+version: 1.0.0
+dependencies:
+  - name: tekton
+    version: 1.0.2
+    repository: https://github.com/cdfoundation/tekton-helm-chart
