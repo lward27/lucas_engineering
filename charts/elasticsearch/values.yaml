@@ -1,4 +1,0 @@
-elasticsearch:
-  service: 
-    type: LoadBalancer
-    port: 8087
