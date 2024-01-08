@@ -1,7 +1,7 @@
-apiVersion: v2
-name: elasticsearch
-version: 1.0.0
-dependencies:
-  - name: elasticsearch
-    version: 8.5.1
-    repository: https://helm.elastic.co
+# apiVersion: v2
+# name: elasticsearch
+# version: 1.0.0
+# dependencies:
+#   - name: elasticsearch
+#     version: 8.5.1
+#     repository: https://helm.elastic.co
