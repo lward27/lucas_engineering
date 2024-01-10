@@ -3,7 +3,7 @@ docker-registry:
     type: LoadBalancer
   persistence:
     enabled: true
-    size: 20Gi
+    size: 10Gi
   resources:
     limits:
       cpu: 1000m
