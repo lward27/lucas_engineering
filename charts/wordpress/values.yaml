@@ -3,4 +3,4 @@ wordpress:
     type: LoadBalancer
     ports:
       http: 8085
-      https: 8443
+      https: 8543
