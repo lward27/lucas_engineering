@@ -12,7 +12,7 @@ spec:
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
-    namespace: tekton-pipelines
+    namespace: default
   syncPolicy:
     automated:
       selfHeal: true
