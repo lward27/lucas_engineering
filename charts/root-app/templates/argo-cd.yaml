@@ -13,6 +13,11 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: default
+  namespaceResourceBlacklist:
+  - group: tekton.dev
+    kind: TaskRun
+  - group: tekton.dev
+    kind: PipelineRun
   syncPolicy:
     automated:
       selfHeal: true
