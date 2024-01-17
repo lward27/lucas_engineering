@@ -17,4 +17,4 @@ spec:
         name: goodbye
       params:
       - name: username
-        values: $(params.username)
+        value: $(params.username)
