@@ -7,6 +7,6 @@ spec:
     spec:
       containers:
       - name: scraper-manager
-        image: docker.lucas.engineering/scraper_manager:0.6
+        image: docker.lucas.engineering/scraper_manager:0.7
       restartPolicy: Never
   backoffLimit: 1
