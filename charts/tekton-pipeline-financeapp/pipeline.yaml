@@ -1,14 +1,16 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: clone-read
+  name: clone-build-push
 spec:
   description: |
-    This pipeline clones a git repo, then echoes the README file to the stdout.
+    This pipeline clones a git repo, builds a docker image with Kaniko and pushes it to a registry
   params:
   - name: repo-url
     type: string
     description: The git repo URL to clone from.
+  - name: image-reference
+    type: string
   workspaces:
   - name: shared-data
     description: |
@@ -23,10 +25,20 @@ spec:
     params:
     - name: url
       value: $(params.repo-url)
-  - name: show-readme
+  - name: build-push
     runAfter: ["fetch-source"]
     taskRef:
-      name: show-readme
+      name: kaniko
     workspaces:
     - name: source
       workspace: shared-data
+    params:
+    - name: IMAGE
+      value: $(params.image-reference)
+  # - name: show-readme
+  #   runAfter: ["fetch-source"]
+  #   taskRef:
+  #     name: show-readme
+  #   workspaces:
+  #   - name: source
+  #     workspace: shared-data
