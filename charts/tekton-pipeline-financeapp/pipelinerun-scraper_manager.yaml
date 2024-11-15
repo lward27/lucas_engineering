@@ -21,4 +21,4 @@ spec:
   - name: repo-url
     value: https://github.com/lward27/scraper_manager.git
   - name: image-reference
-    value: docker.lucas.engineering/scraper_manager:0.7
+    value: docker.lucas.engineering/scraper_manager:0.8
