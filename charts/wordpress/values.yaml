@@ -1,8 +1,0 @@
-wordpress:
-  allowEmptyPassword: false
-  wordpressPassword: reallybadpassword
-  service:
-    type: LoadBalancer
-    ports:
-      http: 8085
-      https: 8543
