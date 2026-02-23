@@ -17,5 +17,6 @@ spec:
     namespace: tekton-pipelines
   syncPolicy:
     automated:
+      prune: true
       selfHeal: true
 {{- end }}

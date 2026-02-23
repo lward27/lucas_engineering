@@ -17,5 +17,6 @@ spec:
     namespace: openfaas
   syncPolicy:
     automated:
+      prune: true
       selfHeal: true
 {{- end }}

@@ -14,8 +14,11 @@ spec:
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: apps-prod
   syncPolicy:
     automated:
+      prune: true
       selfHeal: false
+    syncOptions:
+    - CreateNamespace=true
 {{- end }}
