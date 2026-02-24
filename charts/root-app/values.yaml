@@ -1,0 +1,29 @@
+apps:
+  argo-cd:
+    enabled: true
+  docker-registry:
+    enabled: false
+  finance-app-database-service:
+    enabled: false
+  grafana:
+    enabled: false
+  openfaas:
+    enabled: false
+  postgresql:
+    enabled: false
+  prometheus:
+    enabled: false
+  scraper-manager:
+    enabled: false
+  tekton-dashboard:
+    enabled: false
+  tekton-pipeline:
+    enabled: false
+  tekton-pipeline-hello-world:
+    enabled: false
+  tekton-triggers:
+    enabled: false
+  uptime-kuma:
+    enabled: false
+  yfinance-wrapper:
+    enabled: false
