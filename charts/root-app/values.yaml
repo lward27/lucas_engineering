@@ -10,7 +10,7 @@ apps:
   openfaas:
     enabled: false
   postgresql:
-    enabled: false
+    enabled: true
   prometheus:
     enabled: false
   scraper-manager:
