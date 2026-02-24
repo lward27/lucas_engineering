@@ -3,6 +3,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: scraper-manager
+  namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:

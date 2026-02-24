@@ -1,6 +1,6 @@
 apps:
   argo-cd:
-    enabled: true
+    enabled: false
   docker-registry:
     enabled: false
   finance-app-database-service:
