@@ -1,4 +1,5 @@
 docker-registry:
+  configPath: /etc/distribution
   service:
     type: ClusterIP
   ingress:

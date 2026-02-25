@@ -1,6 +1,9 @@
 argo-cd:
   global:
     domain: argocd.lucas.engineering
+  configs:
+    params:
+      server.insecure: "true"
   dex:
     enabled: false
   notifications:
@@ -8,8 +11,6 @@ argo-cd:
   applicationSet:
     enabled: false
   server:
-    extraArgs:
-      - --insecure
     service:
       type: ClusterIP
     ingress:
