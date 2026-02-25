@@ -8,7 +8,7 @@ apps:
   grafana:
     enabled: false
   ingress-nginx:
-    enabled: false
+    enabled: true
   openfaas:
     enabled: false
   postgresql:
