@@ -6,7 +6,7 @@ apps:
   finance-app-database-service:
     enabled: false
   grafana:
-    enabled: false
+    enabled: true
   ingress-nginx:
     enabled: true
   openfaas:
@@ -14,7 +14,7 @@ apps:
   postgresql:
     enabled: true
   prometheus:
-    enabled: false
+    enabled: true
   scraper-manager:
     enabled: false
   tekton-dashboard:
@@ -26,6 +26,6 @@ apps:
   tekton-triggers:
     enabled: false
   uptime-kuma:
-    enabled: false
+    enabled: true
   yfinance-wrapper:
     enabled: false
