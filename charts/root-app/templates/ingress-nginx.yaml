@@ -1,8 +1,8 @@
-{{- if (index .Values.apps "argo-cd").enabled }}
+{{- if (index .Values.apps "ingress-nginx").enabled }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: argo-cd
+  name: ingress-nginx
   namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
@@ -10,11 +10,11 @@ spec:
   project: default
   source:
     repoURL: https://github.com/lward27/lucas_engineering.git
-    path: charts/argo-cd
+    path: charts/ingress-nginx
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: ingress-nginx
   syncPolicy:
     automated:
       prune: true

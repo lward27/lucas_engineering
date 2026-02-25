@@ -1,4 +1,11 @@
 uptime-kuma:
   service:
-    type: LoadBalancer
-    
+    type: ClusterIP
+  ingress:
+    enabled: true
+    className: nginx
+    hosts:
+      - host: uptime.lucas.engineering
+        paths:
+          - path: /
+            pathType: ImplementationSpecific

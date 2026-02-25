@@ -1,6 +1,13 @@
 docker-registry:
   service:
-    type: LoadBalancer
+    type: ClusterIP
+  ingress:
+    enabled: true
+    className: nginx
+    hosts:
+      - registry.lucas.engineering
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
   persistence:
     enabled: true
     size: 10Gi

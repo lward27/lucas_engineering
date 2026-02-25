@@ -11,7 +11,7 @@ spec:
   - protocol: "TCP"
     port: 8090
     targetPort: 8000
-  type: LoadBalancer
+  type: ClusterIP
 
 ---
 
@@ -39,3 +39,23 @@ spec:
           value: "Value of the test variable"
         ports:
         - containerPort: 8000
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: yfinance-wrapper
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: yfinance.lucas.engineering
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: yfinance-wrapper
+            port:
+              number: 8090

@@ -1,0 +1,14 @@
+ingress-nginx:
+  controller:
+    ingressClassResource:
+      name: nginx
+      default: true
+    service:
+      type: NodePort
+      nodePorts:
+        http: 30080
+        https: 30443
+    config:
+      use-forwarded-headers: "true"
+      compute-real-ip: "true"
+      proxy-real-ip-cidr: "192.168.20.0/24"

@@ -4,4 +4,4 @@ postgresql:
     database: "testdb"
   primary:
     service:
-      type: LoadBalancer
+      type: ClusterIP

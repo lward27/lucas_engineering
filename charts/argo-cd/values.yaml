@@ -1,4 +1,6 @@
 argo-cd:
+  global:
+    domain: argocd.lucas.engineering
   dex:
     enabled: false
   notifications:
@@ -9,6 +11,7 @@ argo-cd:
     extraArgs:
       - --insecure
     service:
-      type: LoadBalancer
-      servicePortHttp: 8081
-      servicePortHttps: 8443
+      type: ClusterIP
+    ingress:
+      enabled: true
+      ingressClassName: nginx

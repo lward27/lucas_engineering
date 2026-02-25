@@ -1,9 +1,13 @@
 grafana:
-  service: 
-    type: LoadBalancer
-    port: 8083
+  service:
+    type: ClusterIP
   persistence:
     enabled: true
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana.lucas.engineering
   spec:
     containers:
       resources:
