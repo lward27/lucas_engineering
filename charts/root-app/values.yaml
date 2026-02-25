@@ -2,7 +2,7 @@ apps:
   argo-cd:
     enabled: true
   docker-registry:
-    enabled: false
+    enabled: true
   finance-app-database-service:
     enabled: false
   grafana:
