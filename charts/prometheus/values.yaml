@@ -1,5 +1,9 @@
 prometheus:
   server:
-    service: 
-      servicePort: 8082
-      type: LoadBalancer
+    service:
+      type: ClusterIP
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      hosts:
+        - prometheus.lucas.engineering

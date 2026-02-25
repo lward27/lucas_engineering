@@ -9,7 +9,7 @@ spec:
   - protocol: "TCP"
     port: 8091
     targetPort: 8000
-  type: LoadBalancer
+  type: ClusterIP
 
 ---
 
@@ -37,3 +37,23 @@ spec:
           value: "Value of the test variable"
         ports:
         - containerPort: 8000
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: finance-app-database-service
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: finance-db.lucas.engineering
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: finance-app-database-service
+            port:
+              number: 8091

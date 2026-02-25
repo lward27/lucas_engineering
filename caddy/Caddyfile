@@ -1,0 +1,13 @@
+{
+	local_certs
+}
+
+*.lucas.engineering {
+	tls internal
+	reverse_proxy 192.168.20.192:30080 {
+		header_up Host {host}
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+	}
+}
