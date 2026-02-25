@@ -8,12 +8,10 @@ grafana:
     ingressClassName: nginx
     hosts:
       - grafana.lucas.engineering
-  spec:
-    containers:
-      resources:
-        limits:
-          cpu: 1000m
-          memory: 2048Mi
-        requests:
-          cpu: 500m
-          memory: 1024Mi
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2048Mi
+    requests:
+      cpu: 500m
+      memory: 1024Mi
