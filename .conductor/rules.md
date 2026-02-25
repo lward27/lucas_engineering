@@ -7,5 +7,5 @@
 - Do not introduce Terraform unless explicitly requested.
 - Do not modify existing cluster-level RBAC.
 - Do not modify entrypoint.sh files or k3s startup files.
-- You can ssh into lucas_engineering using `ssh lucas_engineering`.
+- You can issues commands against the cluster using kubectl locally.
 - You can update the caddyfile and reload the caddy server on lucas_engineering vm.

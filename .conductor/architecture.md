@@ -1,6 +1,7 @@
 # Architecture
 
 - Homelab Kubernetes cluster
+  - Kubernetes running in a k3s
 - ArgoCD deployed in argocd namespace
 - Root app manages:
     - platform services
