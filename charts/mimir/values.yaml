@@ -11,6 +11,13 @@ mimir-distributed:
           dir: /data/blocks
         bucket_store:
           sync_dir: /data/tsdb-sync
+      # Separate data dirs so none overlap with blocks_storage.filesystem.dir
+      compactor:
+        data_dir: /data/compactor
+      ruler:
+        rule_path: /data/ruler
+      alertmanager:
+        data_dir: /data/alertmanager
       # Disable Kafka-based ingest storage — use classic push path instead
       ingest_storage:
         enabled: false
