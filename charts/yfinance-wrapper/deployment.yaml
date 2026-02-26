@@ -4,6 +4,8 @@ metadata:
   name: yfinance-wrapper
   annotations:
     prometheus.io/scrape: 'true'
+    prometheus.io/port: '8090'
+    prometheus.io/path: '/metrics'
 spec:
   selector:
     app: yfinance-wrapper
@@ -28,11 +30,14 @@ spec:
     metadata:
       labels:
         app: yfinance-wrapper
-
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '8000'
+        prometheus.io/path: '/metrics'
     spec:
       containers:
       - name: yfinance-wrapper
-        image: docker.lucas.engineering/yfinance_wrapper:0.4
+        image: registry.lucas.engineering/yfinance_wrapper:0.5
         imagePullPolicy: IfNotPresent
         env:
         - name: TEST_VARIABLE
