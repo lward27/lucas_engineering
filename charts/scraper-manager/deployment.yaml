@@ -1,12 +1,31 @@
 apiVersion: batch/v1
-kind: Job
+kind: CronJob
 metadata:
   name: scraper-manager
 spec:
-  template:
+  schedule: "0 6 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
     spec:
-      containers:
-      - name: scraper-manager
-        image: registry.lucas.engineering/scraper_manager:0.7
-      restartPolicy: Never
-  backoffLimit: 1
+      backoffLimit: 1
+      activeDeadlineSeconds: 14400
+      template:
+        spec:
+          containers:
+          - name: scraper-manager
+            image: registry.lucas.engineering/scraper_manager:0.8
+            env:
+            - name: DATABASE_SERVICE_URL
+              value: "http://finance-app-database-service.apps-prod.svc.cluster.local:8091"
+            - name: YFINANCE_SERVICE_URL
+              value: "http://yfinance-wrapper.apps-prod.svc.cluster.local:8090"
+            resources:
+              requests:
+                memory: "128Mi"
+                cpu: "100m"
+              limits:
+                memory: "256Mi"
+                cpu: "500m"
+          restartPolicy: Never
