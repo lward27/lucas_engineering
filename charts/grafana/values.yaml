@@ -17,3 +17,22 @@ grafana:
     requests:
       cpu: 100m
       memory: 256Mi
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          url: http://prometheus-server.monitoring.svc
+          access: proxy
+          isDefault: true
+        - name: Mimir
+          type: prometheus
+          url: http://mimir-gateway.monitoring.svc/prometheus
+          access: proxy
+          isDefault: false
+        - name: Loki
+          type: loki
+          url: http://loki-gateway.monitoring.svc
+          access: proxy
+          isDefault: false
