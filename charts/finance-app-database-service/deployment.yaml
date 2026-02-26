@@ -40,8 +40,8 @@ spec:
         image: registry.lucas.engineering/finance_app_database_service:0.4
         imagePullPolicy: IfNotPresent
         env:
-        - name: TEST_VARIABLE
-          value: "Value of the test variable"
+        - name: DATABASE_URL
+          value: "postgresql://postgres:topsecretpassword@postgresql.apps-prod.svc.cluster.local:5432/testdb"
         ports:
         - containerPort: 8000
 
