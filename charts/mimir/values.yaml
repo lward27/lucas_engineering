@@ -8,7 +8,7 @@ mimir-distributed:
       blocks_storage:
         backend: filesystem
         filesystem:
-          dir: /data/tsdb
+          dir: /data/blocks
         bucket_store:
           sync_dir: /data/tsdb-sync
       # Disable Kafka-based ingest storage — use classic push path instead
