@@ -10,9 +10,9 @@ apps:
   ingress-nginx:
     enabled: true
   loki:
-    enabled: false
+    enabled: true
   mimir:
-    enabled: false
+    enabled: true
   openfaas:
     enabled: false
   opentelemetry-collector:
@@ -32,7 +32,7 @@ apps:
   tekton-triggers:
     enabled: false
   tempo:
-    enabled: false
+    enabled: true
   uptime-kuma:
     enabled: true
   yfinance-wrapper:
