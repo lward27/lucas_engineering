@@ -37,7 +37,7 @@ spec:
     spec:
       containers:
       - name: yfinance-wrapper
-        image: registry.lucas.engineering/yfinance_wrapper:0.5
+        image: registry.lucas.engineering/yfinance_wrapper:1.0
         imagePullPolicy: IfNotPresent
         env:
         - name: TEST_VARIABLE
