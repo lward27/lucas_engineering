@@ -4,7 +4,7 @@ apps:
   docker-registry:
     enabled: true
   finance-app-database-service:
-    enabled: false
+    enabled: true
   grafana:
     enabled: true
   ingress-nginx:

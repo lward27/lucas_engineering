@@ -2,6 +2,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: finance-app-database-service
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '8091'
+    prometheus.io/path: '/metrics'
 spec:
   selector:
     app: finance-app-database-service
@@ -26,7 +30,10 @@ spec:
     metadata:
       labels:
         app: finance-app-database-service
-
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '8000'
+        prometheus.io/path: '/metrics'
     spec:
       containers:
       - name: finance-app-database-service
