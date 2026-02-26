@@ -4,6 +4,13 @@ mimir-distributed:
       common:
         storage:
           backend: filesystem
+      # Override chart default of s3 to use local filesystem
+      blocks_storage:
+        backend: filesystem
+        filesystem:
+          dir: /data/tsdb
+        bucket_store:
+          sync_dir: /data/tsdb-sync
       # Disable Kafka-based ingest storage — use classic push path instead
       ingest_storage:
         enabled: false
