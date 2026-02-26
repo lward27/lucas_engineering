@@ -17,9 +17,20 @@ loki:
             period: 24h
   singleBinary:
     replicas: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        memory: 512Mi
   read:
     replicas: 0
   write:
     replicas: 0
   backend:
     replicas: 0
+  # Disable memcached caches - not needed for single-binary mode on a small node
+  chunksCache:
+    enabled: false
+  resultsCache:
+    enabled: false

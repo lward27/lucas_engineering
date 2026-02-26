@@ -14,8 +14,8 @@ docker-registry:
     size: 10Gi
   resources:
     limits:
-      cpu: 1000m
-      memory: 2048Mi
+      cpu: 200m
+      memory: 256Mi
     requests:
-      cpu: 500m
-      memory: 1024Mi
+      cpu: 50m
+      memory: 128Mi
