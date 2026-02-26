@@ -4,6 +4,11 @@ mimir-distributed:
       common:
         storage:
           backend: filesystem
+      # Disable Kafka-based ingest storage — use classic push path instead
+      ingest_storage:
+        enabled: false
+      ingester:
+        push_grpc_method_enabled: true
   minio:
     enabled: false
 

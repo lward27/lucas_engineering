@@ -3,6 +3,8 @@ grafana:
     type: ClusterIP
   persistence:
     enabled: true
+  initChownData:
+    enabled: false
   ingress:
     enabled: true
     ingressClassName: nginx
