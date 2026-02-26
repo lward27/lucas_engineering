@@ -124,9 +124,4 @@ mimir-distributed:
         memory: 64Mi
 
   rollout_operator:
-    resources:
-      requests:
-        cpu: 50m
-        memory: 32Mi
-      limits:
-        memory: 64Mi
+    enabled: false
