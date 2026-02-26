@@ -36,4 +36,4 @@ apps:
   uptime-kuma:
     enabled: true
   yfinance-wrapper:
-    enabled: false
+    enabled: true
