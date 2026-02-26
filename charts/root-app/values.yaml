@@ -9,7 +9,13 @@ apps:
     enabled: true
   ingress-nginx:
     enabled: true
+  loki:
+    enabled: false
+  mimir:
+    enabled: false
   openfaas:
+    enabled: false
+  opentelemetry-collector:
     enabled: false
   postgresql:
     enabled: true
@@ -24,6 +30,8 @@ apps:
   tekton-pipeline-hello-world:
     enabled: false
   tekton-triggers:
+    enabled: false
+  tempo:
     enabled: false
   uptime-kuma:
     enabled: true

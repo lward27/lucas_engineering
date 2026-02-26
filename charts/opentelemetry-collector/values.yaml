@@ -1,0 +1,30 @@
+opentelemetry-collector:
+  mode: deployment
+  config:
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: "0.0.0.0:4317"
+          http:
+            endpoint: "0.0.0.0:4318"
+    exporters:
+      otlphttp/loki:
+        endpoint: http://loki.monitoring.svc.cluster.local:3100/otlp
+      otlp/tempo:
+        endpoint: http://tempo.monitoring.svc.cluster.local:4317
+        tls:
+          insecure: true
+      otlphttp/mimir:
+        endpoint: http://mimir-mimir-distributed-gateway.monitoring.svc.cluster.local:80/otlp
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [otlp/tempo]
+        logs:
+          receivers: [otlp]
+          exporters: [otlphttp/loki]
+        metrics:
+          receivers: [otlp]
+          exporters: [otlphttp/mimir]
