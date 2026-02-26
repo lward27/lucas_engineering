@@ -21,4 +21,4 @@ spec:
   - name: repo-url
     value: https://github.com/lward27/yfinance_wrapper.git
   - name: image-reference
-    value: docker.lucas.engineering/yfinance_wrapper:0.5
+    value: registry.lucas.engineering/yfinance_wrapper:0.5
