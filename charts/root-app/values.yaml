@@ -22,7 +22,7 @@ apps:
   prometheus:
     enabled: true
   scraper-manager:
-    enabled: false
+    enabled: true
   tekton-dashboard:
     enabled: false
   tekton-pipeline:
