@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: finance-frontend
-        image: registry.lucas.engineering/finance_frontend:1.0
+        image: registry.lucas.engineering/finance_frontend:1.1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
