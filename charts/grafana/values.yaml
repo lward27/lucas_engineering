@@ -45,14 +45,6 @@ grafana:
           isDefault: false
           uid: tempo
           jsonData:
-            tracesToLogsV2:
-              datasourceUid: loki
-              filterByTraceID: true
-              filterBySpanID: true
-            tracesToMetrics:
-              datasourceUid: prometheus
-            serviceMap:
-              datasourceUid: prometheus
             nodeGraph:
               enabled: true
   dashboardProviders:
