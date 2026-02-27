@@ -21,6 +21,8 @@ apps:
     enabled: true
   prometheus:
     enabled: true
+  promtail:
+    enabled: true
   scraper-manager:
     enabled: true
   tekton-dashboard:
