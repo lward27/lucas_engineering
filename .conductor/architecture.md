@@ -14,3 +14,7 @@
     - microservices
     - databases
 - Microservices are deployed via Helm charts stored in their own repos.
+- Observability setup: App → (gRPC:4317) → OTel Collector → Tempo (traces)
+                                    → Loki (logs)
+                                    → Mimir (metrics)
+- Grafana reads from all three + Prometheus, with trace↔log correlation

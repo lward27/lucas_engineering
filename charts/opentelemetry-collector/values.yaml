@@ -10,6 +10,14 @@ opentelemetry-collector:
             endpoint: "0.0.0.0:4317"
           http:
             endpoint: "0.0.0.0:4318"
+    processors:
+      batch:
+        send_batch_size: 1024
+        timeout: 5s
+      memory_limiter:
+        check_interval: 5s
+        limit_mib: 256
+        spike_limit_mib: 64
     exporters:
       otlphttp/loki:
         endpoint: http://loki.monitoring.svc.cluster.local:3100/otlp
@@ -18,15 +26,18 @@ opentelemetry-collector:
         tls:
           insecure: true
       otlphttp/mimir:
-        endpoint: http://mimir-mimir-distributed-gateway.monitoring.svc.cluster.local:80/otlp
+        endpoint: http://mimir-gateway.monitoring.svc.cluster.local:80/otlp
     service:
       pipelines:
         traces:
           receivers: [otlp]
+          processors: [memory_limiter, batch]
           exporters: [otlp/tempo]
         logs:
           receivers: [otlp]
+          processors: [memory_limiter, batch]
           exporters: [otlphttp/loki]
         metrics:
           receivers: [otlp]
+          processors: [memory_limiter, batch]
           exporters: [otlphttp/mimir]

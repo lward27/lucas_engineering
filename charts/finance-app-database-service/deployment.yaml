@@ -2,10 +2,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: finance-app-database-service
-  annotations:
-    prometheus.io/scrape: 'true'
-    prometheus.io/port: '8091'
-    prometheus.io/path: '/metrics'
 spec:
   selector:
     app: finance-app-database-service
@@ -30,10 +26,6 @@ spec:
     metadata:
       labels:
         app: finance-app-database-service
-      annotations:
-        prometheus.io/scrape: 'true'
-        prometheus.io/port: '8000'
-        prometheus.io/path: '/metrics'
     spec:
       containers:
       - name: finance-app-database-service
@@ -42,6 +34,22 @@ spec:
         env:
         - name: DATABASE_URL
           value: "postgresql://postgres:topsecretpassword@postgresql.apps-prod.svc.cluster.local:5432/testdb"
+        - name: OTEL_SERVICE_NAME
+          value: "finance-app-database-service"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://opentelemetry-collector.monitoring.svc.cluster.local:4317"
+        - name: OTEL_EXPORTER_OTLP_PROTOCOL
+          value: "grpc"
+        - name: OTEL_LOGS_EXPORTER
+          value: "otlp"
+        - name: OTEL_METRICS_EXPORTER
+          value: "otlp"
+        - name: OTEL_TRACES_EXPORTER
+          value: "otlp"
+        - name: OTEL_PYTHON_LOG_CORRELATION
+          value: "true"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "deployment.environment=production,service.namespace=apps-prod"
         ports:
         - containerPort: 8000
 
