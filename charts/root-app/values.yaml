@@ -16,7 +16,7 @@ apps:
   openfaas:
     enabled: false
   opentelemetry-collector:
-    enabled: false
+    enabled: true
   postgresql:
     enabled: true
   prometheus:
