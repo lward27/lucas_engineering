@@ -3,5 +3,13 @@ postgresql:
     postgresPassword: "topsecretpassword"
     database: "testdb"
   primary:
+    resourcesPreset: none
+    resources:
+      requests:
+        cpu: 500m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
     service:
       type: ClusterIP
