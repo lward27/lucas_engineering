@@ -26,7 +26,6 @@ grafana:
           url: http://prometheus-server.monitoring.svc
           access: proxy
           isDefault: true
-          uid: prometheus
         - name: Mimir
           type: prometheus
           url: http://mimir-gateway.monitoring.svc/prometheus
@@ -37,13 +36,11 @@ grafana:
           url: http://loki-gateway.monitoring.svc
           access: proxy
           isDefault: false
-          uid: loki
         - name: Tempo
           type: tempo
           url: http://tempo.monitoring.svc.cluster.local:3200
           access: proxy
           isDefault: false
-          uid: tempo
           jsonData:
             nodeGraph:
               enabled: true
