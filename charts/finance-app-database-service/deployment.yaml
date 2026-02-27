@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: finance-app-database-service
-        image: registry.lucas.engineering/finance_app_database_service:0.5
+        image: registry.lucas.engineering/finance_app_database_service:1.1
         imagePullPolicy: IfNotPresent
         env:
         - name: DATABASE_URL
