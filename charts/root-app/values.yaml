@@ -5,6 +5,8 @@ apps:
     enabled: true
   finance-app-database-service:
     enabled: true
+  finance-frontend:
+    enabled: true
   grafana:
     enabled: true
   ingress-nginx:
