@@ -24,6 +24,7 @@ spec:
       jsonPointers:
         - /status
         - /spec/conversion
+        - /spec/preserveUnknownFields
       managedFieldsManagers:
         - webhook
 {{- end }}
