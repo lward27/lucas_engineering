@@ -30,7 +30,7 @@ spec:
       containers:
       - name: yfinance-wrapper
         image: registry.lucas.engineering/yfinance_wrapper:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         env:
         - name: OTEL_SERVICE_NAME
           value: "yfinance-wrapper"
