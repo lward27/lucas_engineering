@@ -23,6 +23,10 @@ REPO_URL[finance-app-db-service]="https://github.com/lward27/finance-app-db-serv
 IMAGE_REF[finance-app-db-service]="registry.lucas.engineering/finance-app-db-service:latest"
 STORAGE[finance-app-db-service]="1Gi"
 
+REPO_URL[finance-app-database-service]="https://github.com/lward27/finance_app_database_service.git"
+IMAGE_REF[finance-app-database-service]="registry.lucas.engineering/finance_app_database_service:latest"
+STORAGE[finance-app-database-service]="1Gi"
+
 REPO_URL[finance-frontend]="https://github.com/lward27/finance-frontend.git"
 IMAGE_REF[finance-frontend]="registry.lucas.engineering/finance-frontend:latest"
 STORAGE[finance-frontend]="1Gi"
@@ -35,7 +39,7 @@ REPO_URL[scraper-manager]="https://github.com/lward27/scraper_manager.git"
 IMAGE_REF[scraper-manager]="registry.lucas.engineering/scraper_manager:latest"
 STORAGE[scraper-manager]="1Gi"
 
-ALL_SERVICES=(finance-app-db-service finance-frontend yfinance-wrapper scraper-manager)
+ALL_SERVICES=(finance-app-db-service finance-app-database-service finance-frontend yfinance-wrapper scraper-manager)
 
 # ── helpers ─────────────────────────────────────────────────────────────────
 usage() {
