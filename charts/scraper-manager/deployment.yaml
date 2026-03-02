@@ -15,7 +15,7 @@ spec:
         spec:
           containers:
           - name: scraper-manager
-            image: registry.lucas.engineering/scraper_manager:1.0
+            image: registry.lucas.engineering/scraper_manager:latest
             env:
             - name: DATABASE_SERVICE_URL
               value: "http://finance-app-database-service.apps-prod.svc.cluster.local:8091"

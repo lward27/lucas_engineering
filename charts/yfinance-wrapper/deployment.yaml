@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: yfinance-wrapper
-        image: registry.lucas.engineering/yfinance_wrapper:1.1
+        image: registry.lucas.engineering/yfinance_wrapper:latest
         imagePullPolicy: IfNotPresent
         env:
         - name: OTEL_SERVICE_NAME
