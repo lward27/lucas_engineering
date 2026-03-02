@@ -75,9 +75,6 @@ metadata:
 spec:
   pipelineRef:
     name: clone-build-push
-  podTemplate:
-    securityContext:
-      fsGroup: 65532
   workspaces:
     - name: shared-data
       volumeClaimTemplate:
