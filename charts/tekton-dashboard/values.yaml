@@ -1,13 +1,7 @@
-dashboard:
-  version: v0.42.0
-  image: gcr.io/tekton-releases/github.com/tektoncd/dashboard/cmd/dashboard
-  imageDigest: sha256:166afa47eda4982546fc996661f6c251ae7d69f7f0b09e19a1ac3fb5b045174f
-  readOnly: false
-  logLevel: info
-  logFormat: json
-  replicas: 1
-  pipelinesNamespace: tekton-pipelines
-  triggersNamespace: tekton-pipelines
+# Tekton Dashboard - wrapped official release manifest
+# To upgrade: replace templates/release.yaml with the new release from
+# https://github.com/tektoncd/dashboard/releases/download/<version>/release.yaml
+# and update appVersion in Chart.yaml to match.
 
 ingress:
   enabled: true
