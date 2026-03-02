@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tekton-webhook-ingress
+  namespace: {{ .Values.namespace }}
+  {{- with .Values.webhookIngress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    app.kubernetes.io/part-of: tekton-ci
+spec:
+  ingressClassName: {{ .Values.webhookIngress.className }}
+  rules:
+    - host: {{ .Values.webhookIngress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: el-github-webhook-listener
+                port:
+                  number: 8080

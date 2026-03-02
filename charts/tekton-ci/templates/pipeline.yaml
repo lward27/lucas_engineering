@@ -1,0 +1,52 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: clone-build-push
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: tekton-ci
+spec:
+  description: |
+    Clone a git repo, build a Docker image with Kaniko, and push to the registry.
+    Reused by all microservice triggers via parameterized TriggerTemplates.
+  params:
+    - name: repo-url
+      type: string
+      description: The git repo URL to clone from.
+    - name: image-reference
+      type: string
+      description: Full image reference to build and push (registry/name:tag).
+    - name: kaniko-extra-args
+      type: array
+      description: Extra arguments to pass to the Kaniko executor.
+      default:
+        {{- range .Values.registry.kanikoExtraArgs }}
+        - {{ . | quote }}
+        {{- end }}
+  workspaces:
+    - name: shared-data
+      description: Shared workspace between git-clone and kaniko tasks.
+  tasks:
+    - name: fetch-source
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-data
+      params:
+        - name: url
+          value: $(params.repo-url)
+
+    - name: build-push
+      runAfter:
+        - fetch-source
+      taskRef:
+        name: kaniko
+      workspaces:
+        - name: source
+          workspace: shared-data
+      params:
+        - name: IMAGE
+          value: $(params.image-reference)
+        - name: EXTRA_ARGS
+          value: $(params.kaniko-extra-args[*])

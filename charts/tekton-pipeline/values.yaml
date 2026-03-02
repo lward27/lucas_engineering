@@ -1,0 +1,4 @@
+# Tekton Pipelines - wrapped official release manifest
+# To upgrade: replace templates/release.yaml with the new release from
+# https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
+# and update appVersion in Chart.yaml to match.

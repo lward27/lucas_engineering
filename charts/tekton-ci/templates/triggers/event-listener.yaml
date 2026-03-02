@@ -1,0 +1,39 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: github-webhook-listener
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: tekton-ci
+spec:
+  serviceAccountName: tekton-ci-triggers-sa
+  triggers:
+    {{- range $name, $svc := .Values.services }}
+    {{- if $svc.enabled }}
+    - name: {{ $name }}-trigger
+      interceptors:
+        - ref:
+            name: github
+            kind: ClusterInterceptor
+          params:
+            - name: secretRef
+              value:
+                secretName: {{ $.Values.github.webhookSecretName }}
+                secretKey: {{ $.Values.github.webhookSecretKey }}
+            - name: eventTypes
+              value:
+                - push
+        - ref:
+            name: cel
+            kind: ClusterInterceptor
+          params:
+            - name: filter
+              value: >-
+                body.repository.name == '{{ $name }}' &&
+                body.ref == 'refs/heads/{{ $svc.branch }}'
+      bindings:
+        - ref: {{ $name }}-binding
+      template:
+        ref: {{ $name }}-template
+    {{- end }}
+    {{- end }}

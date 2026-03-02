@@ -1,0 +1,6 @@
+apiVersion: v2
+name: tekton-triggers
+description: Tekton Triggers controller, webhook, and CRDs (v0.25.3)
+type: application
+version: 0.25.3
+appVersion: "0.25.3"

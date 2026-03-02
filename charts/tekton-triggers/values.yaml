@@ -1,0 +1,6 @@
+# Tekton Triggers - wrapped official release manifest
+# To upgrade: replace templates/release.yaml with the new release from
+# https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
+# and templates/interceptors.yaml from
+# https://storage.googleapis.com/tekton-releases/triggers/latest/interceptors.yaml
+# then update appVersion in Chart.yaml to match.

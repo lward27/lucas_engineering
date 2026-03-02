@@ -27,14 +27,14 @@ apps:
     enabled: true
   scraper-manager:
     enabled: true
+  tekton-ci:
+    enabled: true
   tekton-dashboard:
-    enabled: false
+    enabled: true
   tekton-pipeline:
-    enabled: false
-  tekton-pipeline-hello-world:
-    enabled: false
+    enabled: true
   tekton-triggers:
-    enabled: false
+    enabled: true
   tempo:
     enabled: true
   uptime-kuma:

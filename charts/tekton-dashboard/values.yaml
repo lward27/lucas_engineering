@@ -1,0 +1,18 @@
+dashboard:
+  version: v0.42.0
+  image: gcr.io/tekton-releases/github.com/tektoncd/dashboard/cmd/dashboard
+  imageDigest: sha256:166afa47eda4982546fc996661f6c251ae7d69f7f0b09e19a1ac3fb5b045174f
+  readOnly: false
+  logLevel: info
+  logFormat: json
+  replicas: 1
+  pipelinesNamespace: tekton-pipelines
+  triggersNamespace: tekton-pipelines
+
+ingress:
+  enabled: true
+  host: tekton.lucas.engineering
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"

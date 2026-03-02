@@ -1,0 +1,54 @@
+namespace: tekton-pipelines
+
+registry:
+  host: registry.lucas.engineering
+  # Pass --skip-tls-verify if registry uses a self-signed cert.
+  # Pass --insecure if registry is plain HTTP.
+  kanikoExtraArgs:
+    - --skip-tls-verify
+
+# GitHub webhook secret - must be pre-created as a K8s Secret in the tekton-pipelines
+# namespace before deploying this chart. Example:
+#   kubectl create secret generic github-webhook-secret \
+#     --from-literal=secret=<your-webhook-secret> \
+#     -n tekton-pipelines
+github:
+  webhookSecretName: github-webhook-secret
+  webhookSecretKey: secret
+
+webhookIngress:
+  host: tekton-webhooks.lucas.engineering
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "1m"
+
+# One entry per microservice. Each service gets its own TriggerBinding,
+# TriggerTemplate, and a route in the EventListener.
+services:
+  finance-app-db-service:
+    enabled: true
+    repoURL: https://github.com/lward27/finance-app-db-service.git
+    branch: main
+    imageRef: registry.lucas.engineering/finance-app-db-service:latest
+    workspaceStorageSize: 1Gi
+
+  finance-frontend:
+    enabled: true
+    repoURL: https://github.com/lward27/finance-frontend.git
+    branch: main
+    imageRef: registry.lucas.engineering/finance-frontend:latest
+    workspaceStorageSize: 1Gi
+
+  yfinance-wrapper:
+    enabled: true
+    repoURL: https://github.com/lward27/yfinance_wrapper.git
+    branch: main
+    imageRef: registry.lucas.engineering/yfinance_wrapper:latest
+    workspaceStorageSize: 1Gi
+
+  scraper-manager:
+    enabled: true
+    repoURL: https://github.com/lward27/scraper_manager.git
+    branch: main
+    imageRef: registry.lucas.engineering/scraper_manager:latest
+    workspaceStorageSize: 1Gi

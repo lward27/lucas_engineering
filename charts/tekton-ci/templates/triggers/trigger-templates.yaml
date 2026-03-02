@@ -1,0 +1,55 @@
+{{- range $name, $svc := .Values.services }}
+{{- if $svc.enabled }}
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: {{ $name }}-template
+  namespace: {{ $.Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: tekton-ci
+    app.kubernetes.io/component: {{ $name }}
+spec:
+  params:
+    - name: repo-url
+      description: The git repo URL to clone.
+    - name: revision
+      description: The git revision (commit SHA) to build.
+      default: ""
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1
+      kind: PipelineRun
+      metadata:
+        generateName: {{ $name }}-run-
+        namespace: {{ $.Values.namespace }}
+        labels:
+          app.kubernetes.io/part-of: tekton-ci
+          app.kubernetes.io/component: {{ $name }}
+      spec:
+        pipelineRef:
+          name: clone-build-push
+        serviceAccountName: tekton-ci-pipeline-sa
+        podTemplate:
+          securityContext:
+            fsGroup: 65532
+        workspaces:
+          - name: shared-data
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: {{ $svc.workspaceStorageSize }}
+        params:
+          - name: repo-url
+            value: $(tt.params.repo-url)
+          - name: image-reference
+            value: {{ $svc.imageRef }}
+          - name: kaniko-extra-args
+            value:
+              {{- range $.Values.registry.kanikoExtraArgs }}
+              - {{ . | quote }}
+              {{- end }}
+{{- end }}
+{{- end }}

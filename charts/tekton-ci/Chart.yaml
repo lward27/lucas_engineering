@@ -1,0 +1,5 @@
+apiVersion: v2
+name: tekton-ci
+description: CI pipeline definitions - Tasks, Pipeline, and GitHub webhook Triggers for all microservices
+type: application
+version: 1.0.0
