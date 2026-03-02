@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgresql-initdb
+data:
+  001_timescaledb.sql: |
+    CREATE EXTENSION IF NOT EXISTS timescaledb;

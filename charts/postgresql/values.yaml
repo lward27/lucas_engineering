@@ -1,15 +1,24 @@
-postgresql:
-  auth:
-    postgresPassword: "topsecretpassword"
-    database: "testdb"
-  primary:
-    resourcesPreset: none
-    resources:
-      requests:
-        cpu: 500m
-        memory: 512Mi
-      limits:
-        cpu: 500m
-        memory: 512Mi
-    service:
-      type: ClusterIP
+image:
+  repository: timescale/timescaledb
+  tag: latest-pg17
+  pullPolicy: IfNotPresent
+
+auth:
+  postgresPassword: "topsecretpassword"
+  database: "testdb"
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+service:
+  type: ClusterIP
+  port: 5432
+
+persistence:
+  size: 8Gi
+  storageClass: local-path
