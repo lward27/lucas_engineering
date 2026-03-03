@@ -25,6 +25,8 @@ mimir-distributed:
         push_grpc_method_enabled: true
         ring:
           replication_factor: 1
+      limits:
+        max_global_series_per_user: 10000000
       store_gateway:
         sharding_ring:
           replication_factor: 1
