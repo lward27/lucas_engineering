@@ -17,6 +17,9 @@ grafana:
     requests:
       cpu: 100m
       memory: 256Mi
+  grafana.ini:
+    feature_toggles:
+      enable: tracesDrilldown
   datasources:
     datasources.yaml:
       apiVersion: 1
