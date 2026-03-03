@@ -27,6 +27,8 @@ spec:
           - effective_cache_size=1536MB
           - -c
           - work_mem=16MB
+          - -c
+          - max_locks_per_transaction=1024
         env:
         - name: POSTGRES_PASSWORD
           value: {{ .Values.auth.postgresPassword | quote }}
