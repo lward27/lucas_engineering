@@ -9,6 +9,9 @@ prometheus:
         - prometheus.lucas.engineering
     remoteWrite:
       - url: http://mimir-gateway.monitoring.svc/api/v1/push
+        write_relabel_configs:
+          - action: labeldrop
+            regex: '.*\..*'
   extraScrapeConfigs: |
     - job_name: mimir
       kubernetes_sd_configs:
