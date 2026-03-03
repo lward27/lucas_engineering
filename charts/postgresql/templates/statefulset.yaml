@@ -17,7 +17,16 @@ spec:
       - name: postgresql
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        args: ["postgres", "-c", "shared_preload_libraries=timescaledb"]
+        args:
+          - postgres
+          - -c
+          - shared_preload_libraries=timescaledb
+          - -c
+          - shared_buffers=512MB
+          - -c
+          - effective_cache_size=1536MB
+          - -c
+          - work_mem=16MB
         env:
         - name: POSTGRES_PASSWORD
           value: {{ .Values.auth.postgresPassword | quote }}
