@@ -10,3 +10,8 @@ tempo:
     metricsGenerator:
       enabled: true
       remoteWriteUrl: "http://mimir-gateway.monitoring.svc.cluster.local:80/api/v1/push"
+      processors: [local-blocks]
+      processor:
+        local_blocks:
+          filter_server_spans: false
+          flush_to_storage: true

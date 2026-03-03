@@ -44,3 +44,5 @@ grafana:
           jsonData:
             nodeGraph:
               enabled: true
+            streamingEnabled:
+              search: true
