@@ -33,6 +33,7 @@ opentelemetry-collector:
         check_interval: 5s
         limit_mib: 256
         spike_limit_mib: 64
+      deltatocumulative: {}
     exporters:
       otlphttp/loki:
         endpoint: http://loki.monitoring.svc.cluster.local:3100/otlp
@@ -54,5 +55,5 @@ opentelemetry-collector:
           exporters: [otlphttp/loki]
         metrics:
           receivers: [otlp]
-          processors: [memory_limiter, batch]
+          processors: [memory_limiter, deltatocumulative, batch]
           exporters: [otlphttp/mimir]
