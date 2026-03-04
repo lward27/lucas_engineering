@@ -2,6 +2,15 @@ opentelemetry-collector:
   mode: deployment
   image:
     repository: otel/opentelemetry-collector-contrib
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - host: otel.lucas.engineering
+        paths:
+          - path: /
+            pathType: Prefix
+            port: 4318
   ports:
     metrics:
       enabled: true
