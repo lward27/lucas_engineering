@@ -1,5 +1,8 @@
 openfaas:
   serviceType: ClusterIP
+  clusterRole: true
+  alertmanager:
+    create: false
   ingress:
     enabled: true
     ingressClassName: nginx

@@ -16,7 +16,7 @@ apps:
   mimir:
     enabled: true
   openfaas:
-    enabled: false
+    enabled: true
   opentelemetry-collector:
     enabled: true
   postgresql:

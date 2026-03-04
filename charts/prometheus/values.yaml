@@ -59,3 +59,8 @@ prometheus:
       static_configs:
         - targets:
           - opentelemetry-collector.monitoring.svc.cluster.local:8888
+    - job_name: openfaas-gateway
+      static_configs:
+        - targets:
+          - gateway.openfaas.svc.cluster.local:8080
+      metrics_path: /metrics

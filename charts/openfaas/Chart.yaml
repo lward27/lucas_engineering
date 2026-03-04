@@ -3,5 +3,5 @@ name: openfaas
 version: 1.0.0
 dependencies:
   - name: openfaas
-    version: 14.2.135
+    version: 15.0.0
     repository: https://openfaas.github.io/faas-netes/
