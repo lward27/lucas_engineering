@@ -41,18 +41,23 @@ spec:
           volumeMounts:
             - name: ghost-content
               mountPath: /var/lib/ghost/content
+          startupProbe:
+            httpGet:
+              path: /ghost/api/v4/admin/site/
+              port: 2368
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 30
           livenessProbe:
             httpGet:
               path: /ghost/api/v4/admin/site/
               port: 2368
-            initialDelaySeconds: 30
             periodSeconds: 10
             failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /ghost/api/v4/admin/site/
               port: 2368
-            initialDelaySeconds: 15
             periodSeconds: 5
           resources:
             requests:
