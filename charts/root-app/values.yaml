@@ -3,6 +3,8 @@ apps:
     enabled: true
   docker-registry:
     enabled: true
+  cloudflared:
+    enabled: true
   finance-app-database-service:
     enabled: true
   finance-frontend:
