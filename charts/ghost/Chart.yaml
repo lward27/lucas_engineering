@@ -1,0 +1,7 @@
+apiVersion: v2
+name: ghost
+version: 1.0.0
+dependencies:
+  - name: ghost
+    version: 25.0.4
+    repository: https://charts.bitnami.com/bitnami

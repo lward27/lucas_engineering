@@ -5,6 +5,8 @@ apps:
     enabled: true
   cloudflared:
     enabled: true
+  ghost:
+    enabled: true
   finance-app-database-service:
     enabled: true
   finance-frontend:

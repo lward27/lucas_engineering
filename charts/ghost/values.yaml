@@ -1,0 +1,21 @@
+ghost:
+  ghostHost: blog.lucas.engineering
+  ghostEnableHttps: true
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hostname: blog.lucas.engineering
+    path: /
+    pathType: ImplementationSpecific
+  persistence:
+    enabled: true
+    size: 5Gi
+    storageClass: local-path
+  mysql:
+    primary:
+      persistence:
+        enabled: true
+        size: 5Gi
+        storageClass: local-path
