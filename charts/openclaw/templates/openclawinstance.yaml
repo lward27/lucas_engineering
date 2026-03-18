@@ -36,10 +36,7 @@ spec:
         drop:
           - ALL
     networkPolicy:
-      enabled: {{ .Values.openclaw.networkPolicy.enabled }}
-      allowedIngressNamespaces:
-        {{- toYaml .Values.openclaw.networkPolicy.allowedIngressNamespaces | nindent 8 }}
-      allowDNS: true
+      enabled: false
     rbac:
       createServiceAccount: true
 

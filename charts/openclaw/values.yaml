@@ -15,15 +15,26 @@ openclaw:
   #     --from-literal=OPENAI_API_KEY=<key>
   # apiKeysSecret: openclaw-api-keys
 
-  # Agent configuration
-  # Model provider will be configured once external Ollama VM is set up.
-  # To configure, update config.models.providers and config.agents.defaults.model.primary
+  # Agent configuration — external Ollama on dedicated VM
   config:
+    agents:
+      defaults:
+        model:
+          primary: "ollama/mistral"
     session:
       scope: "per-sender"
     gateway:
       trustedProxies:
         - "10.42.0.0/16"
+    models:
+      providers:
+        ollama:
+          baseUrl: "http://192.168.20.212:11434/v1"
+          apiKey: "ollama"
+          api: "openai-completions"
+          models:
+            - id: "mistral"
+              name: "Mistral"
 
   resources:
     requests:
@@ -56,5 +67,4 @@ openclaw:
 
   networkPolicy:
     enabled: true
-    allowedIngressNamespaces:
-      - ingress-nginx
+    ollamaCIDR: "192.168.20.212/32"
