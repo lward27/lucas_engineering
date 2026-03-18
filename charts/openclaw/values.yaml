@@ -40,8 +40,8 @@ openclaw:
               reasoning: false
               input:
                 - "text"
-              contextWindow: 8192
-              maxTokens: 81920
+              contextWindow: 32768
+              maxTokens: 8192
 
   resources:
     requests:
