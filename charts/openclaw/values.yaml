@@ -16,7 +16,7 @@ openclaw:
   # apiKeysSecret: openclaw-api-keys
 
   # Agent configuration — external Ollama on dedicated VM
-  # Uses built-in ollama provider via OLLAMA_HOST env var
+  # Explicit provider config required for remote Ollama (auto-discovery only works for localhost)
   config:
     agents:
       defaults:
@@ -28,6 +28,20 @@ openclaw:
       trustedProxies:
         - "10.42.0.0/16"
         - "::1/128"
+    models:
+      providers:
+        ollama:
+          baseUrl: "http://192.168.20.212:11434/v1"
+          apiKey: "ollama-local"
+          api: "openai-completions"
+          models:
+            - id: "mistral:7b-instruct"
+              name: "Mistral 7B Instruct"
+              reasoning: false
+              input:
+                - "text"
+              contextWindow: 8192
+              maxTokens: 81920
 
   resources:
     requests:
