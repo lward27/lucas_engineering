@@ -32,7 +32,7 @@ openclaw:
         ollama:
           baseUrl: "http://192.168.20.212:11434/v1"
           apiKey: "ollama"
-          api: "openai-responses"
+          api: "openai-completions"
           models:
             - id: "mistral:7b-instruct"
               name: "Mistral 7B Instruct"
