@@ -15,28 +15,15 @@ openclaw:
   #     --from-literal=OPENAI_API_KEY=<key>
   # apiKeysSecret: openclaw-api-keys
 
-  # Agent configuration — uses local Ollama models by default
+  # Agent configuration
+  # Model provider will be configured once external Ollama VM is set up.
+  # To configure, update config.models.providers and config.agents.defaults.model.primary
   config:
-    agents:
-      defaults:
-        model:
-          primary: "ollama/llama3.2"
     session:
       scope: "per-sender"
     gateway:
       trustedProxies:
         - "10.42.0.0/16"
-    models:
-      providers:
-        ollama:
-          baseUrl: "http://127.0.0.1:11434/v1"
-          apiKey: "ollama"
-          api: "openai-completions"
-          models:
-            - id: "llama3.2"
-              name: "Llama 3.2"
-            - id: "nomic-embed-text"
-              name: "Nomic Embed Text"
 
   resources:
     requests:
@@ -56,10 +43,8 @@ openclaw:
       size: "1Gi"
 
   ollama:
-    enabled: true
-    models:
-      - llama3.2
-      - nomic-embed-text
+    enabled: false
+    models: []
     gpu: 0
     storage:
       sizeLimit: 30Gi
