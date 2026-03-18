@@ -78,6 +78,11 @@ spec:
   networking:
     service:
       type: ClusterIP
+    ingress:
+      enabled: false
+      security:
+        forceHTTPS: false
+        enableHSTS: false
 
   probes:
     liveness:
