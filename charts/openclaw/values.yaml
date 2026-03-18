@@ -20,7 +20,7 @@ openclaw:
     agents:
       defaults:
         model:
-          primary: "ollama/mistral"
+          primary: "ollama/mistral:7b-instruct"
     session:
       scope: "per-sender"
     gateway:
@@ -33,8 +33,8 @@ openclaw:
           apiKey: "ollama"
           api: "openai-completions"
           models:
-            - id: "mistral"
-              name: "Mistral"
+            - id: "mistral:7b-instruct"
+              name: "Mistral 7B Instruct"
 
   resources:
     requests:
