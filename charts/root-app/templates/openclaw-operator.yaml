@@ -1,0 +1,24 @@
+{{- if (index .Values.apps "openclaw-operator").enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openclaw-operator
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/lward27/lucas_engineering.git
+    path: charts/openclaw-operator
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: openclaw-operator-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+{{- end }}

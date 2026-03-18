@@ -1,0 +1,4 @@
+apiVersion: v2
+name: openclaw
+version: 1.0.0
+description: OpenClaw AI agent instance for homelab

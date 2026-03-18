@@ -1,0 +1,7 @@
+apiVersion: v2
+name: openclaw-operator
+version: 1.0.0
+dependencies:
+  - name: openclaw-operator
+    version: 0.22.1
+    repository: oci://ghcr.io/openclaw-rocks/charts

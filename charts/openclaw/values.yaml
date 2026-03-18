@@ -1,0 +1,62 @@
+openclaw:
+  name: openclaw
+
+  image:
+    repository: ghcr.io/openclaw/openclaw
+    tag: "2026.2.3"
+    pullPolicy: IfNotPresent
+
+  # Optional: API keys secret for cloud providers (Anthropic, OpenAI, etc.)
+  # Not needed when using Ollama local models only.
+  # To enable, create the secret and uncomment:
+  #   kubectl create secret generic openclaw-api-keys \
+  #     --namespace apps-prod \
+  #     --from-literal=ANTHROPIC_API_KEY=<key> \
+  #     --from-literal=OPENAI_API_KEY=<key>
+  # apiKeysSecret: openclaw-api-keys
+
+  # Agent configuration — uses local Ollama models by default
+  config:
+    agents:
+      defaults:
+        model:
+          primary: "ollama/llama3.2"
+        sandbox: true
+    session:
+      scope: "per-sender"
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2000m"
+      memory: "4Gi"
+
+  storage:
+    size: 10Gi
+    storageClass: local-path
+
+  chromium:
+    enabled: true
+    persistence:
+      size: "1Gi"
+
+  ollama:
+    enabled: true
+    models:
+      - llama3.2
+      - nomic-embed-text
+    gpu: 0
+    storage:
+      sizeLimit: 30Gi
+
+  ingress:
+    enabled: true
+    className: nginx
+    host: openclaw.lucas.engineering
+
+  networkPolicy:
+    enabled: true
+    allowedIngressNamespaces:
+      - ingress-nginx

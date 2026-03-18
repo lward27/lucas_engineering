@@ -19,6 +19,10 @@ apps:
     enabled: true
   mimir:
     enabled: true
+  openclaw:
+    enabled: false
+  openclaw-operator:
+    enabled: true
   openfaas:
     enabled: true
   opentelemetry-collector:

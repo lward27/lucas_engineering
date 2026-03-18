@@ -1,0 +1,116 @@
+apiVersion: openclaw.rocks/v1alpha1
+kind: OpenClawInstance
+metadata:
+  name: {{ .Values.openclaw.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  image:
+    repository: {{ .Values.openclaw.image.repository }}
+    tag: {{ .Values.openclaw.image.tag | quote }}
+    pullPolicy: {{ .Values.openclaw.image.pullPolicy }}
+
+  {{- if .Values.openclaw.apiKeysSecret }}
+  envFrom:
+    - secretRef:
+        name: {{ .Values.openclaw.apiKeysSecret }}
+  {{- end }}
+
+  config:
+    raw:
+      {{- toYaml .Values.openclaw.config | nindent 6 }}
+
+  env:
+    - name: OPENCLAW_DISABLE_BONJOUR
+      value: "1"
+
+  resources:
+    {{- toYaml .Values.openclaw.resources | nindent 4 }}
+
+  security:
+    podSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+      runAsNonRoot: true
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        drop:
+          - ALL
+    networkPolicy:
+      enabled: {{ .Values.openclaw.networkPolicy.enabled }}
+      allowedIngressNamespaces:
+        {{- toYaml .Values.openclaw.networkPolicy.allowedIngressNamespaces | nindent 8 }}
+      allowDNS: true
+    rbac:
+      createServiceAccount: true
+
+  storage:
+    persistence:
+      enabled: true
+      storageClass: {{ .Values.openclaw.storage.storageClass }}
+      size: {{ .Values.openclaw.storage.size }}
+      accessModes:
+        - ReadWriteOnce
+
+  chromium:
+    enabled: {{ .Values.openclaw.chromium.enabled }}
+    image:
+      repository: chromedp/headless-shell
+      tag: "stable"
+    resources:
+      requests:
+        cpu: "250m"
+        memory: "512Mi"
+      limits:
+        cpu: "1000m"
+        memory: "2Gi"
+    persistence:
+      enabled: true
+      size: {{ .Values.openclaw.chromium.persistence.size | quote }}
+
+  ollama:
+    enabled: {{ .Values.openclaw.ollama.enabled }}
+    models:
+      {{- toYaml .Values.openclaw.ollama.models | nindent 6 }}
+    gpu: {{ .Values.openclaw.ollama.gpu }}
+    storage:
+      sizeLimit: {{ .Values.openclaw.ollama.storage.sizeLimit }}
+
+  {{- if .Values.openclaw.ingress.enabled }}
+  networking:
+    service:
+      type: ClusterIP
+    ingress:
+      enabled: true
+      className: {{ .Values.openclaw.ingress.className }}
+      hosts:
+        - host: {{ .Values.openclaw.ingress.host }}
+          paths:
+            - path: /
+              pathType: Prefix
+  {{- end }}
+
+  probes:
+    liveness:
+      enabled: true
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      enabled: true
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+    startup:
+      enabled: true
+      periodSeconds: 5
+      failureThreshold: 60
+
+  observability:
+    logging:
+      level: info
+      format: json
