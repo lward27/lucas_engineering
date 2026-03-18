@@ -1,0 +1,20 @@
+{{- if .Values.openclaw.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.openclaw.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  ingressClassName: {{ .Values.openclaw.ingress.className }}
+  rules:
+  - host: {{ .Values.openclaw.ingress.host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Values.openclaw.name }}
+            port:
+              number: 18789
+{{- end }}

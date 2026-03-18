@@ -75,19 +75,9 @@ spec:
     storage:
       sizeLimit: {{ .Values.openclaw.ollama.storage.sizeLimit }}
 
-  {{- if .Values.openclaw.ingress.enabled }}
   networking:
     service:
       type: ClusterIP
-    ingress:
-      enabled: true
-      className: {{ .Values.openclaw.ingress.className }}
-      hosts:
-        - host: {{ .Values.openclaw.ingress.host }}
-          paths:
-            - path: /
-              pathType: Prefix
-  {{- end }}
 
   probes:
     liveness:
