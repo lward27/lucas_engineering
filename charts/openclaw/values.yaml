@@ -21,7 +21,6 @@ openclaw:
       defaults:
         model:
           primary: "ollama/llama3.2"
-        sandbox: true
     session:
       scope: "per-sender"
 
