@@ -38,7 +38,7 @@ openclaw:
     storageClass: local-path
 
   chromium:
-    enabled: true
+    enabled: false
     persistence:
       size: "1Gi"
 
