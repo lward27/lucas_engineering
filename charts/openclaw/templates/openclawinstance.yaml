@@ -22,10 +22,6 @@ spec:
   env:
     - name: OPENCLAW_DISABLE_BONJOUR
       value: "1"
-    - name: OPENAI_BASE_URL
-      value: "http://localhost:11434/v1"
-    - name: OPENAI_API_KEY
-      value: "ollama"
 
   resources:
     {{- toYaml .Values.openclaw.resources | nindent 4 }}
