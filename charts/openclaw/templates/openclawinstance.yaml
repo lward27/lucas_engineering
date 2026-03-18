@@ -22,6 +22,8 @@ spec:
   env:
     - name: OPENCLAW_DISABLE_BONJOUR
       value: "1"
+    - name: OLLAMA_HOST
+      value: "http://192.168.20.212:11434"
 
   resources:
     {{- toYaml .Values.openclaw.resources | nindent 4 }}
