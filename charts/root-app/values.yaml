@@ -20,7 +20,7 @@ apps:
   mimir:
     enabled: true
   openclaw:
-    enabled: false
+    enabled: true
   openclaw-operator:
     enabled: true
   openfaas:
