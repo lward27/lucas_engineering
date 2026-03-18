@@ -20,7 +20,7 @@ openclaw:
     agents:
       defaults:
         model:
-          primary: "ollama/llama3.2"
+          primary: "openai/llama3.2"
     session:
       scope: "per-sender"
     gateway:
