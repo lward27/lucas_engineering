@@ -12,9 +12,9 @@ openclaw:
     agents:
       defaults:
         model:
-          primary: "fireworks/accounts/fireworks/models/llama-v3p3-70b-instruct"
+          primary: "fireworks/accounts/fireworks/models/kimi-k2.5"
           fallbacks:
-            - "fireworks/accounts/fireworks/models/kimi-k2.5"
+            - "fireworks/accounts/fireworks/models/llama-v3p3-70b-instruct"
         models:
           "fireworks/accounts/fireworks/models/llama-v3p3-70b-instruct":
             alias: "Llama 70B"
