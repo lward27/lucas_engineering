@@ -22,6 +22,50 @@ spec:
   env:
     - name: OPENCLAW_DISABLE_BONJOUR
       value: "1"
+    - name: PATH
+      value: "/opt/tools:/home/openclaw/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+  initContainers:
+    - name: install-kubectl
+      image: bitnami/kubectl:latest
+      command:
+        - sh
+        - -c
+        - |
+          cp /opt/bitnami/kubectl/bin/kubectl /tools/kubectl
+          chmod +x /tools/kubectl
+          echo "kubectl installed"
+      volumeMounts:
+        - name: tools-bin
+          mountPath: /tools
+
+  extraVolumes:
+    - name: tools-bin
+      emptyDir: {}
+    - name: ssh-keys
+      secret:
+        secretName: openclaw-ssh
+        defaultMode: 0600
+
+  extraVolumeMounts:
+    - name: tools-bin
+      mountPath: /opt/tools
+    - name: ssh-keys
+      mountPath: /home/openclaw/.ssh/id_ed25519
+      subPath: id_ed25519
+      readOnly: true
+    - name: ssh-keys
+      mountPath: /home/openclaw/.ssh/id_ed25519.pub
+      subPath: id_ed25519.pub
+      readOnly: true
+    - name: ssh-keys
+      mountPath: /home/openclaw/.ssh/known_hosts
+      subPath: known_hosts
+      readOnly: true
+    - name: ssh-keys
+      mountPath: /home/openclaw/.ssh/config
+      subPath: config
+      readOnly: true
 
   resources:
     {{- toYaml .Values.openclaw.resources | nindent 4 }}
