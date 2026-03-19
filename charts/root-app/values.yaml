@@ -1,6 +1,8 @@
 apps:
   argo-cd:
     enabled: true
+  directus:
+    enabled: true
   docker-registry:
     enabled: true
   cloudflared:

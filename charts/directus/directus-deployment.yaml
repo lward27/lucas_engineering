@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: directus
+  namespace: directus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: directus
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: directus
+    spec:
+      containers:
+        - name: directus
+          image: directus/directus:11
+          env:
+            - name: PUBLIC_URL
+              value: https://admin.reefusion.lucas.engineering
+            - name: DB_CLIENT
+              value: pg
+            - name: DB_HOST
+              value: directus-postgres.directus.svc.cluster.local
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_DATABASE
+              value: directus
+            - name: DB_USER
+              value: directus
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: directus-secret
+                  key: db-password
+            - name: SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: directus-secret
+                  key: secret-key
+            - name: ADMIN_EMAIL
+              value: admin@lucas.engineering
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: directus-secret
+                  key: admin-password
+          ports:
+            - containerPort: 8055
+          volumeMounts:
+            - name: directus-uploads
+              mountPath: /directus/uploads
+            - name: directus-extensions
+              mountPath: /directus/extensions
+          startupProbe:
+            httpGet:
+              path: /server/health
+              port: 8055
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /server/health
+              port: 8055
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /server/health
+              port: 8055
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: directus-uploads
+          persistentVolumeClaim:
+            claimName: directus-uploads
+        - name: directus-extensions
+          persistentVolumeClaim:
+            claimName: directus-extensions
