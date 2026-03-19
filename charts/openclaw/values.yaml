@@ -22,6 +22,7 @@ openclaw:
       defaults:
         model:
           primary: "ollama/mistral:32k"
+        timeoutSeconds: 1800
     session:
       scope: "per-sender"
     gateway:
