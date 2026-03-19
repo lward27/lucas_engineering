@@ -27,15 +27,8 @@ spec:
       protocol: UDP
     - port: 53
       protocol: TCP
-  # HTTPS (external APIs)
+  # HTTPS (external APIs - Fireworks AI, etc.)
   - ports:
     - port: 443
-      protocol: TCP
-  # Ollama VM on LAN
-  - to:
-    - ipBlock:
-        cidr: {{ .Values.openclaw.networkPolicy.ollamaCIDR }}
-    ports:
-    - port: 11434
       protocol: TCP
 {{- end }}

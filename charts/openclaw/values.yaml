@@ -6,23 +6,20 @@ openclaw:
     tag: "2026.2.3"
     pullPolicy: IfNotPresent
 
-  # Optional: API keys secret for cloud providers (Anthropic, OpenAI, etc.)
-  # Not needed when using Ollama local models only.
-  # To enable, create the secret and uncomment:
-  #   kubectl create secret generic openclaw-api-keys \
-  #     --namespace apps-prod \
-  #     --from-literal=ANTHROPIC_API_KEY=<key> \
-  #     --from-literal=OPENAI_API_KEY=<key>
-  # apiKeysSecret: openclaw-api-keys
+  apiKeysSecret: openclaw-api-keys
 
-  # Agent configuration — external Ollama on dedicated VM
-  # Explicit provider config required for remote Ollama (auto-discovery only works for localhost)
   config:
     agents:
       defaults:
         model:
-          primary: "ollama/mistral:32k"
-        timeoutSeconds: 1800
+          primary: "fireworks/accounts/fireworks/models/llama-v3p3-70b-instruct"
+          fallbacks:
+            - "fireworks/accounts/fireworks/models/kimi-k2.5"
+        models:
+          "fireworks/accounts/fireworks/models/llama-v3p3-70b-instruct":
+            alias: "Llama 70B"
+          "fireworks/accounts/fireworks/models/kimi-k2.5":
+            alias: "Kimi K2.5"
     session:
       scope: "per-sender"
     gateway:
@@ -31,17 +28,24 @@ openclaw:
         - "::1/128"
     models:
       providers:
-        ollama:
-          baseUrl: "http://192.168.20.212:11434/v1"
-          apiKey: "ollama-local"
+        fireworks:
+          baseUrl: "https://api.fireworks.ai/inference/v1"
+          apiKey: "${FIREWORKS_API_KEY}"
           api: "openai-completions"
           models:
-            - id: "mistral:32k"
-              name: "Mistral 7B v0.3"
+            - id: "accounts/fireworks/models/llama-v3p3-70b-instruct"
+              name: "Llama 3.3 70B Instruct"
               reasoning: false
               input:
                 - "text"
-              contextWindow: 32768
+              contextWindow: 131072
+              maxTokens: 8192
+            - id: "accounts/fireworks/models/kimi-k2.5"
+              name: "Kimi K2.5"
+              reasoning: false
+              input:
+                - "text"
+              contextWindow: 131072
               maxTokens: 8192
 
   resources:
@@ -75,4 +79,3 @@ openclaw:
 
   networkPolicy:
     enabled: true
-    ollamaCIDR: "192.168.20.212/32"
