@@ -20,6 +20,14 @@ openclaw:
             alias: "Kimi K2.5"
           "fireworks/accounts/fireworks/models/deepseek-v3p2":
             alias: "DeepSeek V3"
+          "fireworks/accounts/fireworks/models/glm-4p7":
+            alias: "GLM 4.7"
+      list:
+        - id: "main"
+          name: "Main"
+        - id: "bobs-burgers"
+          name: "Bob's Burgers Expert"
+          model: "fireworks/accounts/fireworks/models/glm-4p7"
     session:
       scope: "per-sender"
     gateway:
@@ -42,6 +50,13 @@ openclaw:
               maxTokens: 8192
             - id: "accounts/fireworks/models/deepseek-v3p2"
               name: "DeepSeek V3"
+              reasoning: false
+              input:
+                - "text"
+              contextWindow: 131072
+              maxTokens: 8192
+            - id: "accounts/fireworks/models/glm-4p7"
+              name: "GLM 4.7"
               reasoning: false
               input:
                 - "text"
