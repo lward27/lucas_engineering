@@ -56,9 +56,10 @@ spec:
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /ghost/api/v4/admin/site/
+              path: /
               port: 2368
             periodSeconds: 5
+            failureThreshold: 3
           resources:
             requests:
               memory: "256Mi"

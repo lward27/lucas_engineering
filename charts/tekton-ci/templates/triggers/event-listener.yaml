@@ -33,6 +33,7 @@ spec:
                 body.ref == 'refs/heads/{{ $svc.branch }}'
       bindings:
         - ref: {{ $name }}-binding
+          kind: TriggerBinding
       template:
         ref: {{ $name }}-template
     {{- end }}
