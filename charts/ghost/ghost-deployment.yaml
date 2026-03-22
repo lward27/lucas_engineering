@@ -42,31 +42,19 @@ spec:
             - name: ghost-content
               mountPath: /var/lib/ghost/content
           startupProbe:
-            httpGet:
-              path: /ghost/api/v4/admin/site/
+            tcpSocket:
               port: 2368
-              httpHeaders:
-                - name: X-Forwarded-Proto
-                  value: https
-            initialDelaySeconds: 10
+            initialDelaySeconds: 30
             periodSeconds: 5
             failureThreshold: 30
           livenessProbe:
-            httpGet:
-              path: /ghost/api/v4/admin/site/
+            tcpSocket:
               port: 2368
-              httpHeaders:
-                - name: X-Forwarded-Proto
-                  value: https
             periodSeconds: 10
             failureThreshold: 3
           readinessProbe:
-            httpGet:
-              path: /
+            tcpSocket:
               port: 2368
-              httpHeaders:
-                - name: X-Forwarded-Proto
-                  value: https
             periodSeconds: 5
             failureThreshold: 3
           resources:
