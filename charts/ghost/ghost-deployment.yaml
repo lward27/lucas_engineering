@@ -42,15 +42,13 @@ spec:
             - name: ghost-content
               mountPath: /var/lib/ghost/content
           startupProbe:
-            httpGet:
-              path: /ghost/api/v4/admin/site/
+            tcpSocket:
               port: 2368
-            initialDelaySeconds: 10
+            initialDelaySeconds: 30
             periodSeconds: 5
             failureThreshold: 30
           livenessProbe:
-            httpGet:
-              path: /ghost/api/v4/admin/site/
+            tcpSocket:
               port: 2368
             periodSeconds: 10
             failureThreshold: 3
