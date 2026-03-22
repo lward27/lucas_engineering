@@ -5,8 +5,13 @@ metadata:
   namespace: blog
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - blog.lucas.engineering
+      secretName: blog-lucas-engineering-tls
   rules:
     - host: blog.lucas.engineering
       http:
