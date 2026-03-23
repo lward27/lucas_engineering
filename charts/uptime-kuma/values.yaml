@@ -4,8 +4,14 @@ uptime-kuma:
   ingress:
     enabled: true
     className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
     hosts:
       - host: uptime.lucas.engineering
         paths:
           - path: /
             pathType: ImplementationSpecific
+    tls:
+      - hosts:
+          - uptime.lucas.engineering
+        secretName: uptime-lucas-engineering-tls
