@@ -139,4 +139,4 @@ data:
     ---
 
   kubernetes.yaml: |
-    ---
+    mode: cluster
