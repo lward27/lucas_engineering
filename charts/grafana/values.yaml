@@ -8,8 +8,14 @@ grafana:
   ingress:
     enabled: true
     ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
     hosts:
       - grafana.lucas.engineering
+    tls:
+      - hosts:
+          - grafana.lucas.engineering
+        secretName: grafana-lucas-engineering-tls
   resources:
     limits:
       cpu: 500m

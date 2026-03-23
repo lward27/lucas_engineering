@@ -5,12 +5,18 @@ opentelemetry-collector:
   ingress:
     enabled: true
     ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
     hosts:
       - host: otel.lucas.engineering
         paths:
           - path: /
             pathType: Prefix
             port: 4318
+    tls:
+      - hosts:
+          - otel.lucas.engineering
+        secretName: otel-lucas-engineering-tls
   ports:
     metrics:
       enabled: true
