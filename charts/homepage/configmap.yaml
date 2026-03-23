@@ -21,11 +21,11 @@ data:
 
     - Finance:
         - Finance Frontend:
-            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/github.png
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/yahoo-finance.png
               href: https://finance.lucas.engineering
               description: Finance app UI
         - Finance API:
-            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/api.png
+            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/python.png
               href: https://finance-db.lucas.engineering
               description: FastAPI backend
         - YFinance Wrapper:
@@ -35,15 +35,15 @@ data:
 
     - Platform:
         - ArgoCD:
-            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/argocd.png
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/argocd.png
               href: https://argocd.lucas.engineering
               description: GitOps deployment
         - OpenClaw:
-            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/openai.png
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/robot.png
               href: https://openclaw.lucas.engineering
               description: AI assistant (Nova!)
         - Tekton:
-            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/tekton.png
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/tekton.png
               href: https://tekton.lucas.engineering
               description: CI/CD pipelines
         - OpenFaaS:
