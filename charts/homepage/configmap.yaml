@@ -5,53 +5,65 @@ metadata:
   namespace: homepage
 data:
   bookmarks.yaml: |
-    - Developer:
-        - Github:
-            - abbr: GH
-              href: https://github.com/
-    - Infrastructure:
+    - Monitoring:
         - Grafana:
-            - abbr: GR
+            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/grafana.png
               href: https://grafana.lucas.engineering
+              description: Metrics & dashboards
         - Prometheus:
-            - abbr: PR
+            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prometheus.png
               href: https://prometheus.lucas.engineering
-        - ArgoCD:
-            - abbr: AR
-              href: https://argocd.lucas.engineering
-        - Uptime:
-            - abbr: UP
+              description: Metrics collection
+        - Uptime Kuma:
+            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/uptime-kuma.png
               href: https://uptime.lucas.engineering
+              description: Service monitoring
+
     - Finance:
-        - Finance:
-            - abbr: FI
+        - Finance Frontend:
+            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/github.png
               href: https://finance.lucas.engineering
-        - API:
-            - abbr: AP
+              description: Finance app UI
+        - Finance API:
+            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/api.png
               href: https://finance-db.lucas.engineering
-        - YFinance:
-            - abbr: YF
+              description: FastAPI backend
+        - YFinance Wrapper:
+            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/python.png
               href: https://yfinance.lucas.engineering
-    - Tools:
+              description: Yahoo Finance scraper
+
+    - Platform:
+        - ArgoCD:
+            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/argocd.png
+              href: https://argocd.lucas.engineering
+              description: GitOps deployment
         - OpenClaw:
-            - abbr: OC
+            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/openai.png
               href: https://openclaw.lucas.engineering
+              description: AI assistant (Nova!)
         - Tekton:
-            - abbr: TK
+            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/tekton.png
               href: https://tekton.lucas.engineering
+              description: CI/CD pipelines
         - OpenFaaS:
-            - abbr: FA
+            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/openfaas.png
               href: https://openfaas.lucas.engineering
-        - Registry:
-            - abbr: RG
-              href: https://registry.lucas.engineering
+              description: Serverless functions
+
     - Content:
-        - Blog:
-            - abbr: BL
+        - Ghost Blog:
+            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/ghost.png
               href: https://blog.lucas.engineering
+              description: Blog (ipponusa.com)
         - Directus:
-            - abbr: DR
+            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/directus.png
               href: https://admin.reefusion.lucas.engineering
+              description: Headless CMS
+        - Registry:
+            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/docker.png
+              href: https://registry.lucas.engineering
+              description: Container registry
 
   services.yaml: |
     []
@@ -61,6 +73,8 @@ data:
 
   settings.yaml: |
     title: Lucas Engineering
+    theme: dark
+    color: slate
 
   docker.yaml: |
     ---
