@@ -19,21 +19,21 @@ data:
               href: https://uptime.lucas.engineering
               description: Service monitoring
         - OTel:
-            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/opentelemetry.png
+            - icon: https://icon.icepanel.io/Technology/svg/OpenTelemetry.svg
               href: https://otel.lucas.engineering
               description: Observability pipeline
 
     - Finance:
         - Finance Frontend:
-            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/github.png
+            - icon: https://icon.icepanel.io/Technology/svg/React.svg
               href: https://finance.lucas.engineering
               description: Finance app UI
         - Finance API:
-            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/api.png
+            - icon: https://icon.icepanel.io/Technology/svg/Python.svg
               href: https://finance-db.lucas.engineering/docs
               description: FastAPI backend
         - YFinance:
-            - icon: https://cdn.simpleicons.org/yahoo/6001D2
+            - icon: https://icon.icepanel.io/Technology/svg/Python.svg
               href: https://yfinance.lucas.engineering/docs
               description: Yahoo Finance scraper
 
@@ -43,7 +43,7 @@ data:
               href: https://argocd.lucas.engineering
               description: GitOps deployment
         - OpenClaw:
-            - icon: https://cdn.simpleicons.org/openai/412991
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/openclaw-dark.svg
               href: https://openclaw.lucas.engineering
               description: AI assistant (Nova!)
         - Tekton:
