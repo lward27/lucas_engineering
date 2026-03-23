@@ -2,7 +2,7 @@ apps:
   argo-cd:
     enabled: true
   cert-manager:
-    enabled: false
+    enabled: true
   directus:
     enabled: true
   docker-registry:
