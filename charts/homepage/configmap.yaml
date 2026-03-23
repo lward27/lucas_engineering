@@ -101,20 +101,20 @@ data:
     headerStyle: clean
     layout:
       Infrastructure Health:
-        style: row
-        columns: 1
+        style: column
+        rows: 1
       Monitoring:
-        style: row
-        columns: 4
+        style: column
+        rows: 2
       Finance:
-        style: row
-        columns: 3
+        style: column
+        rows: 2
       Platform:
-        style: row
-        columns: 4
+        style: column
+        rows: 2
       Content:
-        style: row
-        columns: 3
+        style: column
+        rows: 2
 
   docker.yaml: |
     ---
