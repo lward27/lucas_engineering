@@ -30,11 +30,11 @@ data:
               description: Finance app UI
         - Finance API:
             - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/api.png
-              href: https://finance-db.lucas.engineering
+              href: https://finance-db.lucas.engineering/docs
               description: FastAPI backend
         - YFinance:
             - icon: https://cdn.simpleicons.org/yahoo/6001D2
-              href: https://yfinance.lucas.engineering
+              href: https://yfinance.lucas.engineering/docs
               description: Yahoo Finance scraper
 
     - Platform:
