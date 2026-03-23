@@ -1,6 +1,8 @@
 apps:
   argo-cd:
     enabled: true
+  homepage:
+    enabled: true
   cert-manager:
     enabled: true
   directus:
