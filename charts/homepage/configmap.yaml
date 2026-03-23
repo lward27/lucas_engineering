@@ -73,12 +73,12 @@ data:
     - Infrastructure Health:
         - Uptime Kuma:
             href: https://uptime.lucas.engineering
-            description: All service status
+            description: Service uptime monitoring
             widget:
               type: uptimekuma
               url: https://uptime.lucas.engineering
               key: {{HOMEPAGE_VAR_UPTIME_KUMA_API_KEY}}
-              mode: status
+              mode: ping
 
   widgets.yaml: |
     - datetime:
@@ -92,7 +92,7 @@ data:
         latitude: 35.4088
         longitude: -80.5795
         units: imperial
-        provider: openweathermap
+        provider: openmeteo
         cache: 5
     - search:
         provider: google
