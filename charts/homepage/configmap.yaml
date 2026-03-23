@@ -50,10 +50,6 @@ data:
             - icon: https://cdn.simpleicons.org/kubernetes/326CE5
               href: https://tekton.lucas.engineering
               description: CI/CD pipelines
-        - OpenFaaS:
-            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/openfaas.png
-              href: https://openfaas.lucas.engineering
-              description: Serverless functions
 
     - Content:
         - Ghost Blog:
@@ -120,7 +116,7 @@ data:
         rows: 2
       Platform:
         style: column
-        rows: 2
+        rows: 1
       Content:
         style: column
         rows: 2
