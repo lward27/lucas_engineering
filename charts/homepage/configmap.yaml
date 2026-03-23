@@ -7,29 +7,33 @@ data:
   bookmarks.yaml: |
     - Monitoring:
         - Grafana:
-            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/grafana.png
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/grafana.png
               href: https://grafana.lucas.engineering
               description: Metrics & dashboards
         - Prometheus:
-            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prometheus.png
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/prometheus.png
               href: https://prometheus.lucas.engineering
               description: Metrics collection
         - Uptime Kuma:
-            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/uptime-kuma.png
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/uptime-kuma.png
               href: https://uptime.lucas.engineering
               description: Service monitoring
+        - OTel:
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/opentelemetry.png
+              href: https://otel.lucas.engineering
+              description: Observability pipeline
 
     - Finance:
         - Finance Frontend:
-            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/yahoo-finance.png
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/github.png
               href: https://finance.lucas.engineering
               description: Finance app UI
         - Finance API:
-            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/python.png
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/api.png
               href: https://finance-db.lucas.engineering
               description: FastAPI backend
-        - YFinance Wrapper:
-            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/python.png
+        - YFinance:
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/yahoo.png
               href: https://yfinance.lucas.engineering
               description: Yahoo Finance scraper
 
@@ -47,34 +51,81 @@ data:
               href: https://tekton.lucas.engineering
               description: CI/CD pipelines
         - OpenFaaS:
-            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/openfaas.png
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/openfaas.png
               href: https://openfaas.lucas.engineering
               description: Serverless functions
 
     - Content:
         - Ghost Blog:
-            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/ghost.png
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/ghost.png
               href: https://blog.lucas.engineering
               description: Blog (ipponusa.com)
         - Directus:
-            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/directus.png
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/directus.png
               href: https://admin.reefusion.lucas.engineering
               description: Headless CMS
         - Registry:
-            - icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/docker.png
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/docker.png
               href: https://registry.lucas.engineering
               description: Container registry
 
   services.yaml: |
-    []
+    - Infrastructure Health:
+        - Uptime Kuma:
+            href: https://uptime.lucas.engineering
+            description: All service status
+            widget:
+              type: uptimekuma
+              url: https://uptime.lucas.engineering
+              key: {{HOMEPAGE_VAR_UPTIME_KUMA_API_KEY}}
+              mode: status
 
   widgets.yaml: |
-    []
+    - datetime:
+        text_size: xl
+        format:
+          timeStyle: short
+          dateStyle: long
+          hour12: false
+    - weather:
+        label: Concord, NC
+        latitude: 35.4088
+        longitude: -80.5795
+        units: imperial
+        provider: openweathermap
+        cache: 5
+    - search:
+        provider: google
+        target: _blank
+        suggestionUrl: https://duckduckgo.com/ac/?q={query}&type=list
+        showSearchSuggestions: true
 
   settings.yaml: |
-    title: Lucas Engineering
+    title: Lucas Engineering | Mission Control
     theme: dark
     color: slate
+    background:
+      image: https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop
+      blur: sm
+      opacity: 20
+    cardBlur: sm
+    headerStyle: clean
+    layout:
+      Infrastructure Health:
+        style: row
+        columns: 1
+      Monitoring:
+        style: row
+        columns: 4
+      Finance:
+        style: row
+        columns: 3
+      Platform:
+        style: row
+        columns: 4
+      Content:
+        style: row
+        columns: 3
 
   docker.yaml: |
     ---
