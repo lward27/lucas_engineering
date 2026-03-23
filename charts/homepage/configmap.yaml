@@ -72,14 +72,13 @@ data:
   services.yaml: |
     - Infrastructure Health:
         - Uptime Kuma:
-            href: https://uptime.lucas.engineering/status/lucas-engineering
+            href: https://uptime.lucas.engineering
             description: Service uptime monitoring
             widget:
               type: uptimekuma
               url: https://uptime.lucas.engineering
               key: {{HOMEPAGE_VAR_UPTIME_KUMA_API_KEY}}
-              slug: lucas-engineering
-              mode: status
+              mode: ping
 
   widgets.yaml: |
     - datetime:
@@ -88,6 +87,15 @@ data:
           timeStyle: short
           dateStyle: long
           hour12: false
+    - resources:
+        cpu: true
+        memory: true
+        disk: false
+        uptime: true
+        cputemp: false
+        units: imperial
+        refresh: 5000
+        diskUnits: bytes
 
   settings.yaml: |
     title: Lucas Engineering | Mission Control
