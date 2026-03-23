@@ -93,6 +93,18 @@ data:
         units: imperial
         refresh: 5000
         diskUnits: bytes
+    - kubernetes:
+        cluster:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+          label: "cluster"
+        nodes:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
 
   settings.yaml: |
     title: Lucas Engineering | Mission Control
