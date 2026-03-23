@@ -72,13 +72,14 @@ data:
   services.yaml: |
     - Infrastructure Health:
         - Uptime Kuma:
-            href: https://uptime.lucas.engineering
+            href: https://uptime.lucas.engineering/status/lucas-engineering
             description: Service uptime monitoring
             widget:
               type: uptimekuma
               url: https://uptime.lucas.engineering
               key: {{HOMEPAGE_VAR_UPTIME_KUMA_API_KEY}}
-              mode: ping
+              slug: lucas-engineering
+              mode: status
 
   widgets.yaml: |
     - datetime:
@@ -87,18 +88,6 @@ data:
           timeStyle: short
           dateStyle: long
           hour12: false
-    - weather:
-        label: Concord, NC
-        latitude: 35.4088
-        longitude: -80.5795
-        units: imperial
-        provider: openmeteo
-        cache: 5
-    - search:
-        provider: google
-        target: _blank
-        suggestionUrl: https://duckduckgo.com/ac/?q={query}&type=list
-        showSearchSuggestions: true
 
   settings.yaml: |
     title: Lucas Engineering | Mission Control
