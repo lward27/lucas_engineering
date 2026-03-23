@@ -102,8 +102,10 @@ data:
       image: https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop
       blur: sm
       opacity: 20
+      saturate: 100
     cardBlur: sm
     headerStyle: clean
+    hideVersion: true
     layout:
       Infrastructure Health:
         style: column
