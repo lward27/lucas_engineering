@@ -5,65 +5,53 @@ metadata:
   namespace: homepage
 data:
   bookmarks.yaml: |
-    - Monitoring:
+    - Developer:
+        - Github:
+            - abbr: GH
+              href: https://github.com/
+    - Infrastructure:
         - Grafana:
-            - icon: grafana.png
+            - abbr: GR
               href: https://grafana.lucas.engineering
-              description: Metrics & dashboards
         - Prometheus:
-            - icon: prometheus.png
+            - abbr: PR
               href: https://prometheus.lucas.engineering
-              description: Metrics collection
-        - Uptime Kuma:
-            - icon: uptime-kuma.png
-              href: https://uptime.lucas.engineering
-              description: Service monitoring
-
-    - Finance Stack:
-        - Finance Frontend:
-            - icon: si-github
-              href: https://finance.lucas.engineering
-              description: Finance app UI
-        - Finance API:
-            - icon: si-fastapi
-              href: https://finance-db.lucas.engineering
-              description: FastAPI backend
-        - YFinance Wrapper:
-            - icon: si-python
-              href: https://yfinance.lucas.engineering
-              description: Yahoo Finance scraper
-
-    - Platform Tools:
         - ArgoCD:
-            - icon: argo-icon
+            - abbr: AR
               href: https://argocd.lucas.engineering
-              description: GitOps deployment
+        - Uptime:
+            - abbr: UP
+              href: https://uptime.lucas.engineering
+    - Finance:
+        - Finance:
+            - abbr: FI
+              href: https://finance.lucas.engineering
+        - API:
+            - abbr: AP
+              href: https://finance-db.lucas.engineering
+        - YFinance:
+            - abbr: YF
+              href: https://yfinance.lucas.engineering
+    - Tools:
         - OpenClaw:
-            - icon: si-openai
+            - abbr: OC
               href: https://openclaw.lucas.engineering
-              description: AI assistant (Nova!)
         - Tekton:
-            - icon: tekton-icon
+            - abbr: TK
               href: https://tekton.lucas.engineering
-              description: CI/CD pipelines
         - OpenFaaS:
-            - icon: openfaas-icon
+            - abbr: FA
               href: https://openfaas.lucas.engineering
-              description: Serverless functions
-
-    - Content & Data:
-        - Ghost Blog:
-            - icon: si-ghost
-              href: https://blog.lucas.engineering
-              description: Blog (ipponusa.com)
-        - Directus:
-            - icon: directus-icon
-              href: https://admin.reefusion.lucas.engineering
-              description: Headless CMS
-        - Docker Registry:
-            - icon: si-docker
+        - Registry:
+            - abbr: RG
               href: https://registry.lucas.engineering
-              description: Container registry
+    - Content:
+        - Blog:
+            - abbr: BL
+              href: https://blog.lucas.engineering
+        - Directus:
+            - abbr: DR
+              href: https://admin.reefusion.lucas.engineering
 
   services.yaml: |
     []
@@ -73,19 +61,9 @@ data:
 
   settings.yaml: |
     title: Lucas Engineering
-    theme: dark
-    color: slate
 
-  layout.yaml: |
-    Monitoring:
-      style: row
-      columns: 3
-    Finance Stack:
-      style: row
-      columns: 3
-    Platform Tools:
-      style: row
-      columns: 4
-    Content & Data:
-      style: row
-      columns: 3
+  docker.yaml: |
+    ---
+
+  kubernetes.yaml: |
+    ---
