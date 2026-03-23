@@ -91,6 +91,11 @@ openclaw:
     enabled: true
     className: nginx
     host: openclaw.lucas.engineering
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+    tls:
+      enabled: true
+      secretName: openclaw-lucas-engineering-tls
 
   networkPolicy:
     enabled: true

@@ -9,6 +9,11 @@ docker-registry:
       - registry.lucas.engineering
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+    tls:
+    - hosts:
+      - registry.lucas.engineering
+      secretName: registry-lucas-engineering-tls
   persistence:
     enabled: true
     size: 10Gi

@@ -21,4 +21,10 @@ spec:
                 name: tekton-dashboard
                 port:
                   number: 9097
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    - hosts:
+      - {{ .Values.ingress.host }}
+      secretName: {{ .Values.ingress.tls.secretName }}
+  {{- end }}
 {{- end }}

@@ -10,6 +10,9 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
     nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    {{- with .Values.openclaw.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   ingressClassName: {{ .Values.openclaw.ingress.className }}
   rules:
@@ -23,4 +26,10 @@ spec:
             name: {{ .Values.openclaw.name }}
             port:
               number: 18789
+  {{- if .Values.openclaw.ingress.tls.enabled }}
+  tls:
+  - hosts:
+    - {{ .Values.openclaw.ingress.host }}
+    secretName: {{ .Values.openclaw.ingress.tls.secretName }}
+  {{- end }}
 {{- end }}

@@ -21,6 +21,10 @@ webhookIngress:
   className: nginx
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "1m"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  tls:
+    enabled: true
+    secretName: tekton-webhooks-lucas-engineering-tls
 
 # One entry per microservice. Each service gets its own TriggerBinding,
 # TriggerTemplate, and a route in the EventListener.

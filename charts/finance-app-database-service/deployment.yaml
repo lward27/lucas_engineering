@@ -59,6 +59,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: finance-app-database-service
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx
   rules:
@@ -72,3 +74,7 @@ spec:
             name: finance-app-database-service
             port:
               number: 8091
+  tls:
+  - hosts:
+    - finance-db.lucas.engineering
+    secretName: finance-db-lucas-engineering-tls

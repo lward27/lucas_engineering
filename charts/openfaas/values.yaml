@@ -6,6 +6,8 @@ openfaas:
   ingress:
     enabled: true
     ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
     hosts:
     - host: openfaas.lucas.engineering
       http:
@@ -17,3 +19,7 @@ openfaas:
               name: gateway
               port:
                 number: 8080
+    tls:
+    - hosts:
+      - openfaas.lucas.engineering
+      secretName: openfaas-lucas-engineering-tls

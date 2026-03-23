@@ -5,6 +5,7 @@ metadata:
   namespace: directus
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx
   rules:
@@ -18,3 +19,7 @@ spec:
                 name: directus
                 port:
                   number: 80
+  tls:
+  - hosts:
+    - admin.reefusion.lucas.engineering
+    secretName: admin-reefusion-lucas-engineering-tls

@@ -22,3 +22,9 @@ spec:
                 name: el-github-webhook-listener
                 port:
                   number: 8080
+  {{- if .Values.webhookIngress.tls.enabled }}
+  tls:
+    - hosts:
+      - {{ .Values.webhookIngress.host }}
+      secretName: {{ .Values.webhookIngress.tls.secretName }}
+  {{- end }}

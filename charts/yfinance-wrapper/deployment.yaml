@@ -57,6 +57,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: yfinance-wrapper
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx
   rules:
@@ -70,3 +72,7 @@ spec:
             name: yfinance-wrapper
             port:
               number: 8090
+  tls:
+  - hosts:
+    - yfinance.lucas.engineering
+    secretName: yfinance-lucas-engineering-tls
