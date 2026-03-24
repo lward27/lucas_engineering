@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.codeServer.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.codeServer.name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.codeServer.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.codeServer.name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.codeServer.name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ include "code-server.serviceAccountName" . }}
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: code-server
+          image: "{{ .Values.codeServer.image.repository }}:{{ .Values.codeServer.image.tag }}"
+          imagePullPolicy: {{ .Values.codeServer.image.pullPolicy }}
+          env:
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ if .Values.codeServer.passwordSecret }}{{ .Values.codeServer.passwordSecret }}{{ else }}{{ .Values.codeServer.name }}-auth{{ end }}
+                  key: {{ if .Values.codeServer.passwordSecret }}{{ .Values.codeServer.passwordSecretKey }}{{ else }}password{{ end }}
+            {{- range .Values.codeServer.config.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.codeServer.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /home/coder
+            - name: config
+              mountPath: /home/coder/.local/share/code-server
+            {{- range .Values.codeServer.extraVolumeMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+      volumes:
+        - name: data
+          {{- if .Values.codeServer.storage.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.codeServer.name }}-data
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: config
+          configMap:
+            name: {{ .Values.codeServer.name }}-config
+        {{- range .Values.codeServer.extraVolumes }}
+        - name: {{ .name }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}

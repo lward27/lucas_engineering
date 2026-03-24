@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.codeServer.name }}-config
+  namespace: {{ .Release.Namespace }}
+data:
+  config.yaml: |
+    bind-addr: 0.0.0.0:8080
+    auth: password
+    password: ${PASSWORD}
+    disable-telemetry: true
+    disable-update-check: true
+  {{- if .Values.codeServer.config.extensions }}
+  extensions-install.sh: |
+    #!/bin/sh
+    # Install extensions on startup
+    {{ range .Values.codeServer.config.extensions }}
+    /usr/bin/code-server --install-extension {{ . }} || true
+    {{ end }}
+  {{- end }}
+  {{- if .Values.codeServer.config.settings }}
+  settings.json: |
+    {{ .Values.codeServer.config.settings | toJson }}
+  {{- end }}

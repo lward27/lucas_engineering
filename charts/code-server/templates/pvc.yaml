@@ -1,0 +1,19 @@
+{{- if .Values.codeServer.storage.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.codeServer.name }}-data
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.codeServer.name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  accessModes:
+    - {{ .Values.codeServer.storage.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.codeServer.storage.size }}
+  {{- if .Values.codeServer.storage.storageClass }}
+  storageClassName: {{ .Values.codeServer.storage.storageClass }}
+  {{- end }}
+{{- end }}

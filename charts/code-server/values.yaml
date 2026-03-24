@@ -1,0 +1,96 @@
+# Code Server - VS Code in the browser
+codeServer:
+  name: code-server
+  replicaCount: 1
+
+  image:
+    repository: codercom/code-server
+    tag: "4.96.2"
+    pullPolicy: IfNotPresent
+
+  # Password for code-server (change this or use existing secret)
+  # If passwordSecret is set, it will be used instead of the plain password
+  password: "changeme"
+  passwordSecret: ""
+  passwordSecretKey: "password"
+
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "2000m"
+      memory: "4Gi"
+
+  # Storage configuration
+  storage:
+    enabled: true
+    size: 30Gi
+    storageClass: local-path
+    accessMode: ReadWriteOnce
+
+  # Additional volumes to mount (e.g., host paths, other PVCs)
+  extraVolumes: []
+  # - name: docker-sock
+  #   hostPath:
+  #     path: /var/run/docker.sock
+  extraVolumeMounts: []
+  # - name: docker-sock
+  #   mountPath: /var/run/docker.sock
+
+  # Code-server configuration
+  config:
+    # Extensions to install on startup (space-separated)
+    extensions: ""
+    # - ms-kubernetes-tools.vscode-kubernetes-tools
+    # - redhat.vscode-yaml
+    # - ms-python.python
+    # - golang.Go
+    # - rust-lang.rust-analyzer
+
+    # Settings to pre-configure
+    settings: {}
+    # "workbench.colorTheme": "Dark+ (default dark)",
+    # "git.autofetch": true,
+    # "editor.formatOnSave": true
+
+    # Environment variables
+    env: {}
+    # - name: SOME_VAR
+    #   value: "some_value"
+
+  # Service configuration
+  service:
+    type: ClusterIP
+    port: 8080
+
+  # Ingress configuration
+  ingress:
+    enabled: true
+    className: nginx
+    host: code.lucas.engineering
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    tls:
+      enabled: true
+      secretName: code-server-lucas-engineering-tls
+
+  # Network policy
+  networkPolicy:
+    enabled: true
+
+  # Service account (for accessing Kubernetes API from within code-server)
+  serviceAccount:
+    create: true
+    name: ""
+    annotations: {}
+
+  # RBAC - allow code-server to interact with cluster (optional)
+  rbac:
+    create: true
+    rules: []
+    # - apiGroups: [""]
+    #   resources: ["pods", "services"]
+    #   verbs: ["get", "list", "watch"]
