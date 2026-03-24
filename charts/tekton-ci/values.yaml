@@ -61,7 +61,7 @@ services:
     enabled: true
     repoURL: https://github.com/lward27/forge.git
     branch: main
-    imageRef: registry.lucas.engineering/forge_platform:latest
+    imageRef: docker-registry.registry.svc.cluster.local:5000/forge_platform:latest
     dockerfile: "./platform/Dockerfile"
     context: "./platform/"
     workspaceStorageSize: 1Gi
