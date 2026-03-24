@@ -58,6 +58,6 @@ apps:
   yfinance-wrapper:
     enabled: true
   forge-postgresql:
-    enabled: false
+    enabled: true
   forge-platform:
-    enabled: false
+    enabled: true
