@@ -40,27 +40,11 @@ spec:
                 cp /tmp/config/config.yaml /home/coder/.config/code-server/config.yaml
               fi
               
-              # Install git if not present
-              if ! command -v git &> /dev/null; then
-                echo "Installing git..."
-                apt-get update && apt-get install -y git || true
-              fi
-              
               # Download kubectl if not present
               if [ ! -f /home/coder/bin/kubectl ]; then
                 echo "Downloading kubectl..."
                 curl -fsSL -o /home/coder/bin/kubectl "https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl"
                 chmod +x /home/coder/bin/kubectl
-              fi
-              
-              # Clone the lucas_engineering repository for collaborative editing
-              if [ ! -d /home/coder/workspace/lucas_engineering ]; then
-                echo "Cloning lucas_engineering repository..."
-                mkdir -p /home/coder/workspace
-                cd /home/coder/workspace
-                git clone https://github.com/lward27/lucas_engineering.git || true
-                # Set proper ownership
-                chown -R 1000:1000 /home/coder/workspace
               fi
               
               # Create kubeconfig using service account token
@@ -87,7 +71,7 @@ spec:
               EOF
               
               # Set correct ownership
-              chown -R 1000:1000 /home/coder/.local /home/coder/.config /home/coder/.kube /home/coder/bin /home/coder/workspace 2>/dev/null || true
+              chown -R 1000:1000 /home/coder/.local /home/coder/.config /home/coder/.kube /home/coder/bin 2>/dev/null || true
           volumeMounts:
             - name: data
               mountPath: /home/coder
