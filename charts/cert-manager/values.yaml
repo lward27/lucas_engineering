@@ -1,5 +1,9 @@
 cert-manager:
   installCRDs: true
+  extraArgs:
+    - --dns01-recursive-nameservers-only
+    - --dns01-recursive-nameservers=1.1.1.1:53,8.8.8.8:53
+    - --dns01-check-retry-period=10s
   resources:
     requests:
       cpu: 50m
