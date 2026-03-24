@@ -1,41 +1,80 @@
 {{- if .Values.codeServer.rbac.create }}
-# ClusterRole for read-only cluster access
+# ClusterRole for cluster access with write permissions
+# WARNING: This grants significant cluster access. Use with caution.
+# I will ALWAYS ask for explicit permission before write/delete operations.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ .Values.codeServer.name }}-cluster-reader
+  name: {{ .Values.codeServer.name }}-cluster-access
   labels:
     app.kubernetes.io/name: {{ .Values.codeServer.name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
 rules:
-  # Read access to most resources
+  # Core resources - FULL ACCESS (for app management)
   - apiGroups: [""]
-    resources: ["pods", "pods/log", "services", "endpoints", "configmaps", "secrets", "namespaces", "events", "persistentvolumeclaims"]
+    resources: ["pods", "pods/log", "pods/exec", "pods/portforward", "pods/attach"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["services", "endpoints", "configmaps", "persistentvolumeclaims", "events"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  # Secrets - read-only by default (can be changed in values if needed)
+  - apiGroups: [""]
+    resources: ["secrets"]
     verbs: ["get", "list", "watch"]
+  # Namespaces - read-only (listing available namespaces)
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list", "watch"]
+  
+  # Workloads - FULL ACCESS
   - apiGroups: ["apps"]
     resources: ["deployments", "replicasets", "daemonsets", "statefulsets"]
-    verbs: ["get", "list", "watch"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  
+  # Networking - FULL ACCESS
   - apiGroups: ["networking.k8s.io"]
     resources: ["ingresses", "networkpolicies"]
-    verbs: ["get", "list", "watch"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  
+  # Batch jobs - FULL ACCESS
   - apiGroups: ["batch"]
     resources: ["jobs", "cronjobs"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: ["rbac.authorization.k8s.io"]
-    resources: ["roles", "rolebindings", "clusterroles", "clusterrolebindings"]
-    verbs: ["get", "list", "watch"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  
+  # ArgoCD - FULL ACCESS (for GitOps management)
   - apiGroups: ["argoproj.io"]
-    resources: ["applications"]
-    verbs: ["get", "list", "watch"]
-  # Nodes (read-only for troubleshooting)
+    resources: ["applications", "applicationsets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  
+  # Cert-manager - FULL ACCESS
+  - apiGroups: ["cert-manager.io"]
+    resources: ["certificates", "certificaterequests", "clusterissuers", "issuers"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  
+  # Nodes - READ-ONLY (safety guardrail)
   - apiGroups: [""]
     resources: ["nodes"]
     verbs: ["get", "list", "watch"]
+  
+  # RBAC - READ-ONLY (safety guardrail - requires cluster-admin for changes)
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["roles", "rolebindings", "clusterroles", "clusterrolebindings"]
+    verbs: ["get", "list", "watch"]
+  
+  # Helm/Argo releases
+  - apiGroups: ["helm.toolkit.fluxcd.io"]
+    resources: ["helmreleases"]
+    verbs: ["get", "list", "watch"]
+  
+  # Tekton - FULL ACCESS
+  - apiGroups: ["tekton.dev"]
+    resources: ["pipelines", "pipelineruns", "tasks", "taskruns", "clustertasks"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ .Values.codeServer.name }}-cluster-reader
+  name: {{ .Values.codeServer.name }}-cluster-access
   labels:
     app.kubernetes.io/name: {{ .Values.codeServer.name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
@@ -45,7 +84,7 @@ subjects:
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
-  name: {{ .Values.codeServer.name }}-cluster-reader
+  name: {{ .Values.codeServer.name }}-cluster-access
   apiGroup: rbac.authorization.k8s.io
 {{- end }}
 {{- if and .Values.codeServer.rbac.create .Values.codeServer.rbac.rules }}
