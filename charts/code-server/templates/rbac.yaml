@@ -1,4 +1,56 @@
+{{- if .Values.codeServer.rbac.create }}
+# ClusterRole for read-only cluster access
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Values.codeServer.name }}-cluster-reader
+  labels:
+    app.kubernetes.io/name: {{ .Values.codeServer.name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+rules:
+  # Read access to most resources
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "services", "endpoints", "configmaps", "secrets", "namespaces", "events", "persistentvolumeclaims"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets", "daemonsets", "statefulsets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses", "networkpolicies"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["roles", "rolebindings", "clusterroles", "clusterrolebindings"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["argoproj.io"]
+    resources: ["applications"]
+    verbs: ["get", "list", "watch"]
+  # Nodes (read-only for troubleshooting)
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Values.codeServer.name }}-cluster-reader
+  labels:
+    app.kubernetes.io/name: {{ .Values.codeServer.name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "code-server.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: {{ .Values.codeServer.name }}-cluster-reader
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}
 {{- if and .Values.codeServer.rbac.create .Values.codeServer.rbac.rules }}
+---
+# Additional namespaced Role for custom permissions
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
