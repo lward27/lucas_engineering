@@ -16,6 +16,14 @@ spec:
     - name: image-reference
       type: string
       description: Full image reference to build and push (registry/name:tag).
+    - name: dockerfile
+      type: string
+      description: Path to the Dockerfile relative to the repo root.
+      default: "./Dockerfile"
+    - name: context
+      type: string
+      description: Build context directory relative to the repo root.
+      default: "./"
     - name: kaniko-extra-args
       type: array
       description: Extra arguments to pass to the Kaniko executor.
@@ -48,5 +56,9 @@ spec:
       params:
         - name: IMAGE
           value: $(params.image-reference)
+        - name: DOCKERFILE
+          value: $(params.dockerfile)
+        - name: CONTEXT
+          value: $(params.context)
         - name: EXTRA_ARGS
           value: $(params.kaniko-extra-args[*])

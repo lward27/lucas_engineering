@@ -56,3 +56,12 @@ services:
     branch: main
     imageRef: registry.lucas.engineering/scraper_manager:latest
     workspaceStorageSize: 1Gi
+
+  forge-platform:
+    enabled: true
+    repoURL: https://github.com/lward27/forge.git
+    branch: main
+    imageRef: registry.lucas.engineering/forge_platform:latest
+    dockerfile: "./platform/Dockerfile"
+    context: "./platform/"
+    workspaceStorageSize: 1Gi
