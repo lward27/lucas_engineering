@@ -16,11 +16,11 @@ codeServer:
 
   resources:
     requests:
-      cpu: "250m"
-      memory: "512Mi"
+      cpu: "1000m"
+      memory: "2Gi"
     limits:
-      cpu: "2000m"
-      memory: "4Gi"
+      cpu: "4000m"
+      memory: "8Gi"
 
   # Storage configuration
   storage:
