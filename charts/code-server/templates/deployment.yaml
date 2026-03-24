@@ -48,13 +48,14 @@ spec:
               fi
               
               # Create kubeconfig using service account token
+              # Connect directly to API server IP since network policy allows it
               cat > /home/coder/.kube/config << 'EOF'
               apiVersion: v1
               kind: Config
               clusters:
               - name: homelab
                 cluster:
-                  server: https://kubernetes.default.svc
+                  server: https://192.168.20.192:6443
                   insecure-skip-tls-verify: true
               contexts:
               - name: code-server
