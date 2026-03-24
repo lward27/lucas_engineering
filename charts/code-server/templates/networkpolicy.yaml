@@ -38,4 +38,12 @@ spec:
           port: 443
         - protocol: TCP
           port: 80
+    # Allow access to Kubernetes API server
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: default
+      ports:
+        - protocol: TCP
+          port: 443
 {{- end }}
