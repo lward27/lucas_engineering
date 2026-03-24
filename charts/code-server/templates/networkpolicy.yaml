@@ -39,11 +39,11 @@ spec:
         - protocol: TCP
           port: 80
     # Allow access to Kubernetes API server
+    # The kubernetes.default.svc service routes to API server IPs on port 6443
     - to:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: default
+        - ipBlock:
+            cidr: 192.168.20.0/24
       ports:
         - protocol: TCP
-          port: 443
+          port: 6443
 {{- end }}
