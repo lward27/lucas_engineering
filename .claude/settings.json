@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(kubectl get nodes -o wide)",
+      "Bash(kubectl get pods --all-namespaces --field-selector=status.phase!=Running,status.phase!=Succeeded)",
+      "Bash(kubectl get pods --all-namespaces -o wide)",
+      "Bash(kubectl logs scraper-manager-29544840-5r4jq -n apps-prod --tail=30)",
+      "Bash(kubectl top nodes)",
+      "Bash(kubectl get cronjobs -n apps-prod)",
+      "Bash(kubectl get secret -n openfaas basic-auth -o jsonpath='{.data}')",
+      "Bash(kubectl get svc -n openfaas)",
+      "Bash(kubectl get ns openfaas-fn)",
+      "Bash(kubectl api-resources)",
+      "Bash(kubectl create namespace openfaas-fn)",
+      "Bash(kubectl apply -f -)",
+      "Bash(apiVersion: openfaas.com/v1)",
+      "Bash(kind: Function)",
+      "Bash(metadata:)",
+      "Bash(name: cowsay)",
+      "Bash(namespace: openfaas-fn)",
+      "Bash(spec:)",
+      "Bash(image: ghcr.io/openfaas/alpine:latest)",
+      "Bash(environment:)",
+      "Bash(fprocess: \"cowsay\")",
+      "Bash(labels:)",
+      "Bash(com.openfaas.scale.min: \"1\")",
+      "Bash(com.openfaas.scale.max: \"5\")",
+      "Bash(EOF)",
+      "Bash(kubectl get pods -n openfaas-fn)",
+      "Bash(image: ghcr.io/openfaas/classic-watchdog:0.2.3)",
+      "Bash(image: ghcr.io/openfaas/cowsay:latest)",
+      "Bash(kubectl logs deploy/gateway -n openfaas -c gateway --tail=30)",
+      "Bash(kubectl delete function cowsay -n openfaas-fn)",
+      "Bash(curl -s -u admin:jBAmLZmUYui0uoNoZZ1ACNfFt8ahkIhe -X POST http://127.0.0.1:8080/system/functions -H 'Content-Type: application/json' -d '{:*)"
+    ]
+  }
+}

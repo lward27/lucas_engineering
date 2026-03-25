@@ -61,3 +61,5 @@ apps:
     enabled: true
   forge-platform:
     enabled: true
+  forge-admin:
+    enabled: true
