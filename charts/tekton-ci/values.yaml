@@ -72,3 +72,10 @@ services:
     branch: main
     imageRef: docker-registry.registry.svc.cluster.local:5000/forge_admin:latest
     workspaceStorageSize: 1Gi
+
+  forge-portal:
+    enabled: true
+    repoURL: https://github.com/lward27/forge-portal.git
+    branch: main
+    imageRef: docker-registry.registry.svc.cluster.local:5000/forge_portal:latest
+    workspaceStorageSize: 1Gi

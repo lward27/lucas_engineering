@@ -1,0 +1,24 @@
+{{- if (index .Values.apps "forge-portal").enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: forge-portal
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/lward27/forge.git
+    path: charts/forge-portal
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: forge-platform
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+    - CreateNamespace=true
+{{- end }}
