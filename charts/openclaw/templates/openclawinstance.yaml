@@ -130,7 +130,24 @@ spec:
     service:
       type: ClusterIP
     ingress:
-      enabled: false
+      enabled: {{ .Values.openclaw.ingress.enabled }}
+      className: {{ .Values.openclaw.ingress.className }}
+      annotations:
+        cert-manager.io/cluster-issuer: {{ .Values.openclaw.ingress.clusterIssuer }}
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+        nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+        nginx.ingress.kubernetes.io/proxy-buffering: "off"
+        nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+      hosts:
+        - host: {{ .Values.openclaw.ingress.host }}
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - hosts:
+            - {{ .Values.openclaw.ingress.host }}
+          secretName: {{ .Values.openclaw.ingress.tls.secretName }}
       security:
         forceHTTPS: false
         enableHSTS: false
