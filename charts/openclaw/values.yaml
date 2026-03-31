@@ -22,12 +22,176 @@ openclaw:
             alias: "DeepSeek V3"
           "fireworks/accounts/fireworks/models/glm-4p7":
             alias: "GLM 4.7"
+        userTimezone: "America/New_York"
+        subagents:
+          maxSpawnDepth: 2
+          maxChildrenPerAgent: 5
+          maxConcurrent: 8
+          runTimeoutSeconds: 900
+          archiveAfterMinutes: 60
       list:
+        # === Nova - The Commander ===
         - id: "main"
-          name: "Main"
-        - id: "bobs-burgers"
-          name: "Bob's Burgers Expert"
+          default: true
+          name: "Nova"
+          workspace: "~/.openclaw/workspace"
+          tools:
+            profile: "full"
+          subagents:
+            allowAgents:
+              - "bolt"
+              - "architect"
+              - "scout"
+              - "scribe"
+              - "forge"
+              - "ticker"
+          sandbox:
+            mode: "off"
+
+        # === Bolt - The Operator ===
+        - id: "bolt"
+          name: "Bolt"
+          workspace: "~/.openclaw/workspaces/bolt"
+          model: "fireworks/accounts/fireworks/models/deepseek-v3p2"
+          tools:
+            profile: "coding"
+            allow:
+              - "group:web"
+          sandbox:
+            mode: "non-main"
+            scope: "agent"
+
+        # === Architect - The Builder ===
+        - id: "architect"
+          name: "Architect"
+          workspace: "~/.openclaw/workspaces/architect"
+          tools:
+            profile: "coding"
+            allow:
+              - "group:web"
+          subagents:
+            allowAgents:
+              - "bolt"
+          sandbox:
+            mode: "non-main"
+            scope: "agent"
+
+        # === Scout - The Researcher ===
+        - id: "scout"
+          name: "Scout"
+          workspace: "~/.openclaw/workspaces/scout"
+          tools:
+            allow:
+              - "group:web"
+              - "group:fs"
+              - "group:memory"
+              - "group:sessions"
+            deny:
+              - "exec"
+              - "process"
+          sandbox:
+            mode: "all"
+            scope: "agent"
+
+        # === Sentinel - The Guardian ===
+        - id: "sentinel"
+          name: "Sentinel"
+          workspace: "~/.openclaw/workspaces/sentinel"
+          model: "fireworks/accounts/fireworks/models/deepseek-v3p2"
+          tools:
+            profile: "coding"
+            deny:
+              - "gateway"
+              - "cron"
+          sandbox:
+            mode: "non-main"
+            scope: "agent"
+
+        # === Scribe - The Documentarian ===
+        - id: "scribe"
+          name: "Scribe"
+          workspace: "~/.openclaw/workspaces/scribe"
           model: "fireworks/accounts/fireworks/models/glm-4p7"
+          tools:
+            allow:
+              - "group:fs"
+              - "group:web"
+              - "group:memory"
+            deny:
+              - "exec"
+              - "process"
+          sandbox:
+            mode: "all"
+            scope: "agent"
+
+        # === Forge - The Platform Smith ===
+        - id: "forge"
+          name: "Forge"
+          workspace: "~/.openclaw/workspaces/forge"
+          tools:
+            profile: "coding"
+            allow:
+              - "group:web"
+          subagents:
+            allowAgents:
+              - "bolt"
+          sandbox:
+            mode: "non-main"
+            scope: "agent"
+
+        # === Ticker - The Quant ===
+        - id: "ticker"
+          name: "Ticker"
+          workspace: "~/.openclaw/workspaces/ticker"
+          model: "fireworks/accounts/fireworks/models/deepseek-v3p2"
+          tools:
+            profile: "coding"
+            allow:
+              - "group:web"
+          sandbox:
+            mode: "non-main"
+            scope: "agent"
+
+        # === Herald - The Briefer ===
+        - id: "herald"
+          name: "Herald"
+          workspace: "~/.openclaw/workspaces/herald"
+          model: "fireworks/accounts/fireworks/models/glm-4p7"
+          tools:
+            allow:
+              - "group:web"
+              - "group:fs"
+              - "group:memory"
+              - "group:sessions"
+            deny:
+              - "exec"
+              - "process"
+          sandbox:
+            mode: "all"
+            scope: "agent"
+
+        # === Wraith - The Automator ===
+        - id: "wraith"
+          name: "Wraith"
+          workspace: "~/.openclaw/workspaces/wraith"
+          model: "fireworks/accounts/fireworks/models/deepseek-v3p2"
+          tools:
+            profile: "coding"
+          sandbox:
+            mode: "non-main"
+            scope: "agent"
+
+    cron:
+      enabled: true
+      maxConcurrentRuns: 2
+      sessionRetention: "24h"
+      retry:
+        maxAttempts: 2
+        retryOn:
+          - "rate_limit"
+          - "overloaded"
+          - "network"
+          - "server_error"
     session:
       scope: "per-sender"
     gateway:

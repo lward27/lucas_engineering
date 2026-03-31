@@ -40,10 +40,62 @@ spec:
       volumeMounts:
         - name: tools-bin
           mountPath: /tools
+    - name: init-workspaces
+      image: busybox:1.37
+      command:
+        - sh
+        - -c
+        - |
+          set -e
+          WS=/data/workspaces
+          INIT=/workspace-init
+          AGENTS="bolt architect scout sentinel scribe forge ticker herald wraith"
+
+          for agent in $AGENTS; do
+            dir="$WS/$agent"
+            mkdir -p "$dir"
+
+            # Copy agent-specific files (only if they don't exist — preserve agent edits)
+            for suffix in soul identity agents; do
+              key="${agent}-${suffix}-md"
+              target_name="$(echo $suffix | tr '[:lower:]' '[:upper:]').md"
+              src="$INIT/$key"
+              dst="$dir/$target_name"
+              if [ -f "$src" ] && [ ! -f "$dst" ]; then
+                cp "$src" "$dst"
+                echo "  copied $target_name"
+              fi
+            done
+
+            # Copy shared files (only if they don't exist)
+            for shared in shared-user-md:USER.md shared-environment-md:ENVIRONMENT.md; do
+              key="${shared%%:*}"
+              fname="${shared#*:}"
+              src="$INIT/$key"
+              dst="$dir/$fname"
+              if [ -f "$src" ] && [ ! -f "$dst" ]; then
+                cp "$src" "$dst"
+                echo "  copied $fname"
+              fi
+            done
+
+            # Create memory directory
+            mkdir -p "$dir/memory"
+            echo "[$agent] workspace ready"
+          done
+          echo "All workspaces initialized"
+      volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: workspace-init
+          mountPath: /workspace-init
 
   extraVolumes:
     - name: tools-bin
       emptyDir: {}
+    - name: workspace-init
+      configMap:
+        name: openclaw-workspace-init
     - name: ssh-keys
       secret:
         secretName: openclaw-ssh
