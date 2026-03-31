@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ghost
+  namespace: blog
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow ingress-nginx to reach ghost
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 80
+  # Allow ghost <-> mysql within namespace
+  - from:
+    - podSelector: {}
+  egress:
+  # DNS
+  - ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+  # Internal namespace traffic (ghost -> mysql)
+  - to:
+    - podSelector: {}
+  # HTTPS (themes, updates, external APIs)
+  - ports:
+    - port: 443
+      protocol: TCP

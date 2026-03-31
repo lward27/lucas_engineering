@@ -1,0 +1,49 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: homepage
+  namespace: homepage
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow ingress-nginx to reach homepage
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 3000
+  egress:
+  # DNS
+  - ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+  # HTTPS (widget API calls, external services)
+  - ports:
+    - port: 443
+      protocol: TCP
+  # HTTP (internal cluster service health checks)
+  - ports:
+    - port: 80
+      protocol: TCP
+  # Kubernetes API (for cluster widget status)
+  - ports:
+    - port: 6443
+      protocol: TCP
+  # Allow reaching services across namespaces (for status widgets)
+  # Homepage needs to probe services in monitoring, apps-prod, etc.
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 3000
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 9090

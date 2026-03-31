@@ -1,0 +1,25 @@
+# =============================================================================
+# Pod Security Standard labels for managed namespaces
+# Enforces "baseline" to prevent privileged containers, hostPath mounts, etc.
+# =============================================================================
+{{- $baselineNamespaces := list
+  "apps-prod"
+  "blog"
+  "cloudflared"
+  "code-server"
+  "directus"
+  "forge-platform"
+  "homepage"
+  "openclaw-operator-system"
+  "registry"
+}}
+{{- range $ns := $baselineNamespaces }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ $ns }}
+  labels:
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/warn: restricted
+{{- end }}

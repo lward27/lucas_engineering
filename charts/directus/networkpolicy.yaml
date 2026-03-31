@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: directus
+  namespace: directus
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow ingress-nginx to reach directus
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 80
+  # Allow directus <-> postgres within namespace
+  - from:
+    - podSelector: {}
+  egress:
+  # DNS
+  - ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+  # Internal namespace traffic (directus -> postgres)
+  - to:
+    - podSelector: {}
+  # HTTPS (extensions, external APIs)
+  - ports:
+    - port: 443
+      protocol: TCP
