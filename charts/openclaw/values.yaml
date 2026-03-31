@@ -202,6 +202,9 @@ openclaw:
         - "10.42.0.0/16"
         - "127.0.0.0/8"
         - "::1/128"
+      controlUi:
+        allowedOrigins:
+          - "https://openclaw.lucas.engineering"
     models:
       providers:
         fireworks:
