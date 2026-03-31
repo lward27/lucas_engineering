@@ -186,6 +186,13 @@ openclaw:
           - "overloaded"
           - "network"
           - "server_error"
+    channels:
+      telegram:
+        enabled: true
+        botToken: "${TELEGRAM_BOT_TOKEN}"
+        dmPolicy: "pairing"
+        groupPolicy: "disabled"
+        streaming: "partial"
     session:
       scope: "per-sender"
     gateway:
