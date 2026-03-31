@@ -190,7 +190,9 @@ openclaw:
       telegram:
         enabled: true
         botToken: "${TELEGRAM_BOT_TOKEN}"
-        dmPolicy: "pairing"
+        dmPolicy: "allowlist"
+        allowFrom:
+          - "8635782483"
         groupPolicy: "disabled"
         streaming: "partial"
     session:
