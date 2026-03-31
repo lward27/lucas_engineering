@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: openclaw-workspace-init
+  name: openclaw-agent-workspace-init
   namespace: {{ .Release.Namespace }}
 data:
   # =========================================================================

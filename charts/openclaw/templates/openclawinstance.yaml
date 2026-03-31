@@ -48,7 +48,7 @@ spec:
         - |
           set -e
           WS=/data/workspaces
-          INIT=/workspace-init
+          INIT=/agent-workspace-init
           AGENTS="bolt architect scout sentinel scribe forge ticker herald wraith"
 
           for agent in $AGENTS; do
@@ -87,15 +87,15 @@ spec:
       volumeMounts:
         - name: data
           mountPath: /data
-        - name: workspace-init
-          mountPath: /workspace-init
+        - name: agent-workspace-init
+          mountPath: /agent-workspace-init
 
   extraVolumes:
     - name: tools-bin
       emptyDir: {}
-    - name: workspace-init
+    - name: agent-workspace-init
       configMap:
-        name: openclaw-workspace-init
+        name: openclaw-agent-workspace-init
     - name: ssh-keys
       secret:
         secretName: openclaw-ssh
