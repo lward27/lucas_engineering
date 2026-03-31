@@ -61,8 +61,7 @@ openclaw:
             allow:
               - "group:web"
           sandbox:
-            mode: "non-main"
-            scope: "agent"
+            mode: "off"
 
         # === Architect - The Builder ===
         - id: "architect"
@@ -76,8 +75,7 @@ openclaw:
             allowAgents:
               - "bolt"
           sandbox:
-            mode: "non-main"
-            scope: "agent"
+            mode: "off"
 
         # === Scout - The Researcher ===
         - id: "scout"
@@ -93,8 +91,7 @@ openclaw:
               - "exec"
               - "process"
           sandbox:
-            mode: "all"
-            scope: "agent"
+            mode: "off"
 
         # === Sentinel - The Guardian ===
         - id: "sentinel"
@@ -107,8 +104,7 @@ openclaw:
               - "gateway"
               - "cron"
           sandbox:
-            mode: "non-main"
-            scope: "agent"
+            mode: "off"
 
         # === Scribe - The Documentarian ===
         - id: "scribe"
@@ -124,8 +120,7 @@ openclaw:
               - "exec"
               - "process"
           sandbox:
-            mode: "all"
-            scope: "agent"
+            mode: "off"
 
         # === Forge - The Platform Smith ===
         - id: "forge"
@@ -139,8 +134,7 @@ openclaw:
             allowAgents:
               - "bolt"
           sandbox:
-            mode: "non-main"
-            scope: "agent"
+            mode: "off"
 
         # === Ticker - The Quant ===
         - id: "ticker"
@@ -152,8 +146,7 @@ openclaw:
             allow:
               - "group:web"
           sandbox:
-            mode: "non-main"
-            scope: "agent"
+            mode: "off"
 
         # === Herald - The Briefer ===
         - id: "herald"
@@ -170,8 +163,7 @@ openclaw:
               - "exec"
               - "process"
           sandbox:
-            mode: "all"
-            scope: "agent"
+            mode: "off"
 
         # === Wraith - The Automator ===
         - id: "wraith"
@@ -181,8 +173,7 @@ openclaw:
           tools:
             profile: "coding"
           sandbox:
-            mode: "non-main"
-            scope: "agent"
+            mode: "off"
 
     cron:
       enabled: true
