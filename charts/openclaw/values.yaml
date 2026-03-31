@@ -45,6 +45,9 @@ openclaw:
               - "scribe"
               - "forge"
               - "ticker"
+              - "sentinel"
+              - "herald"
+              - "wraith"
           sandbox:
             mode: "off"
 
