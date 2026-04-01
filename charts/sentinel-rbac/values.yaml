@@ -1,0 +1,30 @@
+sentinel:
+  # ServiceAccount configuration
+  name: sentinel
+  namespace: monitoring-agents
+  
+  # RBAC configuration
+  rbac:
+    # Core resources (pods, nodes, namespaces, services, events, etc.)
+    core:
+      enabled: true
+    
+    # Workload resources (deployments, daemonsets, jobs, cronjobs, etc.)
+    workload:
+      enabled: true
+    
+    # Metrics server access (REQUIRED for kubectl top nodes/pods)
+    metrics:
+      enabled: true
+    
+    # Certificate management (cert-manager.io)
+    certs:
+      enabled: true
+    
+    # ArgoCD GitOps resources
+    argocd:
+      enabled: true
+    
+    # Network resources (ingresses, networkpolicies)
+    network:
+      enabled: true

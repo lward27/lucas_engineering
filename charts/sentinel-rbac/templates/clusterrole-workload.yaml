@@ -1,0 +1,37 @@
+{{- if .Values.sentinel.rbac.workload.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "sentinel-rbac.name" . }}-workload
+  labels:
+    {{- include "sentinel-rbac.labels" . | nindent 4 }}
+rules:
+  # Apps API group
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+      - deployments/status
+      - daemonsets
+      - daemonsets/status
+      - replicasets
+      - replicasets/status
+      - statefulsets
+      - statefulsets/status
+    verbs: ["get", "list", "watch"]
+  
+  # Batch API group (jobs, cronjobs)
+  - apiGroups: ["batch"]
+    resources:
+      - jobs
+      - jobs/status
+      - cronjobs
+      - cronjobs/status
+    verbs: ["get", "list", "watch"]
+  
+  # Autoscaling
+  - apiGroups: ["autoscaling"]
+    resources:
+      - horizontalpodautoscalers
+      - horizontalpodautoscalers/status
+    verbs: ["get", "list", "watch"]
+{{- end }}

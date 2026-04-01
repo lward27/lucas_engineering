@@ -1,0 +1,39 @@
+{{- if .Values.sentinel.rbac.core.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "sentinel-rbac.name" . }}-core
+  labels:
+    {{- include "sentinel-rbac.labels" . | nindent 4 }}
+rules:
+  # Core workload resources
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/status
+      - pods/log
+      - nodes
+      - nodes/status
+      - namespaces
+      - services
+      - endpoints
+      - events
+      - configmaps
+      - secrets
+      - persistentvolumeclaims
+      - resourcequotas
+      - limitranges
+    verbs: ["get", "list", "watch"]
+  
+  # Storage resources
+  - apiGroups: ["storage.k8s.io"]
+    resources:
+      - storageclasses
+    verbs: ["get", "list", "watch"]
+  
+  # Persistent volumes (cluster-scoped)
+  - apiGroups: [""]
+    resources:
+      - persistentvolumes
+    verbs: ["get", "list", "watch"]
+{{- end }}

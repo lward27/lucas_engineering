@@ -43,6 +43,8 @@ apps:
     enabled: true
   scraper-manager:
     enabled: true
+  sentinel-rbac:
+    enabled: true
   tekton-ci:
     enabled: true
   tekton-dashboard:

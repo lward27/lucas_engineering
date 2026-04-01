@@ -1,0 +1,18 @@
+{{- if .Values.sentinel.rbac.argocd.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "sentinel-rbac.name" . }}-argocd
+  labels:
+    {{- include "sentinel-rbac.labels" . | nindent 4 }}
+rules:
+  # ArgoCD core resources
+  - apiGroups: ["argoproj.io"]
+    resources:
+      - applications
+      - applications/status
+      - applicationsets
+      - applicationsets/status
+      - appprojects
+    verbs: ["get", "list", "watch"]
+{{- end }}

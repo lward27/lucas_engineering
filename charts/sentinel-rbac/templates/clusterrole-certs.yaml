@@ -1,0 +1,31 @@
+{{- if .Values.sentinel.rbac.certs.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "sentinel-rbac.name" . }}-certs
+  labels:
+    {{- include "sentinel-rbac.labels" . | nindent 4 }}
+rules:
+  # cert-manager.io - Certificates and requests
+  - apiGroups: ["cert-manager.io"]
+    resources:
+      - certificates
+      - certificates/status
+      - certificaterequests
+      - certificaterequests/status
+      - issuers
+    verbs: ["get", "list", "watch"]
+  
+  # Cluster-scoped issuers
+  - apiGroups: ["cert-manager.io"]
+    resources:
+      - clusterissuers
+    verbs: ["get", "list", "watch"]
+  
+  # acme.cert-manager.io - ACME challenges/orders
+  - apiGroups: ["acme.cert-manager.io"]
+    resources:
+      - challenges
+      - orders
+    verbs: ["get", "list", "watch"]
+{{- end }}

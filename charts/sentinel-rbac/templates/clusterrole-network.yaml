@@ -1,0 +1,22 @@
+{{- if .Values.sentinel.rbac.network.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "sentinel-rbac.name" . }}-network
+  labels:
+    {{- include "sentinel-rbac.labels" . | nindent 4 }}
+rules:
+  # Ingress resources
+  - apiGroups: ["networking.k8s.io"]
+    resources:
+      - ingresses
+      - ingresses/status
+      - networkpolicies
+    verbs: ["get", "list", "watch"]
+  
+  # Old extensions API (for older clusters)
+  - apiGroups: ["extensions"]
+    resources:
+      - ingresses
+    verbs: ["get", "list", "watch"]
+{{- end }}

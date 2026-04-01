@@ -1,0 +1,101 @@
+{{- if .Values.sentinel.rbac.core.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "sentinel-rbac.name" . }}-core
+  labels:
+    {{- include "sentinel-rbac.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "sentinel-rbac.name" . }}-core
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "sentinel-rbac.name" . }}
+    namespace: {{ include "sentinel-rbac.namespace" . }}
+{{- end }}
+---
+{{- if .Values.sentinel.rbac.workload.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "sentinel-rbac.name" . }}-workload
+  labels:
+    {{- include "sentinel-rbac.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "sentinel-rbac.name" . }}-workload
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "sentinel-rbac.name" . }}
+    namespace: {{ include "sentinel-rbac.namespace" . }}
+{{- end }}
+---
+{{- if .Values.sentinel.rbac.metrics.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "sentinel-rbac.name" . }}-metrics
+  labels:
+    {{- include "sentinel-rbac.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "sentinel-rbac.name" . }}-metrics
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "sentinel-rbac.name" . }}
+    namespace: {{ include "sentinel-rbac.namespace" . }}
+{{- end }}
+---
+{{- if .Values.sentinel.rbac.certs.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "sentinel-rbac.name" . }}-certs
+  labels:
+    {{- include "sentinel-rbac.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "sentinel-rbac.name" . }}-certs
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "sentinel-rbac.name" . }}
+    namespace: {{ include "sentinel-rbac.namespace" . }}
+{{- end }}
+---
+{{- if .Values.sentinel.rbac.argocd.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "sentinel-rbac.name" . }}-argocd
+  labels:
+    {{- include "sentinel-rbac.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "sentinel-rbac.name" . }}-argocd
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "sentinel-rbac.name" . }}
+    namespace: {{ include "sentinel-rbac.namespace" . }}
+{{- end }}
+---
+{{- if .Values.sentinel.rbac.network.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "sentinel-rbac.name" . }}-network
+  labels:
+    {{- include "sentinel-rbac.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "sentinel-rbac.name" . }}-network
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "sentinel-rbac.name" . }}
+    namespace: {{ include "sentinel-rbac.namespace" . }}
+{{- end }}
