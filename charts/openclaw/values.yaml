@@ -12,11 +12,11 @@ openclaw:
     agents:
       defaults:
         model:
-          primary: "fireworks/accounts/fireworks/models/kimi-k2p5"
+          primary: "fireworks/accounts/fireworks/routers/kimi-k2p5-turbo"
           fallbacks:
             - "fireworks/accounts/fireworks/models/deepseek-v3p2"
         models:
-          "fireworks/accounts/fireworks/models/kimi-k2p5":
+          "fireworks/accounts/fireworks/routers/kimi-k2p5-turbo":
             alias: "Kimi K2.5"
           "fireworks/accounts/fireworks/models/deepseek-v3p2":
             alias: "DeepSeek V3"
@@ -212,7 +212,7 @@ openclaw:
           apiKey: "${FIREWORKS_API_KEY}"
           api: "openai-completions"
           models:
-            - id: "accounts/fireworks/models/kimi-k2p5"
+            - id: "accounts/fireworks/routers/kimi-k2p5-turbo"
               name: "Kimi K2.5"
               reasoning: false
               input:
