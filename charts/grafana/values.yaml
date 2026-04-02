@@ -54,13 +54,6 @@ grafana:
           url: http://loki-gateway.monitoring.svc
           access: proxy
           isDefault: false
-          jsonData:
-            derivedFields:
-              - datasourceUid: tempo
-                matcherRegex: '"trace_id":"(\w+)"'
-                name: TraceID
-                url: "$${__value.raw}"
-                urlDisplayLabel: View Trace
         - name: Tempo
           uid: tempo
           type: tempo
@@ -70,13 +63,3 @@ grafana:
           jsonData:
             nodeGraph:
               enabled: true
-            tracesToLogs:
-              datasourceUid: loki
-              filterByTraceID: true
-              spanStartTimeShift: "-1h"
-              spanEndTimeShift: "1h"
-              tags:
-                - key: service.name
-                  value: app
-            serviceMap:
-              datasourceUid: mimir
