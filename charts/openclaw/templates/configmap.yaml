@@ -8,7 +8,7 @@ metadata:
 data:
   openclaw.json: |
     {{- $config := deepCopy .Values.openclaw.config }}
-    {{- $_ := set $config "diagnostics" (dict "otel" (dict "endpoint" "http://localhost:4318" "metrics" true "traces" true)) }}
+    {{- $_ := set $config "diagnostics" (dict "enabled" true "otel" (dict "enabled" true "endpoint" "http://localhost:4318" "protocol" "http/protobuf" "serviceName" "openclaw" "metrics" true "traces" true "logs" true "sampleRate" 1.0 "flushIntervalMs" 5000)) }}
     {{- $_ := set $config "gateway" (dict "auth" (dict "mode" "token" "token" "${OPENCLAW_GATEWAY_TOKEN}") "bind" "loopback" "controlUi" (dict "allowedOrigins" .Values.openclaw.config.gateway.controlUi.allowedOrigins "dangerouslyDisableDeviceAuth" true) "trustedProxies" .Values.openclaw.config.gateway.trustedProxies) }}
     {{- $config | toPrettyJson | nindent 4 }}
   nginx.conf: |
@@ -40,14 +40,14 @@ data:
     exporters:
       prometheus:
         endpoint: "0.0.0.0:9090"
-      otlp/traces:
+      otlp/cluster:
         endpoint: "opentelemetry-collector.monitoring.svc.cluster.local:4317"
         tls:
           insecure: true
 
     processors:
       batch:
-        timeout: 10s
+        timeout: 5s
 
     service:
       pipelines:
@@ -58,7 +58,11 @@ data:
         traces:
           receivers: [otlp]
           processors: [batch]
-          exporters: [otlp/traces]
+          exporters: [otlp/cluster]
+        logs:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [otlp/cluster]
 ---
 apiVersion: v1
 kind: ConfigMap
