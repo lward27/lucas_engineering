@@ -1,3 +1,12 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.openclaw.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.openclaw.name }}
+automountServiceAccountToken: false
+---
 # =============================================================================
 # Cluster-wide read-only access (excludes secrets, RBAC resources)
 # =============================================================================
