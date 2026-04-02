@@ -106,7 +106,7 @@
       "datasource": { "type": "loki", "uid": "${loki}" },
       "targets": [
         {
-          "expr": "sum by (method) (count_over_time({app=\"openclaw\"} | regexp `\\[(?P<component>[^\\]]+)\\].*(?P<method>\\S+)\\s+\\d+ms` [$__range]))",
+          "expr": "sum by (method) (count_over_time({app=\"openclaw\"} | regexp `res ✓ (?P<method>\\S+) \\d+ms` [$__range]))",
           "legendFormat": "{{method}}"
         }
       ],
@@ -124,7 +124,7 @@
       "datasource": { "type": "loki", "uid": "${loki}" },
       "targets": [
         {
-          "expr": "sum by (method) (count_over_time({app=\"openclaw\"} | regexp `\\[(?P<component>[^\\]]+)\\].*(?P<method>\\S+)\\s+\\d+ms` [$__interval]))",
+          "expr": "sum by (method) (count_over_time({app=\"openclaw\"} | regexp `res ✓ (?P<method>\\S+) \\d+ms` [$__interval]))",
           "legendFormat": "{{method}}"
         }
       ],

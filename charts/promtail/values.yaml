@@ -24,7 +24,7 @@ promtail:
               target_label: app
           pipeline_stages:
             - regex:
-                expression: '^\S+ \[(?P<component>[^\]]+)\] (?P<direction>\S+) (?P<type>\S+) (?P<status>\S+) (?P<method>\S+) (?P<duration>\S+)'
+                expression: '^\S+ \[(?P<component>[^\]]+)\] .+ (?P<method>[a-zA-Z][\w.]+) (?P<duration>\d+ms)'
             - labels:
                 component:
                 method:
