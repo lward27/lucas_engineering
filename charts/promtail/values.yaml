@@ -23,22 +23,11 @@ promtail:
             - replacement: openclaw
               target_label: app
           pipeline_stages:
-            - json:
-                expressions:
-                  level: level
-                  agent: agent
-                  tool_name: tool_name
-                  event_type: event_type
-                  model: model
-                  trace_id: trace_id
+            - regex:
+                expression: '^\S+ \[(?P<component>[^\]]+)\] (?P<direction>\S+) (?P<type>\S+) (?P<status>\S+) (?P<method>\S+) (?P<duration>\S+)'
             - labels:
-                level:
-                agent:
-                tool_name:
-                event_type:
-                model:
-            - structured_metadata:
-                trace_id:
+                component:
+                method:
   resources:
     requests:
       cpu: 50m
