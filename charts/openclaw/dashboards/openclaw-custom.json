@@ -6,28 +6,33 @@
   "graphTooltip": 1,
   "panels": [
     {
-      "title": "Message Rate by Outcome",
-      "description": "Rate of messages processed, split by outcome",
+      "title": "Messages Processed by Outcome",
+      "description": "Total messages processed, split by outcome",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
       "datasource": { "type": "prometheus", "uid": "${datasource}" },
       "targets": [
         {
-          "expr": "sum(rate(openclaw_message_processed_total[$__rate_interval])) by (openclaw_outcome)",
+          "expr": "sum(increase(openclaw_message_processed_total[$__rate_interval])) by (openclaw_outcome)",
           "legendFormat": "{{openclaw_outcome}}"
+        },
+        {
+          "expr": "sum(openclaw_message_processed_total) by (openclaw_outcome)",
+          "legendFormat": "total {{openclaw_outcome}}",
+          "hide": true
         }
       ],
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "palette-classic" },
           "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 15,
-            "lineWidth": 2,
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "lineWidth": 1,
             "showPoints": "auto",
-            "stacking": { "mode": "none" }
+            "stacking": { "mode": "normal" }
           },
-          "unit": "reqps"
+          "unit": "short"
         }
       }
     },
@@ -67,14 +72,14 @@
     },
     {
       "title": "Token Usage by Type",
-      "description": "Prompt, completion, and total tokens over time",
+      "description": "Cumulative tokens used, split by type",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
       "datasource": { "type": "prometheus", "uid": "${datasource}" },
       "targets": [
         {
-          "expr": "sum(rate(openclaw_tokens_total[$__rate_interval])) by (openclaw_type)",
-          "legendFormat": "{{openclaw_type}}"
+          "expr": "sum by (openclaw_token) (openclaw_tokens_total)",
+          "legendFormat": "{{openclaw_token}}"
         }
       ],
       "fieldConfig": {
@@ -181,8 +186,8 @@
       "datasource": { "type": "prometheus", "uid": "${datasource}" },
       "targets": [
         {
-          "expr": "sum(rate(openclaw_session_state_total[$__rate_interval])) by (openclaw_state)",
-          "legendFormat": "{{openclaw_state}}"
+          "expr": "sum(increase(openclaw_session_state_total[$__rate_interval])) by (openclaw_state, openclaw_reason)",
+          "legendFormat": "{{openclaw_state}} ({{openclaw_reason}})"
         }
       ],
       "fieldConfig": {
