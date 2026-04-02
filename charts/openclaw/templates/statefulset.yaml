@@ -1,0 +1,385 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.openclaw.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.openclaw.name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: 1
+  serviceName: {{ .Values.openclaw.name }}
+  podManagementPolicy: Parallel
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.openclaw.name }}
+      app.kubernetes.io/instance: {{ .Values.openclaw.name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.openclaw.name }}
+        app.kubernetes.io/instance: {{ .Values.openclaw.name }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      serviceAccountName: {{ .Values.openclaw.name }}
+      automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+
+      initContainers:
+        # 1. Copy config files to PVC
+        - name: init-config
+          image: busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              cp /config/openclaw.json /data/openclaw.json
+              mkdir -p /data/workspace
+              [ -f /data/workspace/BOOTSTRAP.md ] || cp /workspace-init/BOOTSTRAP.md /data/workspace/BOOTSTRAP.md
+              [ -f /data/workspace/ENVIRONMENT.md ] || cp /workspace-init/ENVIRONMENT.md /data/workspace/ENVIRONMENT.md
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: config
+              mountPath: /config
+            - name: workspace-init
+              mountPath: /workspace-init
+              readOnly: true
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+
+        # 2. Install uv package manager
+        - name: init-uv
+          image: {{ .Values.openclaw.initContainers.uvImage }}
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              if [ -x /home/openclaw/.local/bin/uv ]; then echo "uv already installed"; exit 0; fi
+              mkdir -p /home/openclaw/.local/bin
+              cp /usr/local/bin/uv /home/openclaw/.local/bin/uv
+              echo "uv $(/home/openclaw/.local/bin/uv --version) installed"
+          volumeMounts:
+            - name: data
+              mountPath: /home/openclaw/.local
+              subPath: .local
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+
+        # 3. Ensure pip is available
+        - name: init-pip
+          image: {{ .Values.openclaw.image.repository }}:{{ .Values.openclaw.image.tag }}
+          command:
+            - sh
+            - -c
+            - |
+              python3 -m ensurepip --upgrade --user 2>/dev/null || echo "ensurepip unavailable, skipping"
+          env:
+            - name: HOME
+              value: /home/openclaw
+          volumeMounts:
+            - name: data
+              mountPath: /home/openclaw/.local
+              subPath: .local
+            - name: tmp
+              mountPath: /tmp
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+
+        # 4. Install kubectl
+        - name: install-kubectl
+          image: bitnami/kubectl:latest
+          imagePullPolicy: Always
+          command:
+            - sh
+            - -c
+            - |
+              cp /opt/bitnami/kubectl/bin/kubectl /tools/kubectl
+              chmod +x /tools/kubectl
+              echo "kubectl installed"
+          volumeMounts:
+            - name: tools-bin
+              mountPath: /tools
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+
+        # 5. Initialize agent workspaces
+        - name: init-workspaces
+          image: busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              WS=/data/workspaces
+              INIT=/agent-workspace-init
+              AGENTS="bolt architect scout sentinel scribe forge ticker herald wraith"
+
+              for agent in $AGENTS; do
+                dir="$WS/$agent"
+                mkdir -p "$dir"
+
+                # Copy agent-specific files (only if they don't exist — preserve agent edits)
+                for suffix in soul identity agents; do
+                  key="${agent}-${suffix}-md"
+                  target_name="$(echo $suffix | tr '[:lower:]' '[:upper:]').md"
+                  src="$INIT/$key"
+                  dst="$dir/$target_name"
+                  if [ -f "$src" ] && [ ! -f "$dst" ]; then
+                    cp "$src" "$dst"
+                    echo "  copied $target_name"
+                  fi
+                done
+
+                # Copy shared files (only if they don't exist)
+                for shared in shared-user-md:USER.md shared-environment-md:ENVIRONMENT.md; do
+                  key="${shared%%:*}"
+                  fname="${shared#*:}"
+                  src="$INIT/$key"
+                  dst="$dir/$fname"
+                  if [ -f "$src" ] && [ ! -f "$dst" ]; then
+                    cp "$src" "$dst"
+                    echo "  copied $fname"
+                  fi
+                done
+
+                # Create memory directory
+                mkdir -p "$dir/memory"
+                echo "[$agent] workspace ready"
+              done
+              echo "All workspaces initialized"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: agent-workspace-init
+              mountPath: /agent-workspace-init
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+
+      containers:
+        # === Main OpenClaw container ===
+        - name: openclaw
+          image: {{ .Values.openclaw.image.repository }}:{{ .Values.openclaw.image.tag }}
+          imagePullPolicy: {{ .Values.openclaw.image.pullPolicy }}
+          ports:
+            - name: gateway
+              containerPort: 18789
+              protocol: TCP
+            - name: canvas
+              containerPort: 18793
+              protocol: TCP
+          env:
+            - name: HOME
+              value: /home/openclaw
+            - name: OPENCLAW_DISABLE_BONJOUR
+              value: "1"
+            - name: OPENCLAW_GATEWAY_HANDSHAKE_TIMEOUT_MS
+              value: "10000"
+            - name: NPM_CONFIG_PREFIX
+              value: /home/openclaw/.local
+            - name: NPM_CONFIG_CACHE
+              value: /home/openclaw/.cache/npm
+            - name: PIP_USER
+              value: "1"
+            - name: PATH
+              value: "/opt/tools:/home/openclaw/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            - name: KUBECONFIG
+              value: "/home/openclaw/.kube/config"
+            - name: OPENCLAW_GATEWAY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.openclaw.gatewayTokenSecret }}
+                  key: token
+          {{- if .Values.openclaw.apiKeysSecret }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.openclaw.apiKeysSecret }}
+          {{- end }}
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - cp /operator-config/openclaw.json /home/openclaw/.openclaw/openclaw.json
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 18790
+            failureThreshold: 60
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 18790
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 18790
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+          resources:
+            {{- toYaml .Values.openclaw.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            capabilities:
+              drop: [ALL]
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: data
+              mountPath: /home/openclaw/.openclaw
+            - name: data
+              mountPath: /home/openclaw/.local
+              subPath: .local
+            - name: data
+              mountPath: /home/openclaw/.cache
+              subPath: .cache
+            - name: tmp
+              mountPath: /tmp
+            - name: tools-bin
+              mountPath: /opt/tools
+            - name: kubeconfig
+              mountPath: /home/openclaw/.kube/config
+              subPath: config
+              readOnly: true
+            - name: ssh-keys
+              mountPath: /home/openclaw/.ssh/id_ed25519
+              subPath: id_ed25519
+              readOnly: true
+            - name: ssh-keys
+              mountPath: /home/openclaw/.ssh/id_ed25519.pub
+              subPath: id_ed25519.pub
+              readOnly: true
+            - name: ssh-keys
+              mountPath: /home/openclaw/.ssh/known_hosts
+              subPath: known_hosts
+              readOnly: true
+            - name: ssh-keys
+              mountPath: /home/openclaw/.ssh/config
+              subPath: config
+              readOnly: true
+            - name: config
+              mountPath: /operator-config
+              readOnly: true
+
+        # === Gateway Proxy (nginx) ===
+        - name: gateway-proxy
+          image: {{ .Values.openclaw.gatewayProxy.image }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: gw-proxy
+              containerPort: 18790
+              protocol: TCP
+            - name: canvas-proxy
+              containerPort: 18794
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 101
+            capabilities:
+              drop: [ALL]
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+            - name: gateway-proxy-tmp
+              mountPath: /tmp
+
+        # === OTel Collector (sidecar) ===
+        - name: otel-collector
+          image: {{ .Values.openclaw.otelCollector.image }}
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--config=/etc/otel-collector/config.yaml"
+          ports:
+            - name: metrics
+              containerPort: 9090
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop: [ALL]
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: config
+              mountPath: /etc/otel-collector/config.yaml
+              subPath: otel-collector.yaml
+              readOnly: true
+
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: openclaw-data
+        - name: config
+          configMap:
+            name: {{ .Values.openclaw.name }}-config
+        - name: workspace-init
+          configMap:
+            name: {{ .Values.openclaw.name }}-workspace
+        - name: agent-workspace-init
+          configMap:
+            name: openclaw-agent-workspace-init
+        - name: tmp
+          emptyDir: {}
+        - name: gateway-proxy-tmp
+          emptyDir: {}
+        - name: tools-bin
+          emptyDir: {}
+        - name: ssh-keys
+          secret:
+            secretName: openclaw-ssh
+            defaultMode: 0600
+        - name: kubeconfig
+          secret:
+            secretName: openclaw-kubeconfig
+            defaultMode: 0600

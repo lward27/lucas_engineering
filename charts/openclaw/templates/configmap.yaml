@@ -1,0 +1,115 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.openclaw.name }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.openclaw.name }}
+data:
+  openclaw.json: |
+    {{- $config := deepCopy .Values.openclaw.config }}
+    {{- $_ := set $config "diagnostics" (dict "otel" (dict "endpoint" "http://localhost:4318" "metrics" true)) }}
+    {{- $_ := set $config "gateway" (dict "auth" (dict "mode" "token" "token" "${OPENCLAW_GATEWAY_TOKEN}") "bind" "loopback" "controlUi" (dict "allowedOrigins" .Values.openclaw.config.gateway.controlUi.allowedOrigins "dangerouslyDisableDeviceAuth" true) "trustedProxies" .Values.openclaw.config.gateway.trustedProxies) }}
+    {{- $config | toPrettyJson | nindent 4 }}
+  nginx.conf: |
+    worker_processes 1;
+    pid /tmp/nginx.pid;
+    error_log /dev/stderr warn;
+
+    events {
+        worker_connections 128;
+    }
+
+    stream {
+        server {
+            listen 0.0.0.0:18790;
+            proxy_pass 127.0.0.1:18789;
+        }
+        server {
+            listen 0.0.0.0:18794;
+            proxy_pass 127.0.0.1:18793;
+        }
+    }
+  otel-collector.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          http:
+            endpoint: "0.0.0.0:4318"
+
+    exporters:
+      prometheus:
+        endpoint: "0.0.0.0:9090"
+      otlp/traces:
+        endpoint: "opentelemetry-collector.monitoring.svc.cluster.local:4317"
+        tls:
+          insecure: true
+
+    processors:
+      batch:
+        timeout: 10s
+
+    service:
+      pipelines:
+        metrics:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [prometheus]
+        traces:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [otlp/traces]
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.openclaw.name }}-workspace
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.openclaw.name }}
+data:
+  BOOTSTRAP.md: |
+    # BOOTSTRAP
+
+    You just came online for the first time. Before doing anything else, get to know your human.
+
+    ## Step 1 - Meet your human
+
+    Start with something natural like: "Hey! I just came online. Before I dive into anything, I'd love to know a bit about you and how I can help."
+
+    ## Step 2 - Learn preferences
+
+    Ask about their working style, preferred communication, and what they're working on.
+
+    ## Step 3 - Get oriented
+
+    Explore the environment. Check what tools are available, what projects exist in the workspace, and what systems you have access to.
+  ENVIRONMENT.md: |
+    # Runtime Environment
+
+    You run in a hardened Kubernetes pod. The root filesystem is read-only.
+
+    ## Writable paths
+
+    | Path | Backed by | Persists across restarts |
+    |------|-----------|--------------------------|
+    | ~/.openclaw/ | PVC | Yes |
+    | ~/.local/ | PVC (subPath) | Yes |
+    | ~/.cache/ | PVC (subPath) | Yes |
+    | /tmp | emptyDir | No |
+    | /opt/tools | emptyDir (init container) | No |
+
+    ## Available tools
+
+    - `kubectl` — Kubernetes CLI (installed by init container to /opt/tools)
+    - `uv` — Python package manager (installed to ~/.local/bin)
+    - `python3` — Python runtime
+    - `ssh` — SSH client (keys mounted at ~/.ssh/)
+    - `git` — Version control
+
+    ## Network access
+
+    - HTTPS (port 443) to external APIs
+    - SSH (port 22) to homelab VMs at 192.168.20.0/24
+    - Kubernetes API (port 6443)
+    - DNS (port 53)

@@ -7,6 +7,16 @@ openclaw:
     pullPolicy: IfNotPresent
 
   apiKeysSecret: openclaw-api-keys
+  gatewayTokenSecret: openclaw-gateway-token
+
+  gatewayProxy:
+    image: "nginx:1.27-alpine"
+
+  otelCollector:
+    image: "otel/opentelemetry-collector:0.120.0"
+
+  initContainers:
+    uvImage: "ghcr.io/astral-sh/uv:0.6-bookworm-slim"
 
   config:
     agents:
@@ -245,18 +255,6 @@ openclaw:
   storage:
     size: 10Gi
     storageClass: local-path
-
-  chromium:
-    enabled: false
-    persistence:
-      size: "1Gi"
-
-  ollama:
-    enabled: false
-    models: []
-    gpu: 0
-    storage:
-      sizeLimit: 30Gi
 
   ingress:
     enabled: true
