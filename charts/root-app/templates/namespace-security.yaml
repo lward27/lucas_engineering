@@ -10,7 +10,6 @@
   "directus"
   "forge-platform"
   "homepage"
-  "openclaw-operator-system"
   "registry"
 }}
 {{- range $ns := $baselineNamespaces }}

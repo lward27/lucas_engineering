@@ -29,8 +29,6 @@ apps:
     enabled: true
   openclaw:
     enabled: true
-  openclaw-operator:
-    enabled: false
   openfaas:
     enabled: false
   opentelemetry-collector:
