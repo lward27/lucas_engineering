@@ -2,6 +2,43 @@ promtail:
   config:
     clients:
       - url: http://loki-gateway.monitoring.svc.cluster.local:80/loki/api/v1/push
+    snippets:
+      extraScrapeConfigs: |
+        - job_name: openclaw
+          kubernetes_sd_configs:
+            - role: pod
+              namespaces:
+                names:
+                  - apps-prod
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
+              regex: openclaw
+              action: keep
+            - source_labels: [__meta_kubernetes_namespace]
+              target_label: namespace
+            - source_labels: [__meta_kubernetes_pod_name]
+              target_label: pod
+            - source_labels: [__meta_kubernetes_container_name]
+              target_label: container
+            - replacement: openclaw
+              target_label: app
+          pipeline_stages:
+            - json:
+                expressions:
+                  level: level
+                  agent: agent
+                  tool_name: tool_name
+                  event_type: event_type
+                  model: model
+                  trace_id: trace_id
+            - labels:
+                level:
+                agent:
+                tool_name:
+                event_type:
+                model:
+            - structured_metadata:
+                trace_id:
   resources:
     requests:
       cpu: 50m

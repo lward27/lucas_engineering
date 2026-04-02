@@ -42,4 +42,14 @@ spec:
   - ports:
     - port: 6443
       protocol: TCP
+  # OpenTelemetry Collector (monitoring namespace) - OTLP gRPC + HTTP
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+    ports:
+    - port: 4317
+      protocol: TCP
+    - port: 4318
+      protocol: TCP
 {{- end }}

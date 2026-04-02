@@ -1,4 +1,13 @@
 grafana:
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
+      searchNamespace: ALL
+      folderAnnotation: grafana_folder
+      provider:
+        foldersFromFilesStructure: false
   service:
     type: ClusterIP
   persistence:
@@ -33,6 +42,7 @@ grafana:
           access: proxy
           isDefault: true
         - name: Mimir
+          uid: mimir
           type: prometheus
           url: http://mimir-gateway.monitoring.svc/prometheus
           access: proxy
@@ -42,7 +52,15 @@ grafana:
           url: http://loki-gateway.monitoring.svc
           access: proxy
           isDefault: false
+          jsonData:
+            derivedFields:
+              - datasourceUid: tempo
+                matcherRegex: '"trace_id":"(\w+)"'
+                name: TraceID
+                url: "$${__value.raw}"
+                urlDisplayLabel: View Trace
         - name: Tempo
+          uid: tempo
           type: tempo
           url: http://tempo.monitoring.svc.cluster.local:3200
           access: proxy
@@ -50,3 +68,13 @@ grafana:
           jsonData:
             nodeGraph:
               enabled: true
+            tracesToLogs:
+              datasourceUid: loki
+              filterByTraceID: true
+              spanStartTimeShift: "-1h"
+              spanEndTimeShift: "1h"
+              tags:
+                - key: service.name
+                  value: app
+            serviceMap:
+              datasourceUid: mimir

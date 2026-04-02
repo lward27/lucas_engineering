@@ -268,3 +268,11 @@ openclaw:
 
   networkPolicy:
     enabled: true
+
+  observability:
+    tracing:
+      enabled: true
+      endpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4317"
+    metrics:
+      enabled: true
+      endpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/metrics"

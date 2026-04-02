@@ -26,6 +26,24 @@ spec:
       value: "/opt/tools:/home/openclaw/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     - name: KUBECONFIG
       value: "/home/openclaw/.kube/config"
+    {{- if .Values.openclaw.observability.tracing.enabled }}
+    - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      value: {{ .Values.openclaw.observability.tracing.endpoint | quote }}
+    - name: OTEL_TRACES_EXPORTER
+      value: "otlp"
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: "service.name={{ .Values.openclaw.name }},service.namespace={{ .Release.Namespace }}"
+    - name: OTEL_EXPORTER_OTLP_PROTOCOL
+      value: "grpc"
+    {{- end }}
+    {{- if .Values.openclaw.observability.metrics.enabled }}
+    - name: OTEL_METRICS_EXPORTER
+      value: "otlp"
+    - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+      value: {{ .Values.openclaw.observability.metrics.endpoint | quote }}
+    - name: OTEL_EXPORTER_OTLP_METRICS_PROTOCOL
+      value: "http/protobuf"
+    {{- end }}
 
   initContainers:
     - name: install-kubectl
