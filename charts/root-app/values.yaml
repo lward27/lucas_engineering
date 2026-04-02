@@ -30,7 +30,7 @@ apps:
   openclaw:
     enabled: true
   openclaw-operator:
-    enabled: true
+    enabled: false
   openfaas:
     enabled: false
   opentelemetry-collector:
