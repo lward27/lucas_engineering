@@ -20,6 +20,14 @@ spec:
     - namespaceSelector:
         matchLabels:
           kubernetes.io/metadata.name: {{ .Release.Namespace }}
+  # Prometheus metrics scraping from monitoring namespace
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+    ports:
+    - port: 9090
+      protocol: TCP
   egress:
   # DNS
   - ports:
