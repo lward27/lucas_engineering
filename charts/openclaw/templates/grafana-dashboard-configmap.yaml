@@ -38,7 +38,7 @@ data:
           "targets": [
             {
               "expr": "sum(rate(http_client_request_duration_seconds_count{service_name=\"openclaw\"}[$__rate_interval])) by (http_request_method, url_path)",
-              "legendFormat": "{{http_request_method}} {{url_path}}"
+              "legendFormat": "{{ "{{" }}http_request_method{{ "}}" }} {{ "{{" }}url_path{{ "}}" }}"
             }
           ],
           "fieldConfig": {
@@ -66,7 +66,7 @@ data:
           "targets": [
             {
               "expr": "sum(rate(http_client_request_duration_seconds_count{service_name=\"openclaw\", http_response_status_code=~\"[45]..\"}[$__rate_interval])) by (http_response_status_code)",
-              "legendFormat": "HTTP {{http_response_status_code}}"
+              "legendFormat": "HTTP {{ "{{" }}http_response_status_code{{ "}}" }}"
             }
           ],
           "fieldConfig": {
@@ -137,7 +137,7 @@ data:
           "targets": [
             {
               "expr": "sum by (tool_name) (count_over_time({app=\"openclaw\"} | json | tool_name != \"\" [$__range]))",
-              "legendFormat": "{{tool_name}}"
+              "legendFormat": "{{ "{{" }}tool_name{{ "}}" }}"
             }
           ],
           "options": {
@@ -155,7 +155,7 @@ data:
           "targets": [
             {
               "expr": "sum by (agent) (count_over_time({app=\"openclaw\"} | json | agent != \"\" [$__interval]))",
-              "legendFormat": "{{agent}}"
+              "legendFormat": "{{ "{{" }}agent{{ "}}" }}"
             }
           ],
           "fieldConfig": {
@@ -242,7 +242,7 @@ data:
           "targets": [
             {
               "expr": "container_memory_working_set_bytes{namespace=\"apps-prod\", pod=~\"openclaw.*\", container!=\"\"}",
-              "legendFormat": "{{pod}} / {{container}}"
+              "legendFormat": "{{ "{{" }}pod{{ "}}" }} / {{ "{{" }}container{{ "}}" }}"
             }
           ],
           "fieldConfig": {
@@ -267,7 +267,7 @@ data:
           "targets": [
             {
               "expr": "rate(container_cpu_usage_seconds_total{namespace=\"apps-prod\", pod=~\"openclaw.*\", container!=\"\"}[$__rate_interval])",
-              "legendFormat": "{{pod}} / {{container}}"
+              "legendFormat": "{{ "{{" }}pod{{ "}}" }} / {{ "{{" }}container{{ "}}" }}"
             }
           ],
           "fieldConfig": {
