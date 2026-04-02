@@ -24,9 +24,9 @@ spec:
               value: "http://yfinance-wrapper.apps-prod.svc.cluster.local:8090"
             resources:
               requests:
-                memory: "128Mi"
+                memory: "256Mi"
                 cpu: "100m"
               limits:
-                memory: "256Mi"
+                memory: "1Gi"
                 cpu: "500m"
           restartPolicy: Never
