@@ -37,6 +37,7 @@ grafana:
       apiVersion: 1
       datasources:
         - name: Prometheus
+          uid: prometheus
           type: prometheus
           url: http://prometheus-server.monitoring.svc
           access: proxy
@@ -48,6 +49,7 @@ grafana:
           access: proxy
           isDefault: false
         - name: Loki
+          uid: loki
           type: loki
           url: http://loki-gateway.monitoring.svc
           access: proxy
