@@ -37,25 +37,21 @@ grafana:
       apiVersion: 1
       datasources:
         - name: Prometheus
-          uid: prometheus
           type: prometheus
           url: http://prometheus-server.monitoring.svc
           access: proxy
           isDefault: true
         - name: Mimir
-          uid: mimir
           type: prometheus
           url: http://mimir-gateway.monitoring.svc/prometheus
           access: proxy
           isDefault: false
         - name: Loki
-          uid: loki
           type: loki
           url: http://loki-gateway.monitoring.svc
           access: proxy
           isDefault: false
         - name: Tempo
-          uid: tempo
           type: tempo
           url: http://tempo.monitoring.svc.cluster.local:3200
           access: proxy
