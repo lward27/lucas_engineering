@@ -1,0 +1,4 @@
+apiVersion: v2
+name: nanoclaw
+version: 1.0.0
+description: NanoClaw AI agent swarm platform with Docker-in-Docker

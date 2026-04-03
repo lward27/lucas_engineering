@@ -1,0 +1,180 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.nanoclaw.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.nanoclaw.name }}
+spec:
+  replicas: 1
+  serviceName: {{ .Values.nanoclaw.name }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.nanoclaw.name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.nanoclaw.name }}
+    spec:
+      serviceAccountName: {{ .Values.nanoclaw.name }}
+      automountServiceAccountToken: false
+
+      initContainers:
+        # 1. Clone NanoClaw repo
+        - name: clone-repo
+          image: {{ .Values.nanoclaw.image.git }}
+          command:
+            - sh
+            - -c
+            - |
+              if [ -d /app/nanoclaw/.git ]; then
+                echo "Repo exists, pulling latest..."
+                cd /app/nanoclaw && git pull --ff-only || true
+              else
+                git clone --depth 1 --branch {{ .Values.nanoclaw.repo.ref }} {{ .Values.nanoclaw.repo.url }} /app/nanoclaw
+              fi
+          volumeMounts:
+            - name: app-source
+              mountPath: /app/nanoclaw
+
+        # 2. Install Node.js dependencies + Docker CLI
+        - name: install-deps
+          image: {{ .Values.nanoclaw.image.node }}
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              cd /app/nanoclaw
+              if [ ! -d node_modules ] || [ package-lock.json -nt node_modules/.package-lock.json ]; then
+                npm ci --production
+                echo "Dependencies installed"
+              else
+                echo "Dependencies already up to date"
+              fi
+          volumeMounts:
+            - name: app-source
+              mountPath: /app/nanoclaw
+
+        # 3. Copy Docker CLI binary
+        - name: install-docker-cli
+          image: {{ .Values.nanoclaw.image.dockerCli }}
+          command:
+            - sh
+            - -c
+            - |
+              cp /usr/local/bin/docker /tools/docker
+              chmod +x /tools/docker
+              echo "Docker CLI installed"
+          volumeMounts:
+            - name: tools-bin
+              mountPath: /tools
+
+      containers:
+        # === NanoClaw host process ===
+        - name: nanoclaw
+          image: {{ .Values.nanoclaw.image.node }}
+          command:
+            - node
+            - /app/nanoclaw/src/index.js
+          env:
+            - name: ANTHROPIC_BASE_URL
+              value: {{ .Values.nanoclaw.env.ANTHROPIC_BASE_URL | quote }}
+            - name: ANTHROPIC_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.nanoclaw.apiKeysSecret }}
+                  key: ANTHROPIC_AUTH_TOKEN
+            - name: DOCKER_HOST
+              value: "tcp://localhost:2376"
+            - name: DOCKER_TLS_VERIFY
+              value: "1"
+            - name: DOCKER_CERT_PATH
+              value: "/certs/client"
+            - name: CREDENTIAL_PROXY_PORT
+              value: {{ .Values.nanoclaw.env.CREDENTIAL_PROXY_PORT | quote }}
+            - name: CONTAINER_TIMEOUT
+              value: {{ .Values.nanoclaw.env.CONTAINER_TIMEOUT | quote }}
+            - name: MAX_CONCURRENT_CONTAINERS
+              value: {{ .Values.nanoclaw.env.MAX_CONCURRENT_CONTAINERS | quote }}
+            - name: PATH
+              value: "/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+          resources:
+            {{- toYaml .Values.nanoclaw.resources | nindent 12 }}
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: app-source
+              mountPath: /app/nanoclaw
+            - name: nanoclaw-data
+              mountPath: /data
+            - name: certs
+              mountPath: /certs/client
+              subPath: client
+              readOnly: true
+            - name: tools-bin
+              mountPath: /tools
+              readOnly: true
+
+        # === Docker-in-Docker sidecar ===
+        - name: dind
+          image: {{ .Values.nanoclaw.dind.image }}
+          securityContext:
+            privileged: true
+          env:
+            - name: DOCKER_TLS_CERTDIR
+              value: "/certs"
+          ports:
+            - name: docker-tls
+              containerPort: 2376
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.nanoclaw.dind.resources | nindent 12 }}
+          livenessProbe:
+            exec:
+              command: ["docker", "info"]
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            timeoutSeconds: 10
+          readinessProbe:
+            exec:
+              command: ["docker", "info"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: certs
+              mountPath: /certs
+            - name: docker-storage
+              mountPath: /var/lib/docker
+
+      volumes:
+        - name: app-source
+          emptyDir: {}
+        - name: tools-bin
+          emptyDir: {}
+        - name: certs
+          emptyDir: {}
+
+  volumeClaimTemplates:
+    - metadata:
+        name: nanoclaw-data
+      spec:
+        accessModes: [ReadWriteOnce]
+        storageClassName: {{ .Values.nanoclaw.storage.storageClass }}
+        resources:
+          requests:
+            storage: {{ .Values.nanoclaw.storage.dataSize }}
+    - metadata:
+        name: docker-storage
+      spec:
+        accessModes: [ReadWriteOnce]
+        storageClassName: {{ .Values.nanoclaw.dind.storageClass }}
+        resources:
+          requests:
+            storage: {{ .Values.nanoclaw.dind.storageSize }}

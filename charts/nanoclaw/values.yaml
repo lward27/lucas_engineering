@@ -1,0 +1,46 @@
+nanoclaw:
+  name: nanoclaw
+
+  repo:
+    url: "https://github.com/qwibitai/nanoclaw.git"
+    ref: "main"
+
+  image:
+    node: "node:20-slim"
+    git: "alpine/git:latest"
+    dockerCli: "docker:27-cli"
+
+  apiKeysSecret: nanoclaw-api-keys
+
+  env:
+    ANTHROPIC_BASE_URL: "https://api.fireworks.ai/inference/v1"
+    CREDENTIAL_PROXY_PORT: "3001"
+    CONTAINER_TIMEOUT: "1800"
+    MAX_CONCURRENT_CONTAINERS: "5"
+
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "2000m"
+      memory: "4Gi"
+
+  dind:
+    image: "docker:27-dind"
+    storageSize: 20Gi
+    storageClass: local-path
+    resources:
+      requests:
+        cpu: "250m"
+        memory: "512Mi"
+      limits:
+        cpu: "4000m"
+        memory: "4Gi"
+
+  storage:
+    dataSize: 10Gi
+    storageClass: local-path
+
+  networkPolicy:
+    enabled: true
