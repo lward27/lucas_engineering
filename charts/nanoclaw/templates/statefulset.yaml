@@ -18,6 +18,8 @@ spec:
     spec:
       serviceAccountName: {{ .Values.nanoclaw.name }}
       automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 1000
 
       initContainers:
         # 1. Clone NanoClaw repo
@@ -118,7 +120,7 @@ spec:
             - name: app-source
               mountPath: /app/nanoclaw
             - name: nanoclaw-data
-              mountPath: /data
+              mountPath: /store
             - name: certs
               mountPath: /certs/client
               subPath: client
