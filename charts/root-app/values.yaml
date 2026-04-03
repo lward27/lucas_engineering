@@ -28,7 +28,7 @@ apps:
   mimir:
     enabled: true
   nanoclaw:
-    enabled: true
+    enabled: false
   openclaw:
     enabled: true
   openfaas:
