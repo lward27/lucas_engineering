@@ -36,11 +36,30 @@ spec:
         # 1. Copy config files to PVC
         - name: init-config
           image: busybox:1.37
+          env:
+            - name: TELEGRAM_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.openclaw.apiKeysSecret }}
+                  key: TELEGRAM_BOT_TOKEN
+            - name: FIREWORKS_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.openclaw.apiKeysSecret }}
+                  key: FIREWORKS_API_KEY
+            - name: OPENCLAW_GATEWAY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.openclaw.gatewayTokenSecret }}
+                  key: token
           command:
             - sh
             - -c
             - |
               cp /config/openclaw.json /data/openclaw.json
+              sed -i "s|\${TELEGRAM_BOT_TOKEN}|$TELEGRAM_BOT_TOKEN|g" /data/openclaw.json
+              sed -i "s|\${FIREWORKS_API_KEY}|$FIREWORKS_API_KEY|g" /data/openclaw.json
+              sed -i "s|\${OPENCLAW_GATEWAY_TOKEN}|$OPENCLAW_GATEWAY_TOKEN|g" /data/openclaw.json
               mkdir -p /data/workspace
               [ -f /data/workspace/BOOTSTRAP.md ] || cp /workspace-init/BOOTSTRAP.md /data/workspace/BOOTSTRAP.md
               [ -f /data/workspace/ENVIRONMENT.md ] || cp /workspace-init/ENVIRONMENT.md /data/workspace/ENVIRONMENT.md
@@ -213,17 +232,6 @@ spec:
             - secretRef:
                 name: {{ .Values.openclaw.apiKeysSecret }}
           {{- end }}
-          lifecycle:
-            postStart:
-              exec:
-                command:
-                  - sh
-                  - -c
-                  - |
-                    cp /operator-config/openclaw.json /home/openclaw/.openclaw/openclaw.json
-                    sed -i "s|\${TELEGRAM_BOT_TOKEN}|$TELEGRAM_BOT_TOKEN|g" /home/openclaw/.openclaw/openclaw.json
-                    sed -i "s|\${FIREWORKS_API_KEY}|$FIREWORKS_API_KEY|g" /home/openclaw/.openclaw/openclaw.json
-                    sed -i "s|\${OPENCLAW_GATEWAY_TOKEN}|$OPENCLAW_GATEWAY_TOKEN|g" /home/openclaw/.openclaw/openclaw.json
           startupProbe:
             httpGet:
               path: /healthz
