@@ -91,14 +91,9 @@ spec:
               echo "ANTHROPIC_BASE_URL=$ANTHROPIC_BASE_URL" > .env
               echo "ANTHROPIC_AUTH_TOKEN=$ANTHROPIC_AUTH_TOKEN" >> .env
               [ -n "$TELEGRAM_BOT_TOKEN" ] && echo "TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN" >> .env
-              # Start NanoClaw (or sleep if setup hasn't been run yet)
-              if [ -f /store/messages.db ] && [ -d groups ]; then
-                exec node dist/index.js
-              else
-                echo "NanoClaw not yet set up. Run: kubectl -n nanoclaw exec -it nanoclaw-0 -c nanoclaw -- sh"
-                echo "Then: cd /app/nanoclaw && npx tsx setup/index.ts"
-                exec sleep infinity
-              fi
+              echo ".env written"
+              # Start NanoClaw
+              exec node dist/index.js
           env:
             - name: ANTHROPIC_BASE_URL
               value: {{ .Values.nanoclaw.env.ANTHROPIC_BASE_URL | quote }}
