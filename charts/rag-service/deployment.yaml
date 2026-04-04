@@ -1,0 +1,124 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rag-service-secrets
+type: Opaque
+stringData:
+  fireworks-api-key: "REPLACE_ME"
+  api-token: "REPLACE_ME"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: rag-service
+spec:
+  selector:
+    app: rag-service
+  ports:
+  - protocol: "TCP"
+    port: 8000
+    targetPort: 8000
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-service
+spec:
+  selector:
+    matchLabels:
+      app: rag-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rag-service
+    spec:
+      containers:
+      - name: rag-service
+        image: registry.lucas.engineering/rag_service:latest
+        imagePullPolicy: Always
+        env:
+        - name: RAG_QDRANT_URL
+          value: "http://qdrant.apps-prod.svc.cluster.local:6333"
+        - name: RAG_FIREWORKS_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: rag-service-secrets
+              key: fireworks-api-key
+        - name: RAG_API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: rag-service-secrets
+              key: api-token
+        - name: RAG_EMBEDDING_MODEL
+          value: "nomic-ai/nomic-embed-text-v1.5"
+        - name: RAG_EMBEDDING_DIMENSIONS
+          value: "768"
+        - name: OTEL_SERVICE_NAME
+          value: "rag-service"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://opentelemetry-collector.monitoring.svc.cluster.local:4317"
+        - name: OTEL_EXPORTER_OTLP_PROTOCOL
+          value: "grpc"
+        - name: OTEL_LOGS_EXPORTER
+          value: "otlp"
+        - name: OTEL_METRICS_EXPORTER
+          value: "otlp"
+        - name: OTEL_TRACES_EXPORTER
+          value: "otlp"
+        - name: OTEL_PYTHON_LOG_CORRELATION
+          value: "true"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "deployment.environment=production,service.namespace=apps-prod"
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rag-service
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: rag.lucas.engineering
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: rag-service
+            port:
+              number: 8000
+  tls:
+  - hosts:
+    - rag.lucas.engineering
+    secretName: rag-lucas-engineering-tls

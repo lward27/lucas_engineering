@@ -1,0 +1,22 @@
+{{- if (index .Values.apps "rag-service").enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rag-service
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/lward27/lucas_engineering.git
+    path: charts/rag-service
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps-prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+{{- end }}

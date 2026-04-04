@@ -69,3 +69,5 @@ apps:
     enabled: true
   qdrant:
     enabled: true
+  rag-service:
+    enabled: true
