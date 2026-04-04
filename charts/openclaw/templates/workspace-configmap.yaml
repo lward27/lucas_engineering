@@ -64,6 +64,11 @@ data:
     - Git repos in code-server for changes
     - SSH to homelab VMs when needed
 
+    ## RAG Memory
+    - **Search before acting** — query `operations` collection for past fixes and patterns
+    - **Index runbook updates** — when you discover new procedures, index them
+    - See `TOOLS_RAG.md` for API details
+
     ## GitOps Rule
     Read-only kubectl. All changes through git commits. ArgoCD syncs.
 
@@ -132,6 +137,11 @@ data:
     - Git for all changes
     - Can delegate deployment tasks to Bolt
 
+    ## RAG Memory
+    - **Search before designing** — query `code_knowledge` for prior architecture decisions
+    - **Index decisions** — after making architecture choices, index the decision + rationale to `code_knowledge`
+    - See `TOOLS_RAG.md` for API details
+
     ## GitOps Rule
     All infrastructure changes through git. Use code-server for editing. Commit with clear messages.
 
@@ -198,6 +208,12 @@ data:
     - File system (for writing reports)
     - Memory (for tracking research history)
     - No code execution — hand off to Architect for implementation
+
+    ## RAG Memory
+    - **Always search before researching** — query `research` collection first to avoid duplicate work
+    - **Always index after researching** — index your full report to `research` with topic + source metadata
+    - This is your most important habit — you are the fleet's primary knowledge builder
+    - See `TOOLS_RAG.md` for API details
 
     ## Output
     Save research reports to your workspace as markdown files.
@@ -276,6 +292,12 @@ data:
     - `kubectl get applications -n argocd` — sync/health status
     - `kubectl get netpol -A` — verify policies exist
 
+    ## RAG Memory
+    - **Index all reports** — after every health scan or audit, index findings to `operations`
+    - **Search for trends** — query `operations` to compare current findings with historical data
+    - Include metadata: `severity`, `component`, `namespace`
+    - See `TOOLS_RAG.md` for API details
+
     ## GitOps Rule
     Read-only kubectl only. Never modify cluster state directly.
 
@@ -334,6 +356,11 @@ data:
     - File system (read existing docs, write new ones)
     - Web (research for accuracy, find references)
     - Memory (track what's been documented)
+
+    ## RAG Memory
+    - **Index all documentation** — after writing docs, index them to `documents`
+    - **Search before writing** — query `documents` and `code_knowledge` to avoid duplication
+    - See `TOOLS_RAG.md` for API details
 
   # =========================================================================
   # Forge - The Platform Smith
@@ -396,6 +423,11 @@ data:
     - forge: github.com/lward27/forge.git
     - forge-admin: github.com/lward27/forge-admin.git
     - forge-portal: github.com/lward27/forge-portal.git
+
+    ## RAG Memory
+    - **Index platform decisions** — schema changes, tenant isolation choices → `code_knowledge`
+    - **Search for prior design rationale** — query `code_knowledge` before proposing changes
+    - See `TOOLS_RAG.md` for API details
 
     ## GitOps Rule
     All changes through git. ArgoCD syncs. Can delegate deployment to Bolt.
@@ -464,6 +496,11 @@ data:
     ## Service URLs
     - finance-db: finance-db.lucas.engineering
     - yfinance: yfinance.lucas.engineering
+
+    ## RAG Memory
+    - **Index data quality reports** — after audits, index findings to `operations`
+    - **Search for historical patterns** — query `operations` for past data anomalies
+    - See `TOOLS_RAG.md` for API details
 
   # =========================================================================
   # Herald - The Briefer
@@ -536,6 +573,12 @@ data:
     - Memory (track briefing history)
     - Sessions (read other agents' recent activity)
 
+    ## RAG Memory
+    - **Search all collections** — pull cross-agent context for briefings
+    - **Index briefing summaries** — after writing a brief, index it to `documents`
+    - RAG is your best tool for building context-rich briefings
+    - See `TOOLS_RAG.md` for API details
+
   # =========================================================================
   # Wraith - The Automator
   # =========================================================================
@@ -599,6 +642,11 @@ data:
     - Build trigger: `scripts/trigger-build.sh <service>`
     - Pipelines run in tekton-pipelines namespace (privileged PSS)
 
+    ## RAG Memory
+    - **Index pipeline configs** — when creating new pipelines, index the pattern to `code_knowledge`
+    - **Search for automation patterns** — query `code_knowledge` before building new pipelines
+    - See `TOOLS_RAG.md` for API details
+
     ## GitOps Rule
     Pipeline definitions go in git. ArgoCD manages Tekton resources.
 
@@ -622,6 +670,105 @@ data:
     ## Communication Style
     - Fun, witty, brilliant co-worker energy
     - Respects competence and directness
+
+  shared-tools-rag-md: |
+    # RAG Memory System
+
+    You have access to a **vector memory system** (RAG) that stores and retrieves knowledge semantically across all agents. Use it to remember research, decisions, operational findings, and anything worth recalling later.
+
+    ## API Endpoint
+
+    **Base URL:** `http://rag-service.apps-prod.svc.cluster.local:8000`
+    **Auth:** `Authorization: Bearer 669d103d4815294e933b4e838c0b2d09bcda369ab99c57b847149b09df508b70`
+
+    ## Endpoints
+
+    ### Search (retrieve knowledge)
+    ```
+    POST /search
+    Content-Type: application/json
+    Authorization: Bearer <token>
+
+    {
+      "query": "your natural language question",
+      "collection": "research",
+      "limit": 5,
+      "score_threshold": 0.3,
+      "filters": {"agent_id": "scout"}
+    }
+    ```
+    Returns semantically similar documents with scores and metadata.
+
+    ### Index (store knowledge)
+    ```
+    POST /index
+    Content-Type: application/json
+    Authorization: Bearer <token>
+
+    {
+      "content": "The full text content to store",
+      "collection": "research",
+      "metadata": {
+        "agent_id": "scout",
+        "topic": "vector-databases",
+        "source": "web-research"
+      },
+      "document_id": "optional-unique-id"
+    }
+    ```
+    Content is automatically chunked and embedded.
+
+    ### Batch Index
+    ```
+    POST /batch
+    Content-Type: application/json
+    Authorization: Bearer <token>
+
+    {
+      "documents": [
+        {"content": "...", "collection": "research", "metadata": {...}},
+        {"content": "...", "collection": "operations", "metadata": {...}}
+      ]
+    }
+    ```
+
+    ### Status
+    ```
+    GET /status
+    ```
+    Returns collection stats and system health.
+
+    ## Collections
+
+    | Collection | What goes in it | Who writes |
+    |------------|----------------|------------|
+    | `conversations` | Important Q&A pairs, conversation summaries | All agents |
+    | `research` | Reports, comparisons, analysis, findings | Scout, Architect |
+    | `operations` | Health reports, incident notes, audit findings | Sentinel, Bolt |
+    | `code_knowledge` | Architecture decisions, code explanations, patterns | Architect, Scribe |
+    | `documents` | Documentation, runbooks, reference material | Scribe, any agent |
+
+    ## When to Search
+
+    - **Before starting research** — check if someone already covered this topic
+    - **Before making architecture decisions** — check for prior decisions or context
+    - **When building briefings** — pull cross-agent context
+    - **When asked "what do we know about X"** — always search RAG first
+
+    ## When to Index
+
+    - **After completing research** — index the full report
+    - **After an important conversation** — summarize and index key findings
+    - **After operational discoveries** — index findings with severity and component tags
+    - **After architecture decisions** — index the decision, rationale, and tradeoffs
+
+    ## Metadata Best Practices
+
+    Always include these metadata fields when indexing:
+    - `agent_id`: your agent ID (e.g., "scout", "sentinel")
+    - `topic`: main topic or category
+    - `source`: where the info came from (e.g., "web-research", "cluster-audit", "conversation")
+    - `date`: ISO date string (e.g., "2026-04-04")
 
   shared-environment-md: |
     # Runtime Environment

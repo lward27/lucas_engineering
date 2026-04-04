@@ -167,7 +167,7 @@ spec:
                 done
 
                 # Copy shared files (only if they don't exist)
-                for shared in shared-user-md:USER.md shared-environment-md:ENVIRONMENT.md; do
+                for shared in shared-user-md:USER.md shared-environment-md:ENVIRONMENT.md shared-tools-rag-md:TOOLS_RAG.md; do
                   key="${shared%%:*}"
                   fname="${shared#*:}"
                   src="$INIT/$key"
