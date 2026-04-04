@@ -1,15 +1,4 @@
 apiVersion: v1
-kind: Secret
-metadata:
-  name: rag-service-secrets
-type: Opaque
-stringData:
-  fireworks-api-key: "REPLACE_ME"
-  api-token: "REPLACE_ME"
-
----
-
-apiVersion: v1
 kind: Service
 metadata:
   name: rag-service
