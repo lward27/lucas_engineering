@@ -48,6 +48,12 @@ spec:
           value: "nomic-ai/nomic-embed-text-v1.5"
         - name: RAG_EMBEDDING_DIMENSIONS
           value: "768"
+        - name: RAG_EMBEDDING_PROVIDER
+          value: "local"
+        - name: RAG_OLLAMA_URL
+          value: "http://ollama.apps-prod.svc.cluster.local:11434"
+        - name: RAG_OLLAMA_MODEL
+          value: "nomic-embed-text"
         - name: OTEL_SERVICE_NAME
           value: "rag-service"
         - name: OTEL_EXPORTER_OTLP_ENDPOINT

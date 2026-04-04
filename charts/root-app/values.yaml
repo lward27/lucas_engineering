@@ -71,3 +71,5 @@ apps:
     enabled: true
   rag-service:
     enabled: true
+  ollama:
+    enabled: true

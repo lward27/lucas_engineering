@@ -1,0 +1,4 @@
+apiVersion: v2
+name: ollama
+description: Ollama local LLM server for embedding generation
+version: 1.0.0

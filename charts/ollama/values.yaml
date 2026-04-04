@@ -1,0 +1,22 @@
+image:
+  repository: ollama/ollama
+  tag: latest
+  pullPolicy: IfNotPresent
+
+model: nomic-embed-text
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: "2"
+    memory: 2Gi
+
+service:
+  type: ClusterIP
+  port: 11434
+
+persistence:
+  size: 2Gi
+  storageClass: local-path
