@@ -60,4 +60,19 @@ spec:
       protocol: TCP
     - port: 4318
       protocol: TCP
+  # RAG service + Qdrant (apps-prod namespace)
+  - to:
+    - podSelector:
+        matchLabels:
+          app: rag-service
+    ports:
+    - port: 8000
+      protocol: TCP
+  - to:
+    - podSelector:
+        matchLabels:
+          app: qdrant
+    ports:
+    - port: 6333
+      protocol: TCP
 {{- end }}
