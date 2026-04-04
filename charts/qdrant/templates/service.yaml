@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: qdrant
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: qdrant
+  ports:
+  - name: http
+    port: {{ .Values.service.httpPort }}
+    targetPort: 6333
+  - name: grpc
+    port: {{ .Values.service.grpcPort }}
+    targetPort: 6334

@@ -67,3 +67,5 @@ apps:
     enabled: true
   forge-portal:
     enabled: true
+  qdrant:
+    enabled: true

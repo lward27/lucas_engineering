@@ -1,0 +1,4 @@
+apiVersion: v2
+name: qdrant
+description: Qdrant vector database for RAG memory system
+version: 1.0.0

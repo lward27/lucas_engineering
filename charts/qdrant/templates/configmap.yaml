@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: qdrant-config
+data:
+  production.yaml: |
+    storage:
+      storage_path: /qdrant/storage
+      on_disk_payload: true
+    service:
+      http_port: 6333
+      grpc_port: 6334
+      enable_tls: false
+    log_level: {{ .Values.config.log_level }}
+    telemetry_disabled: true

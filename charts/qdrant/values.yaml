@@ -1,0 +1,34 @@
+image:
+  repository: qdrant/qdrant
+  tag: v1.13.6
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+
+service:
+  type: ClusterIP
+  httpPort: 6333
+  grpcPort: 6334
+
+persistence:
+  size: 4Gi
+  storageClass: local-path
+
+config:
+  # Qdrant configuration overrides
+  storage:
+    # Use memory-mapped storage for efficiency
+    storage_type: mmap
+  service:
+    # Enable REST API
+    http_port: 6333
+    # Enable gRPC
+    grpc_port: 6334
+  # Log level
+  log_level: INFO
