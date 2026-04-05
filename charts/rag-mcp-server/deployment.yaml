@@ -62,3 +62,29 @@ spec:
             port: 8080
           initialDelaySeconds: 3
           periodSeconds: 10
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rag-mcp-server
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: rag-mcp.lucas.engineering
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: rag-mcp-server
+            port:
+              number: 8080
+  tls:
+  - hosts:
+    - rag-mcp.lucas.engineering
+    secretName: rag-mcp-lucas-engineering-tls
