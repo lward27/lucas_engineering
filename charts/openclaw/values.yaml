@@ -60,6 +60,31 @@ openclaw:
               - "wraith"
           sandbox:
             mode: "off"
+          cron:
+            - name: "RAG Memory Sync"
+              schedule:
+                kind: "cron"
+                expr: "0 3 * * *"
+                tz: "America/New_York"
+              sessionTarget: "isolated"
+              payload:
+                kind: "agentTurn"
+                message: |
+                  RAG AUTO-INDEX TASK: Scan all agent workspaces for new or updated memory files and index them.
+
+                  Steps:
+                  1. List files in each agent workspace: ~/.openclaw/workspaces/*/memory/
+                  2. For each .md file found, check if it's already indexed by using rag_search with the filename as query in the 'documents' collection
+                  3. If a file is NOT found in RAG (or the content has significantly changed), use rag_index to store it:
+                     - collection: "documents" for general workspace files
+                     - collection: "operations" for sentinel reports
+                     - collection: "research" for scout reports
+                     - topic: the filename without extension
+                     - source: "auto-index"
+                  4. Report a brief summary of what was indexed (or "no new files found")
+
+                  Be efficient — skip files that are already indexed and unchanged.
+                timeoutSeconds: 300
 
         # === Bolt - The Operator ===
         - id: "bolt"
@@ -132,6 +157,26 @@ openclaw:
               - "cron"
           sandbox:
             mode: "off"
+          cron:
+            - name: "Cluster Health Scan + RAG Index"
+              schedule:
+                kind: "cron"
+                expr: "0 6 * * *"
+                tz: "America/New_York"
+              sessionTarget: "isolated"
+              payload:
+                kind: "agentTurn"
+                message: |
+                  Run a cluster health scan and index the results to RAG.
+
+                  1. Run your standard health checks (pods, certs, resources, ArgoCD sync)
+                  2. Write the report to your workspace as a timestamped file
+                  3. Use rag_index to store the report:
+                     - collection: "operations"
+                     - topic: "cluster-health-scan"
+                     - source: "sentinel-cron"
+                  4. If any CRIT findings, also index them separately with topic "critical-alert"
+                timeoutSeconds: 180
 
         # === Scribe - The Documentarian ===
         - id: "scribe"
@@ -207,6 +252,27 @@ openclaw:
               - "process"
           sandbox:
             mode: "off"
+          cron:
+            - name: "Daily Briefing + RAG Index"
+              schedule:
+                kind: "cron"
+                expr: "30 7 * * *"
+                tz: "America/New_York"
+              sessionTarget: "isolated"
+              payload:
+                kind: "agentTurn"
+                message: |
+                  Morning briefing task with RAG integration.
+
+                  1. Use rag_search_all to pull recent context from all collections (query: "events and changes from yesterday")
+                  2. Check other agents' session history for overnight activity
+                  3. Write a morning brief following your standard template
+                  4. Save the brief to your workspace
+                  5. Use rag_index to store the brief:
+                     - collection: "documents"
+                     - topic: "daily-briefing"
+                     - source: "herald-cron"
+                timeoutSeconds: 180
 
         # === Wraith - The Automator ===
         - id: "wraith"
