@@ -75,4 +75,12 @@ spec:
     ports:
     - port: 6333
       protocol: TCP
+  # RAG MCP Server
+  - to:
+    - podSelector:
+        matchLabels:
+          app: rag-mcp-server
+    ports:
+    - port: 8080
+      protocol: TCP
 {{- end }}

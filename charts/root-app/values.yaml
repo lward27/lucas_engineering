@@ -73,3 +73,5 @@ apps:
     enabled: true
   ollama:
     enabled: true
+  rag-mcp-server:
+    enabled: true

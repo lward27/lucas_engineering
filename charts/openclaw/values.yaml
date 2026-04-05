@@ -70,6 +70,7 @@ openclaw:
             profile: "coding"
             allow:
               - "group:web"
+              - "rag"
           sandbox:
             mode: "off"
 
@@ -81,6 +82,7 @@ openclaw:
             profile: "coding"
             allow:
               - "group:web"
+              - "rag"
           subagents:
             allowAgents:
               - "bolt"
@@ -97,6 +99,7 @@ openclaw:
               - "group:fs"
               - "group:memory"
               - "group:sessions"
+              - "rag"
             deny:
               - "exec"
               - "process"
@@ -110,6 +113,8 @@ openclaw:
           model: "fireworks/accounts/fireworks/models/deepseek-v3p2"
           tools:
             profile: "coding"
+            allow:
+              - "rag"
             deny:
               - "gateway"
               - "cron"
@@ -126,6 +131,7 @@ openclaw:
               - "group:fs"
               - "group:web"
               - "group:memory"
+              - "rag"
             deny:
               - "exec"
               - "process"
@@ -140,6 +146,7 @@ openclaw:
             profile: "coding"
             allow:
               - "group:web"
+              - "rag"
           subagents:
             allowAgents:
               - "bolt"
@@ -155,6 +162,7 @@ openclaw:
             profile: "coding"
             allow:
               - "group:web"
+              - "rag"
           sandbox:
             mode: "off"
 
@@ -169,6 +177,7 @@ openclaw:
               - "group:fs"
               - "group:memory"
               - "group:sessions"
+              - "rag"
             deny:
               - "exec"
               - "process"
@@ -182,9 +191,16 @@ openclaw:
           model: "fireworks/accounts/fireworks/models/deepseek-v3p2"
           tools:
             profile: "coding"
+            allow:
+              - "rag"
           sandbox:
             mode: "off"
 
+    mcp:
+      servers:
+        rag:
+          url: "http://rag-mcp-server.apps-prod.svc.cluster.local:8080/mcp"
+          transport: "streamable-http"
     cron:
       enabled: true
       maxConcurrentRuns: 2
