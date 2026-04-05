@@ -3,7 +3,7 @@ openclaw:
 
   image:
     repository: ghcr.io/openclaw/openclaw
-    tag: "2026.3.28"
+    tag: "2026.3.31"
     pullPolicy: IfNotPresent
 
   apiKeysSecret: openclaw-api-keys
@@ -70,7 +70,10 @@ openclaw:
             profile: "coding"
             allow:
               - "group:web"
-              - "rag"
+              - "mcp__rag__rag_search"
+              - "mcp__rag__rag_search_all"
+              - "mcp__rag__rag_index"
+              - "mcp__rag__rag_status"
           sandbox:
             mode: "off"
 
@@ -82,7 +85,10 @@ openclaw:
             profile: "coding"
             allow:
               - "group:web"
-              - "rag"
+              - "mcp__rag__rag_search"
+              - "mcp__rag__rag_search_all"
+              - "mcp__rag__rag_index"
+              - "mcp__rag__rag_status"
           subagents:
             allowAgents:
               - "bolt"
@@ -99,7 +105,10 @@ openclaw:
               - "group:fs"
               - "group:memory"
               - "group:sessions"
-              - "rag"
+              - "mcp__rag__rag_search"
+              - "mcp__rag__rag_search_all"
+              - "mcp__rag__rag_index"
+              - "mcp__rag__rag_status"
             deny:
               - "exec"
               - "process"
@@ -114,7 +123,10 @@ openclaw:
           tools:
             profile: "coding"
             allow:
-              - "rag"
+              - "mcp__rag__rag_search"
+              - "mcp__rag__rag_search_all"
+              - "mcp__rag__rag_index"
+              - "mcp__rag__rag_status"
             deny:
               - "gateway"
               - "cron"
@@ -131,7 +143,10 @@ openclaw:
               - "group:fs"
               - "group:web"
               - "group:memory"
-              - "rag"
+              - "mcp__rag__rag_search"
+              - "mcp__rag__rag_search_all"
+              - "mcp__rag__rag_index"
+              - "mcp__rag__rag_status"
             deny:
               - "exec"
               - "process"
@@ -146,7 +161,10 @@ openclaw:
             profile: "coding"
             allow:
               - "group:web"
-              - "rag"
+              - "mcp__rag__rag_search"
+              - "mcp__rag__rag_search_all"
+              - "mcp__rag__rag_index"
+              - "mcp__rag__rag_status"
           subagents:
             allowAgents:
               - "bolt"
@@ -162,7 +180,10 @@ openclaw:
             profile: "coding"
             allow:
               - "group:web"
-              - "rag"
+              - "mcp__rag__rag_search"
+              - "mcp__rag__rag_search_all"
+              - "mcp__rag__rag_index"
+              - "mcp__rag__rag_status"
           sandbox:
             mode: "off"
 
@@ -177,7 +198,10 @@ openclaw:
               - "group:fs"
               - "group:memory"
               - "group:sessions"
-              - "rag"
+              - "mcp__rag__rag_search"
+              - "mcp__rag__rag_search_all"
+              - "mcp__rag__rag_index"
+              - "mcp__rag__rag_status"
             deny:
               - "exec"
               - "process"
@@ -192,7 +216,10 @@ openclaw:
           tools:
             profile: "coding"
             allow:
-              - "rag"
+              - "mcp__rag__rag_search"
+              - "mcp__rag__rag_search_all"
+              - "mcp__rag__rag_index"
+              - "mcp__rag__rag_status"
           sandbox:
             mode: "off"
 
