@@ -144,7 +144,7 @@ spec:
             capabilities:
               drop: [ALL]
 
-        # 5. Initialize agent workspaces (hash-based sync)
+        # 5. Initialize agent workspaces (bootstrap-only, never overwrites)
         - name: init-workspaces
           image: busybox:1.37
           command:
@@ -154,78 +154,46 @@ spec:
               set -e
               WS=/data/workspaces
               INIT=/agent-workspace-init
-              HASHES=/data/.operator-hashes
               AGENTS="bolt architect scout sentinel scribe forge ticker herald wraith"
-
-              mkdir -p "$HASHES"
-
-              # sync_file: copy if new OR if operator changed the source (hash mismatch)
-              # Agent edits are preserved when the operator hasn't pushed a change.
-              # When the operator pushes a new version (configmap changes), it overwrites.
-              sync_file() {
-                src="$1"
-                dst="$2"
-                hash_key="$3"
-                hash_file="$HASHES/$hash_key"
-
-                [ -f "$src" ] || return 0
-
-                new_hash=$(md5sum "$src" | cut -d' ' -f1)
-
-                if [ ! -f "$dst" ]; then
-                  # First deploy — copy
-                  cp "$src" "$dst"
-                  echo "$new_hash" > "$hash_file"
-                  echo "  [new] $(basename $dst)"
-                elif [ ! -f "$hash_file" ]; then
-                  # Existing file but no hash — legacy. Record hash, don't overwrite.
-                  echo "$new_hash" > "$hash_file"
-                  echo "  [keep] $(basename $dst) (legacy, hash recorded)"
-                elif [ "$(cat $hash_file)" != "$new_hash" ]; then
-                  # Operator pushed a change — overwrite
-                  cp "$src" "$dst"
-                  echo "$new_hash" > "$hash_file"
-                  echo "  [updated] $(basename $dst) (operator change)"
-                else
-                  # Same hash — agent may have edited, leave it alone
-                  echo "  [skip] $(basename $dst)"
-                fi
-              }
 
               for agent in $AGENTS; do
                 dir="$WS/$agent"
                 mkdir -p "$dir"
-                echo "[$agent]"
 
-                # Agent-specific files
+                # Copy agent-specific files (only if they don't exist — preserve agent edits)
                 for suffix in soul identity agents; do
                   key="${agent}-${suffix}-md"
                   target_name="$(echo $suffix | tr '[:lower:]' '[:upper:]').md"
-                  sync_file "$INIT/$key" "$dir/$target_name" "${agent}-${suffix}"
+                  src="$INIT/$key"
+                  dst="$dir/$target_name"
+                  if [ -f "$src" ] && [ ! -f "$dst" ]; then
+                    cp "$src" "$dst"
+                    echo "  [$agent] copied $target_name"
+                  fi
                 done
 
-                # Shared files
+                # Copy shared files (only if they don't exist)
                 for shared in shared-user-md:USER.md shared-environment-md:ENVIRONMENT.md shared-tools-rag-md:TOOLS_RAG.md; do
                   key="${shared%%:*}"
                   fname="${shared#*:}"
-                  sync_file "$INIT/$key" "$dir/$fname" "${agent}-${key}"
+                  src="$INIT/$key"
+                  dst="$dir/$fname"
+                  if [ -f "$src" ] && [ ! -f "$dst" ]; then
+                    cp "$src" "$dst"
+                    echo "  [$agent] copied $fname"
+                  fi
                 done
 
                 mkdir -p "$dir/memory"
               done
 
-              # Write default exec-approvals if not customized
+              # Write exec-approvals only if it doesn't exist yet
               APPROVALS=/data/exec-approvals.json
-              APPROVALS_HASH="$HASHES/exec-approvals"
-              OPERATOR_APPROVALS='{"version":1,"socket":{"path":"/home/openclaw/.openclaw/exec-approvals.sock","token":"2TZVn3CNRdiPbE06M3DJj3vZoU48bSlu"},"defaults":{"allow":["Bash(kubectl *)","Bash(helm *)","Bash(git *)","Bash(ssh *)","Bash(cat *)","Bash(ls *)","Bash(find *)","Bash(grep *)","Bash(wc *)","Bash(head *)","Bash(tail *)","Bash(curl *)","Bash(python3 *)","Bash(pip *)","Bash(uv *)","Bash(npm *)","Bash(npx *)","Read(*)","Write(*)","Edit(*)"]},"agents":{}}'
-              NEW_HASH=$(echo "$OPERATOR_APPROVALS" | md5sum | cut -d' ' -f1)
-
-              if [ ! -f "$APPROVALS" ] || [ ! -f "$APPROVALS_HASH" ] || [ "$(cat $APPROVALS_HASH)" != "$NEW_HASH" ]; then
-                echo "$OPERATOR_APPROVALS" > "$APPROVALS"
-                echo "$NEW_HASH" > "$APPROVALS_HASH"
-                echo "[exec-approvals] written"
-              else
-                echo "[exec-approvals] unchanged"
+              if [ ! -f "$APPROVALS" ]; then
+                cat > "$APPROVALS" << 'EOFAPPROVALS'
+              {"version":1,"socket":{"path":"/home/openclaw/.openclaw/exec-approvals.sock","token":"2TZVn3CNRdiPbE06M3DJj3vZoU48bSlu"},"defaults":{"allow":["Bash(kubectl *)","Bash(helm *)","Bash(git *)","Bash(ssh *)","Bash(cat *)","Bash(ls *)","Bash(find *)","Bash(grep *)","Bash(wc *)","Bash(head *)","Bash(tail *)","Bash(curl *)","Bash(python3 *)","Bash(pip *)","Bash(uv *)","Bash(npm *)","Bash(npx *)","Read(*)","Write(*)","Edit(*)"]},"agents":{}}
+              EOFAPPROVALS
+                echo "[exec-approvals] bootstrapped"
               fi
 
               echo "All workspaces initialized"
