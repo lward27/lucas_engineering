@@ -31,6 +31,14 @@ spec:
         {{- range .Values.registry.kanikoExtraArgs }}
         - {{ . | quote }}
         {{- end }}
+    - name: deployment
+      type: string
+      description: Deployment name to restart after build (empty = skip).
+      default: ""
+    - name: deployment-namespace
+      type: string
+      description: Namespace of the deployment to restart.
+      default: "apps-prod"
   workspaces:
     - name: shared-data
       description: Shared workspace between git-clone and kaniko tasks.
@@ -62,3 +70,18 @@ spec:
           value: $(params.context)
         - name: EXTRA_ARGS
           value: $(params.kaniko-extra-args[*])
+
+    - name: rollout-restart
+      runAfter:
+        - build-push
+      when:
+        - input: $(params.deployment)
+          operator: notin
+          values: [""]
+      taskRef:
+        name: rollout-restart
+      params:
+        - name: DEPLOYMENT
+          value: $(params.deployment)
+        - name: NAMESPACE
+          value: $(params.deployment-namespace)

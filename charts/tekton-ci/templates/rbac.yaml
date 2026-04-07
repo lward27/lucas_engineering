@@ -44,6 +44,36 @@ rules:
     resources: ["serviceaccounts"]
     verbs: ["impersonate"]
 ---
+# Allow the pipeline SA to restart deployments after builds
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: tekton-ci-rollout-restart
+  labels:
+    app.kubernetes.io/part-of: tekton-ci
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "patch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments/scale"]
+    verbs: ["get", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tekton-ci-rollout-restart-binding
+  labels:
+    app.kubernetes.io/part-of: tekton-ci
+subjects:
+  - kind: ServiceAccount
+    name: tekton-ci-pipeline-sa
+    namespace: {{ .Values.namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-ci-rollout-restart
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:

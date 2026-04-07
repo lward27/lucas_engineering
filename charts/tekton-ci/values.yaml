@@ -34,7 +34,9 @@ services:
     repoName: finance_app_database_service
     repoURL: https://github.com/lward27/finance_app_database_service.git
     branch: main
-    imageRef: registry.lucas.engineering/finance-app-db-service:latest
+    imageRef: registry.lucas.engineering/finance_app_database_service:latest
+    deployment: finance-app-database-service
+    deploymentNamespace: apps-prod
     workspaceStorageSize: 1Gi
 
   finance-frontend:
@@ -42,6 +44,8 @@ services:
     repoURL: https://github.com/lward27/finance-frontend.git
     branch: main
     imageRef: registry.lucas.engineering/finance-frontend:latest
+    deployment: finance-frontend
+    deploymentNamespace: apps-prod
     workspaceStorageSize: 1Gi
 
   yfinance-wrapper:
@@ -50,6 +54,8 @@ services:
     repoURL: https://github.com/lward27/yfinance_wrapper.git
     branch: main
     imageRef: registry.lucas.engineering/yfinance_wrapper:latest
+    deployment: yfinance-wrapper
+    deploymentNamespace: apps-prod
     workspaceStorageSize: 1Gi
 
   scraper-manager:
@@ -58,6 +64,8 @@ services:
     repoURL: https://github.com/lward27/scraper_manager.git
     branch: main
     imageRef: registry.lucas.engineering/scraper_manager:latest
+    deployment: scraper-manager
+    deploymentNamespace: apps-prod
     workspaceStorageSize: 1Gi
 
   forge-platform:
@@ -68,6 +76,8 @@ services:
     imageRef: docker-registry.registry.svc.cluster.local:5000/forge_platform:latest
     dockerfile: "./platform/Dockerfile"
     context: "./platform/"
+    deployment: forge-platform
+    deploymentNamespace: forge-platform
     workspaceStorageSize: 1Gi
 
   forge-admin:
@@ -75,6 +85,8 @@ services:
     repoURL: https://github.com/lward27/forge-admin.git
     branch: main
     imageRef: docker-registry.registry.svc.cluster.local:5000/forge_admin:latest
+    deployment: forge-admin
+    deploymentNamespace: forge-platform
     workspaceStorageSize: 1Gi
 
   forge-portal:
@@ -82,4 +94,6 @@ services:
     repoURL: https://github.com/lward27/forge-portal.git
     branch: main
     imageRef: docker-registry.registry.svc.cluster.local:5000/forge_portal:latest
+    deployment: forge-portal
+    deploymentNamespace: forge-platform
     workspaceStorageSize: 1Gi

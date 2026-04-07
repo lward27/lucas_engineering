@@ -1,0 +1,26 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: rollout-restart
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: tekton-ci
+spec:
+  description: Restart a Kubernetes deployment to pick up a new image.
+  params:
+    - name: DEPLOYMENT
+      type: string
+      description: Name of the deployment to restart.
+    - name: NAMESPACE
+      type: string
+      description: Namespace of the deployment.
+      default: apps-prod
+  steps:
+    - name: restart
+      image: bitnami/kubectl:latest
+      script: |
+        #!/bin/sh
+        echo "Restarting deployment/$(params.DEPLOYMENT) in $(params.NAMESPACE)..."
+        kubectl rollout restart deployment/$(params.DEPLOYMENT) -n $(params.NAMESPACE)
+        kubectl rollout status deployment/$(params.DEPLOYMENT) -n $(params.NAMESPACE) --timeout=120s
+        echo "Rollout complete."
