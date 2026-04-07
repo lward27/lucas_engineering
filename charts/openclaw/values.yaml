@@ -22,9 +22,9 @@ openclaw:
     agents:
       defaults:
         model:
-          primary: "fireworks/accounts/fireworks/models/qwen3p6-plus"
+          primary: "fireworks/accounts/fireworks/routers/kimi-k2p5-turbo"
           fallbacks:
-            - "fireworks/accounts/fireworks/routers/kimi-k2p5-turbo"
+            - "fireworks/accounts/fireworks/models/qwen3p6-plus"
             - "fireworks/accounts/fireworks/models/deepseek-v3p2"
         models:
           "fireworks/accounts/fireworks/routers/kimi-k2p5-turbo":
