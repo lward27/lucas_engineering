@@ -48,6 +48,7 @@ openclaw:
           default: true
           name: "Nova"
           workspace: "~/.openclaw/workspace"
+          model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
             profile: "full"
           subagents:
