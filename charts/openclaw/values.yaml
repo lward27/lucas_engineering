@@ -232,6 +232,20 @@ openclaw:
     tools:
       exec:
         ask: "off"
+      subagents:
+        tools:
+          allow:
+            - "group:fs"
+            - "group:runtime"
+            - "group:web"
+            - "group:memory"
+            - "group:sessions"
+            - "group:ui"
+            - "group:messaging"
+            - "group:automation"
+            - "group:nodes"
+            - "group:agents"
+            - "group:media"
     approvals:
       exec:
         enabled: false
