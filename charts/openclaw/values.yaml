@@ -227,6 +227,12 @@ openclaw:
           sandbox:
             mode: "off"
 
+    tools:
+      exec:
+        ask: "off"
+    approvals:
+      exec:
+        enabled: false
     mcp:
       servers:
         rag:
@@ -251,6 +257,8 @@ openclaw:
       telegram:
         enabled: true
         botToken: "${TELEGRAM_BOT_TOKEN}"
+        execApprovals:
+          enabled: false
         dmPolicy: "allowlist"
         allowFrom:
           - "8635782483"
