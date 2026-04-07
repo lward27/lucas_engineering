@@ -31,7 +31,8 @@ webhookIngress:
 services:
   finance-app-db-service:
     enabled: true
-    repoURL: https://github.com/lward27/finance-app-db-service.git
+    repoName: finance_app_database_service
+    repoURL: https://github.com/lward27/finance_app_database_service.git
     branch: main
     imageRef: registry.lucas.engineering/finance-app-db-service:latest
     workspaceStorageSize: 1Gi
@@ -45,6 +46,7 @@ services:
 
   yfinance-wrapper:
     enabled: true
+    repoName: yfinance_wrapper
     repoURL: https://github.com/lward27/yfinance_wrapper.git
     branch: main
     imageRef: registry.lucas.engineering/yfinance_wrapper:latest
@@ -52,6 +54,7 @@ services:
 
   scraper-manager:
     enabled: true
+    repoName: scraper_manager
     repoURL: https://github.com/lward27/scraper_manager.git
     branch: main
     imageRef: registry.lucas.engineering/scraper_manager:latest
@@ -59,6 +62,7 @@ services:
 
   forge-platform:
     enabled: true
+    repoName: forge
     repoURL: https://github.com/lward27/forge.git
     branch: main
     imageRef: docker-registry.registry.svc.cluster.local:5000/forge_platform:latest

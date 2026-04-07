@@ -29,7 +29,7 @@ spec:
           params:
             - name: filter
               value: >-
-                body.repository.name == '{{ $name }}' &&
+                body.repository.name == '{{ $svc.repoName | default $name }}' &&
                 body.ref == 'refs/heads/{{ $svc.branch }}'
       bindings:
         - ref: {{ $name }}-binding
