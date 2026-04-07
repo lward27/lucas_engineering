@@ -207,7 +207,79 @@ spec:
             capabilities:
               drop: [ALL]
 
-        # 6. Install RAG MCP server dependencies
+        # 6. Install gh CLI + configure git
+        - name: init-git
+          image: {{ .Values.openclaw.image.repository }}:{{ .Values.openclaw.image.tag }}
+          env:
+            - name: GH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.openclaw.apiKeysSecret }}
+                  key: GH_TOKEN
+                  optional: true
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              LOCAL=/home/openclaw/.local/bin
+              OCDIR=/home/openclaw/.openclaw
+
+              # Install gh CLI if not present
+              if [ ! -x "$LOCAL/gh" ]; then
+                cd /tmp
+                curl -sL https://github.com/cli/cli/releases/download/v2.69.0/gh_2.69.0_linux_amd64.tar.gz -o gh.tar.gz
+                tar xzf gh.tar.gz
+                cp gh_2.69.0_linux_amd64/bin/gh "$LOCAL/gh"
+                chmod +x "$LOCAL/gh"
+                rm -rf gh.tar.gz gh_2.69.0_linux_amd64
+                echo "gh CLI installed"
+              else
+                echo "gh CLI already installed"
+              fi
+
+              # Write git config
+              cat > "$OCDIR/.gitconfig" << 'GITCFG'
+              [user]
+                  name = OpenClaw Agent Fleet
+                  email = openclaw@lucas.engineering
+              [init]
+                  defaultBranch = main
+              [push]
+                  default = current
+              [pull]
+                  rebase = false
+              [credential]
+                  helper = store --file /home/openclaw/.openclaw/.git-credentials
+              [url "https://github.com/"]
+                  insteadOf = git@github.com:
+              GITCFG
+
+              # Write git credentials if token exists
+              if [ -n "$GH_TOKEN" ]; then
+                echo "https://lward27:${GH_TOKEN}@github.com" > "$OCDIR/.git-credentials"
+                chmod 600 "$OCDIR/.git-credentials"
+                echo "git credentials configured"
+              fi
+
+              echo "git setup complete"
+          volumeMounts:
+            - name: data
+              mountPath: /home/openclaw/.openclaw
+            - name: data
+              mountPath: /home/openclaw/.local
+              subPath: .local
+            - name: data
+              mountPath: /home/openclaw/.cache
+              subPath: .cache
+            - name: tmp
+              mountPath: /tmp
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+
+        # 7. Install RAG MCP server dependencies
         - name: init-rag-mcp
           image: {{ .Values.openclaw.image.repository }}:{{ .Values.openclaw.image.tag }}
           command:
@@ -277,6 +349,14 @@ spec:
               value: "/opt/tools:/home/openclaw/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
             - name: KUBECONFIG
               value: "/home/openclaw/.kube/config"
+            - name: GIT_CONFIG_GLOBAL
+              value: "/home/openclaw/.openclaw/.gitconfig"
+            - name: GH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.openclaw.apiKeysSecret }}
+                  key: GH_TOKEN
+                  optional: true
             - name: OPENCLAW_GATEWAY_TOKEN
               valueFrom:
                 secretKeyRef:
