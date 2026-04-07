@@ -253,6 +253,8 @@ spec:
                   helper = store --file /home/openclaw/.openclaw/.git-credentials
               [url "https://github.com/"]
                   insteadOf = git@github.com:
+              [core]
+                  hooksPath = /home/openclaw/.openclaw/.git-hooks
               GITCFG
 
               # Write git credentials if token exists
@@ -261,6 +263,27 @@ spec:
                 chmod 600 "$OCDIR/.git-credentials"
                 echo "git credentials configured"
               fi
+
+              # Create pre-push hook to block direct pushes to main
+              mkdir -p "$OCDIR/.git-hooks"
+              cat > "$OCDIR/.git-hooks/pre-push" << 'HOOKEOF'
+              #!/bin/sh
+              while read local_ref local_sha remote_ref remote_sha; do
+                if echo "$remote_ref" | grep -q 'refs/heads/main'; then
+                  echo ""
+                  echo "ERROR: Direct push to main is not allowed!"
+                  echo "Create a feature branch and submit a pull request instead:"
+                  echo "  git checkout -b <agent-name>/<description>"
+                  echo "  git push -u origin <agent-name>/<description>"
+                  echo "  gh pr create --title '...' --body '...'"
+                  echo ""
+                  exit 1
+                fi
+              done
+              exit 0
+              HOOKEOF
+              chmod +x "$OCDIR/.git-hooks/pre-push"
+              echo "pre-push hook installed (blocks direct push to main)"
 
               echo "git setup complete"
           volumeMounts:
