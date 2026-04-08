@@ -1,0 +1,120 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: clawspace
+spec:
+  selector:
+    app: clawspace
+  ports:
+  - protocol: "TCP"
+    port: 6789
+    targetPort: 6789
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clawspace
+spec:
+  selector:
+    matchLabels:
+      app: clawspace
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: clawspace
+    spec:
+      containers:
+      - name: clawspace
+        image: ghcr.io/nickytonline/clawspace:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: CLAWSPACE_ROOT
+          value: "/claw/workspace"
+        - name: CLAWSPACE_IGNORE
+          value: ".venv,.cache,node_modules,__pycache__"
+        ports:
+        - containerPort: 6789
+        volumeMounts:
+        - name: openclaw-data
+          mountPath: /claw/workspace/nova
+          subPath: workspace
+        - name: openclaw-data
+          mountPath: /claw/workspace/bolt
+          subPath: workspaces/bolt
+        - name: openclaw-data
+          mountPath: /claw/workspace/architect
+          subPath: workspaces/architect
+        - name: openclaw-data
+          mountPath: /claw/workspace/scout
+          subPath: workspaces/scout
+        - name: openclaw-data
+          mountPath: /claw/workspace/sentinel
+          subPath: workspaces/sentinel
+        - name: openclaw-data
+          mountPath: /claw/workspace/scribe
+          subPath: workspaces/scribe
+        - name: openclaw-data
+          mountPath: /claw/workspace/forge
+          subPath: workspaces/forge
+        - name: openclaw-data
+          mountPath: /claw/workspace/ticker
+          subPath: workspaces/ticker
+        - name: openclaw-data
+          mountPath: /claw/workspace/herald
+          subPath: workspaces/herald
+        - name: openclaw-data
+          mountPath: /claw/workspace/wraith
+          subPath: workspaces/wraith
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 6789
+          initialDelaySeconds: 5
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 6789
+          initialDelaySeconds: 3
+          periodSeconds: 10
+      volumes:
+      - name: openclaw-data
+        persistentVolumeClaim:
+          claimName: openclaw-data
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: clawspace
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: clawspace.lucas.engineering
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: clawspace
+            port:
+              number: 6789
+  tls:
+  - hosts:
+    - clawspace.lucas.engineering
+    secretName: clawspace-lucas-engineering-tls

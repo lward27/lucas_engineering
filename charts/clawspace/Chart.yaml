@@ -1,0 +1,4 @@
+apiVersion: v2
+name: clawspace
+description: Browser-based file explorer for OpenClaw agent workspaces
+version: 1.0.0

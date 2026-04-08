@@ -75,3 +75,5 @@ apps:
     enabled: true
   rag-mcp-server:
     enabled: false
+  clawspace:
+    enabled: true
