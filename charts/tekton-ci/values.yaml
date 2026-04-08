@@ -34,7 +34,7 @@ services:
     repoName: finance_app_database_service
     repoURL: https://github.com/lward27/finance_app_database_service.git
     branch: main
-    imageRef: registry.lucas.engineering/finance_app_database_service:latest
+    imageRef: docker-registry.registry.svc.cluster.local:5000/finance_app_database_service:latest
     deployment: finance-app-database-service
     deploymentNamespace: apps-prod
     workspaceStorageSize: 1Gi
@@ -43,7 +43,7 @@ services:
     enabled: true
     repoURL: https://github.com/lward27/finance-frontend.git
     branch: main
-    imageRef: registry.lucas.engineering/finance-frontend:latest
+    imageRef: docker-registry.registry.svc.cluster.local:5000/finance-frontend:latest
     deployment: finance-frontend
     deploymentNamespace: apps-prod
     workspaceStorageSize: 1Gi
@@ -53,7 +53,7 @@ services:
     repoName: yfinance_wrapper
     repoURL: https://github.com/lward27/yfinance_wrapper.git
     branch: main
-    imageRef: registry.lucas.engineering/yfinance_wrapper:latest
+    imageRef: docker-registry.registry.svc.cluster.local:5000/yfinance_wrapper:latest
     deployment: yfinance-wrapper
     deploymentNamespace: apps-prod
     workspaceStorageSize: 1Gi
@@ -63,7 +63,7 @@ services:
     repoName: scraper_manager
     repoURL: https://github.com/lward27/scraper_manager.git
     branch: main
-    imageRef: registry.lucas.engineering/scraper_manager:latest
+    imageRef: docker-registry.registry.svc.cluster.local:5000/scraper_manager:latest
     deployment: scraper-manager
     deploymentNamespace: apps-prod
     workspaceStorageSize: 1Gi
