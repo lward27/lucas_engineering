@@ -401,18 +401,18 @@ spec:
             httpGet:
               path: /healthz
               port: 18790
-            failureThreshold: 3
+            failureThreshold: 6
             initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 10
           readinessProbe:
             httpGet:
               path: /readyz
               port: 18790
-            failureThreshold: 3
+            failureThreshold: 6
             initialDelaySeconds: 5
-            periodSeconds: 5
-            timeoutSeconds: 3
+            periodSeconds: 10
+            timeoutSeconds: 10
           resources:
             {{- toYaml .Values.openclaw.resources | nindent 12 }}
           securityContext:
