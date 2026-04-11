@@ -31,7 +31,10 @@ spec:
           - max_locks_per_transaction=1024
         env:
         - name: POSTGRES_PASSWORD
-          value: {{ .Values.auth.postgresPassword | quote }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.auth.existingSecret }}
+              key: {{ .Values.auth.passwordKey }}
         - name: POSTGRES_DB
           value: {{ .Values.auth.database | quote }}
         - name: PGDATA

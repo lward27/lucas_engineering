@@ -1,13 +1,4 @@
 {{- if (index .Values.apps "cert-manager").enabled }}
-apiVersion: v1
-kind: Secret
-metadata:
-  name: cloudflare-api-token
-  namespace: cert-manager
-type: Opaque
-stringData:
-  api-token: cfat_BHfpHQrry8vcLpOXPBWMVO4RbSKJAZa5Yez1krvUb6aed0bd
----
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:

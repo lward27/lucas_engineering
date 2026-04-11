@@ -33,7 +33,10 @@ spec:
         imagePullPolicy: Always
         env:
         - name: DATABASE_URL
-          value: "postgresql://postgres:topsecretpassword@postgresql.apps-prod.svc.cluster.local:5432/testdb"
+          valueFrom:
+            secretKeyRef:
+              name: finance-app-database-service-env
+              key: DATABASE_URL
         - name: OTEL_SERVICE_NAME
           value: "finance-app-database-service"
         - name: OTEL_EXPORTER_OTLP_ENDPOINT

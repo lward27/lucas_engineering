@@ -87,8 +87,8 @@ spec:
             - name: PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ if .Values.codeServer.passwordSecret }}{{ .Values.codeServer.passwordSecret }}{{ else }}{{ .Values.codeServer.name }}-auth{{ end }}
-                  key: {{ if .Values.codeServer.passwordSecret }}{{ .Values.codeServer.passwordSecretKey }}{{ else }}password{{ end }}
+                  name: {{ .Values.codeServer.passwordSecret }}
+                  key: {{ .Values.codeServer.passwordSecretKey }}
             - name: XDG_CONFIG_HOME
               value: /home/coder/.config
             - name: PATH

@@ -8,10 +8,8 @@ codeServer:
     tag: "4.96.2"
     pullPolicy: IfNotPresent
 
-  # Password for code-server (change this or use existing secret)
-  # If passwordSecret is set, it will be used instead of the plain password
-  password: "changeme"
-  passwordSecret: ""
+  # Password must be provided via an existing Secret
+  passwordSecret: "code-server-auth"
   passwordSecretKey: "password"
 
   resources:

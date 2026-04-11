@@ -4,8 +4,9 @@ image:
   pullPolicy: IfNotPresent
 
 auth:
-  postgresPassword: "topsecretpassword"
   database: "testdb"
+  existingSecret: "postgresql-auth"
+  passwordKey: "postgres-password"
 
 resources:
   requests:
