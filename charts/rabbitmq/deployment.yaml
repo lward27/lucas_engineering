@@ -64,16 +64,25 @@ spec:
           name: amqp
         - containerPort: 15672
           name: mgmt
-        livenessProbe:
-          exec:
-            command: ["rabbitmq-diagnostics", "ping"]
-          initialDelaySeconds: 20
-          periodSeconds: 20
-        readinessProbe:
-          exec:
-            command: ["rabbitmq-diagnostics", "check_running"]
-          initialDelaySeconds: 10
+        startupProbe:
+          tcpSocket:
+            port: 5672
+          initialDelaySeconds: 15
           periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 30
+        livenessProbe:
+          tcpSocket:
+            port: 5672
+          initialDelaySeconds: 60
+          periodSeconds: 20
+          timeoutSeconds: 5
+        readinessProbe:
+          tcpSocket:
+            port: 5672
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
         resources:
           requests:
             cpu: 200m
