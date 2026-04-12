@@ -37,6 +37,8 @@ apps:
     enabled: true
   postgresql:
     enabled: true
+  rabbitmq:
+    enabled: true
   prometheus:
     enabled: true
   promtail:

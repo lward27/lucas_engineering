@@ -8,6 +8,10 @@ auth:
   existingSecret: "postgresql-auth"
   passwordKey: "postgres-password"
 
+financeApp:
+  database: "finance_app"
+  user: "finance_app_user"
+
 resources:
   requests:
     cpu: 500m

@@ -6,11 +6,11 @@ metadata:
   labels:
     app.kubernetes.io/part-of: tekton-ci
 spec:
-  description: Restart a Kubernetes deployment to pick up a new image.
+  description: Restart one or more Kubernetes deployments to pick up a new image.
   params:
     - name: DEPLOYMENT
       type: string
-      description: Name of the deployment to restart.
+      description: Deployment name or comma-separated deployment names to restart.
     - name: NAMESPACE
       type: string
       description: Namespace of the deployment.
@@ -20,7 +20,18 @@ spec:
       image: bitnami/kubectl:latest
       script: |
         #!/bin/sh
-        echo "Restarting deployment/$(params.DEPLOYMENT) in $(params.NAMESPACE)..."
-        kubectl rollout restart deployment/$(params.DEPLOYMENT) -n $(params.NAMESPACE)
-        kubectl rollout status deployment/$(params.DEPLOYMENT) -n $(params.NAMESPACE) --timeout=120s
-        echo "Rollout complete."
+        set -e
+        DEPLOYMENTS="$(params.DEPLOYMENT)"
+        OLD_IFS="$IFS"
+        IFS=','
+        for dep in $DEPLOYMENTS; do
+          dep="$(echo "$dep" | tr -d '[:space:]')"
+          if [ -z "$dep" ]; then
+            continue
+          fi
+          echo "Restarting deployment/${dep} in $(params.NAMESPACE)..."
+          kubectl rollout restart deployment/"${dep}" -n "$(params.NAMESPACE)"
+          kubectl rollout status deployment/"${dep}" -n "$(params.NAMESPACE)" --timeout=180s
+        done
+        IFS="$OLD_IFS"
+        echo "Rollout(s) complete."

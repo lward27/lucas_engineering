@@ -64,7 +64,7 @@ services:
     repoURL: https://github.com/lward27/scraper_manager.git
     branch: main
     imageRef: docker-registry.registry.svc.cluster.local:5000/scraper_manager:latest
-    deployment: scraper-manager
+    deployment: scraper-manager-scheduler,scraper-manager-worker
     deploymentNamespace: apps-prod
     workspaceStorageSize: 1Gi
 
