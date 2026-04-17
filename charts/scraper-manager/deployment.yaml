@@ -31,7 +31,7 @@ spec:
         - name: MODE
           value: "scheduler"
         - name: SHADOW_MODE
-          value: "true"
+          value: "false"
         - name: DATABASE_SERVICE_URL
           value: "http://finance-app-database-service.apps-prod.svc.cluster.local:8091"
         - name: YFINANCE_SERVICE_URL
@@ -121,7 +121,7 @@ spec:
         - name: MODE
           value: "worker"
         - name: SHADOW_MODE
-          value: "true"
+          value: "false"
         - name: DATABASE_SERVICE_URL
           value: "http://finance-app-database-service.apps-prod.svc.cluster.local:8091"
         - name: YFINANCE_SERVICE_URL
