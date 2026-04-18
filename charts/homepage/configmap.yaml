@@ -50,6 +50,32 @@ data:
             - icon: https://cdn.simpleicons.org/kubernetes/326CE5
               href: https://tekton.lucas.engineering
               description: CI/CD pipelines
+        - Code Server:
+            - icon: https://icon.icepanel.io/Technology/svg/Visual-Studio-Code-(VS-Code).svg
+              href: https://code.lucas.engineering
+              description: Browser-based dev workspace
+        - Clawspace:
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/files.svg
+              href: https://clawspace.lucas.engineering
+              description: OpenClaw workspace browser
+        - RAG Service:
+            - icon: https://icon.icepanel.io/Technology/svg/Qdrant.svg
+              href: https://rag.lucas.engineering
+              description: Retrieval API & embeddings
+
+    - Forge:
+        - Forge Platform:
+            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/docker.png
+              href: https://forge.lucas.engineering
+              description: Forge API & platform services
+        - Forge Admin:
+            - icon: https://icon.icepanel.io/Technology/svg/React.svg
+              href: https://forge-admin.lucas.engineering
+              description: Forge admin console
+        - Forge Portal:
+            - icon: https://icon.icepanel.io/Technology/svg/React.svg
+              href: https://forge-portal.lucas.engineering
+              description: Forge tenant portal
 
     - Content:
         - Ghost Blog:
@@ -129,6 +155,9 @@ data:
         style: column
         rows: 2
       Platform:
+        style: column
+        rows: 2
+      Forge:
         style: column
         rows: 1
       Content:

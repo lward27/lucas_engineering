@@ -46,6 +46,7 @@ spec:
           envFrom:
             - secretRef:
                 name: homepage-secrets
+                optional: true
       volumes:
         - name: config-source
           configMap:
