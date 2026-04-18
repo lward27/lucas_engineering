@@ -46,6 +46,10 @@ spec:
             value: $(tt.params.repo-url)
           - name: image-reference
             value: {{ $svc.imageRef }}
+          - name: dockerfile
+            value: {{ $svc.dockerfile | default "./Dockerfile" | quote }}
+          - name: context
+            value: {{ $svc.context | default "./" | quote }}
           - name: kaniko-extra-args
             value:
               {{- range $.Values.registry.kanikoExtraArgs }}

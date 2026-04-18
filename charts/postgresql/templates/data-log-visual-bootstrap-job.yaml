@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postgresql-datalog-visual-bootstrap-v1
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: bootstrap-datalog-visual-db
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.auth.existingSecret }}
+              key: {{ .Values.auth.passwordKey }}
+        - name: DATALOG_VISUAL_DB
+          value: {{ .Values.dataLogVisual.database | quote }}
+        - name: DATALOG_VISUAL_USER
+          value: {{ .Values.dataLogVisual.user | quote }}
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -eu
+          export PGPASSWORD="${POSTGRES_PASSWORD}"
+
+          psql \
+            -h postgresql.apps-prod.svc.cluster.local \
+            -U postgres \
+            -d postgres \
+            -v ON_ERROR_STOP=1 \
+            -v datalog_user="${DATALOG_VISUAL_USER}" \
+            -v datalog_db="${DATALOG_VISUAL_DB}" \
+            -v datalog_password="${POSTGRES_PASSWORD}" <<'SQL'
+          SELECT format('CREATE ROLE %I LOGIN PASSWORD %L', :'datalog_user', :'datalog_password')
+          WHERE NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :'datalog_user')
+          \gexec
+
+          SELECT format('ALTER ROLE %I WITH LOGIN PASSWORD %L', :'datalog_user', :'datalog_password')
+          WHERE EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :'datalog_user')
+          \gexec
+
+          SELECT format('CREATE DATABASE %I OWNER %I', :'datalog_db', :'datalog_user')
+          WHERE NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = :'datalog_db')
+          \gexec
+
+          SELECT format('GRANT ALL PRIVILEGES ON DATABASE %I TO %I', :'datalog_db', :'datalog_user')
+          \gexec
+          SQL

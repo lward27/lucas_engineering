@@ -12,6 +12,10 @@ financeApp:
   database: "finance_app"
   user: "finance_app_user"
 
+dataLogVisual:
+  database: "datalog_visual"
+  user: "datalog_visual_user"
+
 resources:
   requests:
     cpu: 500m

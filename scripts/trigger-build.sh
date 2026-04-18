@@ -17,7 +17,7 @@ set -euo pipefail
 NAMESPACE="tekton-pipelines"
 
 # ── service definitions ─────────────────────────────────────────────────────
-declare -A REPO_URL IMAGE_REF STORAGE
+declare -A REPO_URL IMAGE_REF STORAGE DOCKERFILE CONTEXT
 
 REPO_URL[finance-app-db-service]="https://github.com/lward27/finance-app-db-service.git"
 IMAGE_REF[finance-app-db-service]="registry.lucas.engineering/finance-app-db-service:latest"
@@ -39,7 +39,19 @@ REPO_URL[scraper-manager]="https://github.com/lward27/scraper_manager.git"
 IMAGE_REF[scraper-manager]="registry.lucas.engineering/scraper_manager:latest"
 STORAGE[scraper-manager]="1Gi"
 
-ALL_SERVICES=(finance-app-db-service finance-app-database-service finance-frontend yfinance-wrapper scraper-manager)
+REPO_URL[data-log-visual-frontend]="https://github.com/lward27/data-log-visual.git"
+IMAGE_REF[data-log-visual-frontend]="registry.lucas.engineering/data-log-visual-frontend:latest"
+STORAGE[data-log-visual-frontend]="1Gi"
+DOCKERFILE[data-log-visual-frontend]="./frontend/Dockerfile"
+CONTEXT[data-log-visual-frontend]="./frontend/"
+
+REPO_URL[data-log-visual-backend]="https://github.com/lward27/data-log-visual.git"
+IMAGE_REF[data-log-visual-backend]="registry.lucas.engineering/data-log-visual-backend:latest"
+STORAGE[data-log-visual-backend]="1Gi"
+DOCKERFILE[data-log-visual-backend]="./backend/Dockerfile"
+CONTEXT[data-log-visual-backend]="./backend/"
+
+ALL_SERVICES=(finance-app-db-service finance-app-database-service finance-frontend yfinance-wrapper scraper-manager data-log-visual-frontend data-log-visual-backend)
 
 # ── helpers ─────────────────────────────────────────────────────────────────
 usage() {
@@ -89,6 +101,10 @@ spec:
       value: "${REPO_URL[$svc]}"
     - name: image-reference
       value: "${IMAGE_REF[$svc]}"
+    - name: dockerfile
+      value: "${DOCKERFILE[$svc]:-./Dockerfile}"
+    - name: context
+      value: "${CONTEXT[$svc]:-./}"
     - name: kaniko-extra-args
       value:
         - --skip-tls-verify
