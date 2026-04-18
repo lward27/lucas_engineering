@@ -102,7 +102,7 @@ services:
     enabled: true
     repoURL: https://github.com/lward27/data-log-visual.git
     branch: main
-    imageRef: docker-registry.registry.svc.cluster.local:5000/data-log-visual-frontend:latest
+    imageRef: registry.lucas.engineering/data-log-visual-frontend:latest
     dockerfile: "./frontend/Dockerfile"
     context: "./frontend/"
     deployment: data-log-visual-frontend
@@ -113,7 +113,7 @@ services:
     enabled: true
     repoURL: https://github.com/lward27/data-log-visual.git
     branch: main
-    imageRef: docker-registry.registry.svc.cluster.local:5000/data-log-visual-backend:latest
+    imageRef: registry.lucas.engineering/data-log-visual-backend:latest
     dockerfile: "./backend/Dockerfile"
     context: "./backend/"
     deployment: data-log-visual-backend
