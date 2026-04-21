@@ -19,7 +19,6 @@ rules:
       - endpoints
       - events
       - configmaps
-      - secrets
       - persistentvolumeclaims
       - resourcequotas
       - limitranges

@@ -64,6 +64,39 @@ data:
           receivers: [otlp]
           processors: [batch]
           exporters: [otlp/cluster]
+  exec-approvals.json: |
+    {
+      "version": 1,
+      "socket": {
+        "path": "/home/openclaw/.openclaw/exec-approvals.sock",
+        "token": "2TZVn3CNRdiPbE06M3DJj3vZoU48bSlu"
+      },
+      "defaults": {
+        "allow": [
+          "Bash(kubectl *)",
+          "Bash(helm *)",
+          "Bash(git *)",
+          "Bash(ssh *)",
+          "Bash(cat *)",
+          "Bash(ls *)",
+          "Bash(find *)",
+          "Bash(grep *)",
+          "Bash(wc *)",
+          "Bash(head *)",
+          "Bash(tail *)",
+          "Bash(curl *)",
+          "Bash(python3 *)",
+          "Bash(pip *)",
+          "Bash(uv *)",
+          "Bash(npm *)",
+          "Bash(npx *)",
+          "Read(*)",
+          "Write(*)",
+          "Edit(*)"
+        ]
+      },
+      "agents": {}
+    }
 ---
 apiVersion: v1
 kind: ConfigMap

@@ -92,7 +92,7 @@ openclaw cron add \
   --cron "0 19 * * 1-5" \
   --tz "America/New_York" \
   --session isolated \
-  --message "Run post-market data pipeline check. 1) Check if today's scraper-manager CronJob ran successfully (kubectl get jobs). 2) Query the database service at finance-db.lucas.engineering for /tickers/update-status to see if any tickers are behind. 3) Spot-check 3 random tickers to confirm today's price data exists. 4) Report total tickers tracked, data freshness, and any gaps found."
+  --message "Run post-market data pipeline check. 1) Confirm scraper-manager-scheduler and scraper-manager-worker deployments are healthy in apps-prod and review recent logs for failures. 2) Query the internal database service at http://finance-app-database-service.apps-prod.svc.cluster.local:8091/tickers/update-status to see if any tickers are behind. 3) Spot-check 3 random tickers to confirm today's price data exists. 4) Report total tickers tracked, data freshness, and any gaps found."
 ```
 
 ### Weekly Data Quality Report (Sunday 12 PM EST)
@@ -103,7 +103,7 @@ openclaw cron add \
   --cron "0 12 * * 0" \
   --tz "America/New_York" \
   --session isolated \
-  --message "Generate a weekly data quality report. 1) Total tickers tracked and total rows in price_history. 2) Identify any tickers with gaps in their history (missing trading days). 3) Check for any tickers that haven't been updated in over 7 days. 4) Scraper success rate over the past week (successful vs failed jobs). 5) Storage usage trend for the PostgreSQL PVC. Present with exact numbers."
+  --message "Generate a weekly data quality report. 1) Total tickers tracked and how many currently need refresh according to the internal database service. 2) Identify any tickers that appear stale or have missing recent market days based on API spot checks. 3) Check for any tickers that haven't been updated in over 7 days. 4) Summarize scraper-manager scheduler/worker health and notable failures from the past week using deployment status and recent logs. 5) Report PostgreSQL PVC usage trend from Kubernetes. Present with exact numbers where available."
 ```
 
 ---

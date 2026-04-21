@@ -468,7 +468,7 @@ data:
     ## Finance App Context
     - yfinance-wrapper: fetches stock data from Yahoo Finance
     - finance-app-database-service: PostgreSQL API (tickers + price_history)
-    - scraper-manager: orchestrates data fetching (CronJob)
+    - scraper-manager: queue-backed scheduler + worker deployments
     - price_history: TimescaleDB hypertable on `ts` column
 
     ## Boundaries
@@ -507,8 +507,16 @@ data:
     - `POST /history/batch` — bulk insert (scraper uses this)
 
     ## Service URLs
-    - finance-db: finance-db.lucas.engineering
-    - yfinance: yfinance.lucas.engineering
+    - finance-db: http://finance-app-database-service.apps-prod.svc.cluster.local:8091
+    - yfinance: http://yfinance-wrapper.apps-prod.svc.cluster.local:8090
+
+    ## Checks Playbook
+    - `kubectl get deploy -n apps-prod scraper-manager-scheduler scraper-manager-worker` — confirm desired/current replicas and rollout status
+    - `kubectl get pods -n apps-prod -l app=scraper-manager` — look for CrashLoopBackOff, restarts, or pending pods
+    - `kubectl logs -n apps-prod deployment/scraper-manager-scheduler --tail=200` — inspect the latest scheduler run
+    - `kubectl logs -n apps-prod deployment/scraper-manager-worker --tail=200` — look for queue backlogs or fetch failures
+    - `curl -fsS http://finance-app-database-service.apps-prod.svc.cluster.local:8091/healthz` — verify the database API is reachable
+    - `curl -fsS http://yfinance-wrapper.apps-prod.svc.cluster.local:8090/healthz` — verify the market-data wrapper is reachable
 
     ## RAG Memory
     - **Index data quality reports** — after audits, index findings to `operations`

@@ -187,15 +187,6 @@ spec:
                 mkdir -p "$dir/memory"
               done
 
-              # Write exec-approvals only if it doesn't exist yet
-              APPROVALS=/data/exec-approvals.json
-              if [ ! -f "$APPROVALS" ]; then
-                cat > "$APPROVALS" << 'EOFAPPROVALS'
-              {"version":1,"socket":{"path":"/home/openclaw/.openclaw/exec-approvals.sock","token":"2TZVn3CNRdiPbE06M3DJj3vZoU48bSlu"},"defaults":{"allow":["Bash(kubectl *)","Bash(helm *)","Bash(git *)","Bash(ssh *)","Bash(cat *)","Bash(ls *)","Bash(find *)","Bash(grep *)","Bash(wc *)","Bash(head *)","Bash(tail *)","Bash(curl *)","Bash(python3 *)","Bash(pip *)","Bash(uv *)","Bash(npm *)","Bash(npx *)","Read(*)","Write(*)","Edit(*)"]},"agents":{}}
-              EOFAPPROVALS
-                echo "[exec-approvals] bootstrapped"
-              fi
-
               echo "All workspaces initialized"
           volumeMounts:
             - name: data
@@ -458,6 +449,10 @@ spec:
               readOnly: true
             - name: config
               mountPath: /operator-config
+              readOnly: true
+            - name: config
+              mountPath: /home/openclaw/.openclaw/exec-approvals.json
+              subPath: exec-approvals.json
               readOnly: true
 
         # === Gateway Proxy (nginx) ===
