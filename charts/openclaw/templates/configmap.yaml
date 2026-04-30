@@ -73,7 +73,6 @@ data:
       },
       "defaults": {
         "allow": [
-          "Bash(*)",
           "Bash(kubectl *)",
           "Bash(helm *)",
           "Bash(git *)",
@@ -140,7 +139,7 @@ data:
 
     ## Available tools
 
-    - `kubectl` — Kubernetes CLI (installed by init container to /opt/tools, using the pod service account)
+    - `kubectl` — Kubernetes CLI (installed by init container to /opt/tools)
     - `uv` — Python package manager (installed to ~/.local/bin)
     - `python3` — Python runtime
     - `ssh` — SSH client (keys mounted at ~/.ssh/)
