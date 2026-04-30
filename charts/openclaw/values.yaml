@@ -69,7 +69,7 @@ openclaw:
         - id: "bolt"
           name: "Bolt"
           workspace: "~/.openclaw/workspaces/bolt"
-          model: "fireworks/accounts/fireworks/models/deepseek-v4-pro"
+          model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
             profile: "full"
             allow:
@@ -104,7 +104,7 @@ openclaw:
         - id: "scout"
           name: "Scout"
           workspace: "~/.openclaw/workspaces/scout"
-          model: "fireworks/accounts/fireworks/models/minimax-m2p7"
+          model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
             profile: "full"
             allow:
@@ -123,7 +123,7 @@ openclaw:
         - id: "sentinel"
           name: "Sentinel"
           workspace: "~/.openclaw/workspaces/sentinel"
-          model: "fireworks/accounts/fireworks/models/glm-5p1"
+          model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
             profile: "full"
             allow:
@@ -140,7 +140,7 @@ openclaw:
         - id: "scribe"
           name: "Scribe"
           workspace: "~/.openclaw/workspaces/scribe"
-          model: "fireworks/accounts/fireworks/models/glm-5p1"
+          model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
             profile: "full"
             allow:
@@ -177,7 +177,7 @@ openclaw:
         - id: "ticker"
           name: "Ticker"
           workspace: "~/.openclaw/workspaces/ticker"
-          model: "fireworks/accounts/fireworks/models/deepseek-v4-pro"
+          model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
             profile: "full"
             allow:
@@ -193,7 +193,7 @@ openclaw:
         - id: "herald"
           name: "Herald"
           workspace: "~/.openclaw/workspaces/herald"
-          model: "fireworks/accounts/fireworks/models/minimax-m2p7"
+          model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
             profile: "full"
             allow:
@@ -212,7 +212,7 @@ openclaw:
         - id: "wraith"
           name: "Wraith"
           workspace: "~/.openclaw/workspaces/wraith"
-          model: "fireworks/accounts/fireworks/models/deepseek-v4-pro"
+          model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
             profile: "full"
             allow:
