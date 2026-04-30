@@ -23,7 +23,7 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
       serviceAccountName: {{ .Values.openclaw.name }}
-      automountServiceAccountToken: false
+      automountServiceAccountToken: true
       securityContext:
         fsGroup: 1000
         runAsUser: 1000
@@ -361,8 +361,6 @@ spec:
               value: "1"
             - name: PATH
               value: "/opt/tools:/home/openclaw/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-            - name: KUBECONFIG
-              value: "/home/openclaw/.kube/config"
             - name: GIT_CONFIG_GLOBAL
               value: "/home/openclaw/.openclaw/.gitconfig"
             - name: GH_TOKEN
@@ -427,10 +425,6 @@ spec:
               mountPath: /tmp
             - name: tools-bin
               mountPath: /opt/tools
-            - name: kubeconfig
-              mountPath: /home/openclaw/.kube/config
-              subPath: config
-              readOnly: true
             - name: ssh-keys
               mountPath: /home/openclaw/.ssh/id_ed25519
               subPath: id_ed25519
@@ -543,10 +537,6 @@ spec:
         - name: ssh-keys
           secret:
             secretName: openclaw-ssh
-            defaultMode: 0600
-        - name: kubeconfig
-          secret:
-            secretName: openclaw-kubeconfig
             defaultMode: 0600
         - name: mcp-rag-init
           configMap:
