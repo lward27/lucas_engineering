@@ -8,10 +8,9 @@ metadata:
 data:
   openclaw.json: |
     {{- $config := deepCopy .Values.openclaw.config }}
-    {{- $_ := set $config "meta" (dict "lastTouchedVersion" .Values.openclaw.image.tag "lastTouchedAt" "2026-04-30T00:00:00.000Z") }}
     {{- $_ := set $config "diagnostics" (dict "enabled" true "otel" (dict "enabled" true "endpoint" "http://localhost:4318" "protocol" "http/protobuf" "serviceName" "openclaw" "metrics" true "traces" true "logs" true "sampleRate" 1.0 "flushIntervalMs" 5000)) }}
     {{- $_ := set $config "plugins" (dict "entries" (dict "diagnostics-otel" (dict "enabled" true))) }}
-    {{- $_ := set $config "gateway" (dict "mode" "local" "auth" (dict "mode" "token" "token" "${OPENCLAW_GATEWAY_TOKEN}") "bind" "loopback" "controlUi" (dict "allowedOrigins" .Values.openclaw.config.gateway.controlUi.allowedOrigins "dangerouslyDisableDeviceAuth" true) "trustedProxies" .Values.openclaw.config.gateway.trustedProxies) }}
+    {{- $_ := set $config "gateway" (dict "auth" (dict "mode" "token" "token" "${OPENCLAW_GATEWAY_TOKEN}") "bind" "loopback" "controlUi" (dict "allowedOrigins" .Values.openclaw.config.gateway.controlUi.allowedOrigins "dangerouslyDisableDeviceAuth" true) "trustedProxies" .Values.openclaw.config.gateway.trustedProxies) }}
     {{- $config | toPrettyJson | nindent 4 }}
   nginx.conf: |
     worker_processes 1;
