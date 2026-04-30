@@ -22,8 +22,9 @@ openclaw:
     agents:
       defaults:
         model:
-          primary: "fireworks/accounts/fireworks/routers/kimi-k2p6-turbo"
+          primary: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           fallbacks:
+            - "fireworks/accounts/fireworks/routers/kimi-k2p6-turbo"
             - "fireworks/accounts/fireworks/models/kimi-k2p6"
             - "fireworks/accounts/fireworks/models/deepseek-v4-pro"
             - "fireworks/accounts/fireworks/models/minimax-m2p7"
@@ -53,7 +54,7 @@ openclaw:
           default: true
           name: "Nova"
           workspace: "~/.openclaw/workspace"
-          model: "fireworks/accounts/fireworks/routers/kimi-k2p6-turbo"
+          model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
             profile: "full"
           subagents:
@@ -90,7 +91,7 @@ openclaw:
         - id: "architect"
           name: "Architect"
           workspace: "~/.openclaw/workspaces/architect"
-          model: "fireworks/accounts/fireworks/routers/kimi-k2p6-turbo"
+          model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
             profile: "full"
             allow:
@@ -163,7 +164,7 @@ openclaw:
         - id: "forge"
           name: "Forge"
           workspace: "~/.openclaw/workspaces/forge"
-          model: "fireworks/accounts/fireworks/routers/kimi-k2p6-turbo"
+          model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
             profile: "full"
             allow:
