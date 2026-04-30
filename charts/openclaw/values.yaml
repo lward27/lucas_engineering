@@ -3,7 +3,7 @@ openclaw:
 
   image:
     repository: ghcr.io/openclaw/openclaw
-    tag: "2026.4.27"
+    tag: "2026.4.15"
     pullPolicy: IfNotPresent
 
   apiKeysSecret: openclaw-api-keys
@@ -271,7 +271,7 @@ openclaw:
           - "server_error"
     channels:
       telegram:
-        enabled: false
+        enabled: true
         botToken: "${TELEGRAM_BOT_TOKEN}"
         execApprovals:
           enabled: false
