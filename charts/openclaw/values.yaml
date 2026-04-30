@@ -71,7 +71,7 @@ openclaw:
           workspace: "~/.openclaw/workspaces/bolt"
           model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
-            profile: "full"
+            profile: "coding"
             allow:
               - "group:web"
               - "mcp__rag__rag_search"
@@ -87,7 +87,7 @@ openclaw:
           workspace: "~/.openclaw/workspaces/architect"
           model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
-            profile: "full"
+            profile: "coding"
             allow:
               - "group:web"
               - "mcp__rag__rag_search"
@@ -106,7 +106,6 @@ openclaw:
           workspace: "~/.openclaw/workspaces/scout"
           model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
-            profile: "full"
             allow:
               - "group:web"
               - "group:fs"
@@ -125,7 +124,7 @@ openclaw:
           workspace: "~/.openclaw/workspaces/sentinel"
           model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
-            profile: "full"
+            profile: "coding"
             allow:
               - "mcp__rag__rag_search"
               - "mcp__rag__rag_search_all"
@@ -142,7 +141,6 @@ openclaw:
           workspace: "~/.openclaw/workspaces/scribe"
           model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
-            profile: "full"
             allow:
               - "group:fs"
               - "group:web"
@@ -160,7 +158,7 @@ openclaw:
           workspace: "~/.openclaw/workspaces/forge"
           model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
-            profile: "full"
+            profile: "coding"
             allow:
               - "group:web"
               - "mcp__rag__rag_search"
@@ -179,7 +177,7 @@ openclaw:
           workspace: "~/.openclaw/workspaces/ticker"
           model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
-            profile: "full"
+            profile: "coding"
             allow:
               - "group:web"
               - "mcp__rag__rag_search"
@@ -195,7 +193,6 @@ openclaw:
           workspace: "~/.openclaw/workspaces/herald"
           model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
-            profile: "full"
             allow:
               - "group:web"
               - "group:fs"
@@ -214,7 +211,7 @@ openclaw:
           workspace: "~/.openclaw/workspaces/wraith"
           model: "fireworks/accounts/fireworks/models/qwen3p6-plus"
           tools:
-            profile: "full"
+            profile: "coding"
             allow:
               - "mcp__rag__rag_search"
               - "mcp__rag__rag_search_all"
