@@ -62,7 +62,6 @@ spec:
             - -c
             - |
               cp /config/openclaw.json /data/openclaw.json
-              rm -f /data/openclaw.json.bak
               sed -i "s|\${TELEGRAM_BOT_TOKEN}|$TELEGRAM_BOT_TOKEN|g" /data/openclaw.json
               sed -i "s|\${FIREWORKS_API_KEY}|$FIREWORKS_API_KEY|g" /data/openclaw.json
               sed -i "s|\${OPENCLAW_GATEWAY_TOKEN}|$OPENCLAW_GATEWAY_TOKEN|g" /data/openclaw.json
