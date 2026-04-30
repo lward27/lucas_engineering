@@ -450,10 +450,10 @@ spec:
             - name: config
               mountPath: /operator-config
               readOnly: true
-            - name: config
-              mountPath: /home/openclaw/.openclaw/exec-approvals.json
-              subPath: exec-approvals.json
-              readOnly: false
+            # - name: config
+            #   mountPath: /home/openclaw/.openclaw/exec-approvals.json
+            #   subPath: exec-approvals.json
+            #   readOnly: false
 
         # === Gateway Proxy (nginx) ===
         - name: gateway-proxy
