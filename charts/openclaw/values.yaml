@@ -271,7 +271,7 @@ openclaw:
           - "server_error"
     channels:
       telegram:
-        enabled: true
+        enabled: false
         botToken: "${TELEGRAM_BOT_TOKEN}"
         execApprovals:
           enabled: false
