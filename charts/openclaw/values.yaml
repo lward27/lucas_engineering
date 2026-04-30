@@ -259,7 +259,7 @@ openclaw:
             RAG_API_URL: "http://rag-service.apps-prod.svc.cluster.local:8000"
             RAG_API_TOKEN: "${RAG_API_TOKEN}"
     cron:
-      enabled: true
+      enabled: false
       maxConcurrentRuns: 2
       sessionRetention: "24h"
       retry:
