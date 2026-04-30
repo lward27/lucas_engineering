@@ -453,7 +453,7 @@ spec:
             - name: config
               mountPath: /home/openclaw/.openclaw/exec-approvals.json
               subPath: exec-approvals.json
-              readOnly: true
+              readOnly: false
 
         # === Gateway Proxy (nginx) ===
         - name: gateway-proxy
