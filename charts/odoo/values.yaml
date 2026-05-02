@@ -10,6 +10,8 @@ odoo:
   existingSecret: odoo-auth
   allowEmptyPassword: false
   loadDemoData: false
+  updateStrategy:
+    type: Recreate
 
   service:
     type: ClusterIP
