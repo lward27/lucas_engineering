@@ -52,11 +52,6 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.openclaw.gatewayTokenSecret }}
                   key: token
-            - name: RAG_API_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: rag-service-secrets
-                  key: api-token
           command:
             - sh
             - -c
@@ -65,7 +60,6 @@ spec:
               sed -i "s|\${TELEGRAM_BOT_TOKEN}|$TELEGRAM_BOT_TOKEN|g" /data/openclaw.json
               sed -i "s|\${FIREWORKS_API_KEY}|$FIREWORKS_API_KEY|g" /data/openclaw.json
               sed -i "s|\${OPENCLAW_GATEWAY_TOKEN}|$OPENCLAW_GATEWAY_TOKEN|g" /data/openclaw.json
-              sed -i "s|\${RAG_API_TOKEN}|$RAG_API_TOKEN|g" /data/openclaw.json
               mkdir -p /data/workspace
               [ -f /data/workspace/BOOTSTRAP.md ] || cp /workspace-init/BOOTSTRAP.md /data/workspace/BOOTSTRAP.md
               [ -f /data/workspace/ENVIRONMENT.md ] || cp /workspace-init/ENVIRONMENT.md /data/workspace/ENVIRONMENT.md
@@ -173,7 +167,7 @@ spec:
                 done
 
                 # Copy shared files (only if they don't exist)
-                for shared in shared-user-md:USER.md shared-environment-md:ENVIRONMENT.md shared-tools-rag-md:TOOLS_RAG.md; do
+                for shared in shared-user-md:USER.md shared-environment-md:ENVIRONMENT.md; do
                   key="${shared%%:*}"
                   fname="${shared#*:}"
                   src="$INIT/$key"
@@ -293,47 +287,6 @@ spec:
             capabilities:
               drop: [ALL]
 
-        # 7. Install RAG MCP server dependencies
-        - name: init-rag-mcp
-          image: {{ .Values.openclaw.image.repository }}:{{ .Values.openclaw.image.tag }}
-          command:
-            - sh
-            - -c
-            - |
-              set -e
-              MCP_DIR=/home/openclaw/.openclaw/mcp-servers/rag
-              mkdir -p "$MCP_DIR"
-              # Copy server script from configmap
-              cp /mcp-rag-init/server.py "$MCP_DIR/server.py"
-              # Install dependencies using uv
-              if [ ! -d "$MCP_DIR/.venv" ]; then
-                /home/openclaw/.local/bin/uv venv "$MCP_DIR/.venv" --python python3
-              fi
-              /home/openclaw/.local/bin/uv pip install --python "$MCP_DIR/.venv/bin/python" \
-                "mcp[cli]>=1.0.0" "httpx>=0.28.0" 2>&1 | tail -3
-              echo "RAG MCP server ready at $MCP_DIR"
-          env:
-            - name: HOME
-              value: /home/openclaw
-          volumeMounts:
-            - name: data
-              mountPath: /home/openclaw/.openclaw
-            - name: data
-              mountPath: /home/openclaw/.local
-              subPath: .local
-            - name: data
-              mountPath: /home/openclaw/.cache
-              subPath: .cache
-            - name: mcp-rag-init
-              mountPath: /mcp-rag-init
-              readOnly: true
-            - name: tmp
-              mountPath: /tmp
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: [ALL]
-
       containers:
         # === Main OpenClaw container ===
         - name: openclaw
@@ -392,10 +345,10 @@ spec:
             httpGet:
               path: /healthz
               port: 18790
-            failureThreshold: 6
-            initialDelaySeconds: 30
-            periodSeconds: 15
-            timeoutSeconds: 10
+            failureThreshold: 12
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            timeoutSeconds: 30
           readinessProbe:
             httpGet:
               path: /readyz
@@ -548,6 +501,3 @@ spec:
           secret:
             secretName: openclaw-kubeconfig
             defaultMode: 0600
-        - name: mcp-rag-init
-          configMap:
-            name: openclaw-mcp-rag

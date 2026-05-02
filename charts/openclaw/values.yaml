@@ -141,6 +141,153 @@ openclaw:
           enabled: false
         "xurl":
           enabled: false
+    plugins:
+      # Keep the OpenClaw runtime intentionally small. OpenClaw enables many
+      # bundled plugins/providers by default, so explicitly deny everything we
+      # do not need for Nova + Kubernetes work.
+      entries:
+        acpx:
+          enabled: true
+        diagnostics-otel:
+          enabled: true
+        fireworks:
+          enabled: true
+        alibaba:
+          enabled: false
+        amazon-bedrock:
+          enabled: false
+        amazon-bedrock-mantle:
+          enabled: false
+        anthropic:
+          enabled: false
+        anthropic-vertex:
+          enabled: false
+        arcee:
+          enabled: false
+        azure-speech:
+          enabled: false
+        bonjour:
+          enabled: false
+        browser:
+          enabled: false
+        byteplus:
+          enabled: false
+        cerebras:
+          enabled: false
+        chutes:
+          enabled: false
+        cloudflare-ai-gateway:
+          enabled: false
+        comfy:
+          enabled: false
+        copilot-proxy:
+          enabled: false
+        deepgram:
+          enabled: false
+        deepinfra:
+          enabled: false
+        deepseek:
+          enabled: false
+        device-pair:
+          enabled: false
+        document-extract:
+          enabled: false
+        elevenlabs:
+          enabled: false
+        fal:
+          enabled: false
+        file-transfer:
+          enabled: false
+        github-copilot:
+          enabled: false
+        google:
+          enabled: false
+        groq:
+          enabled: false
+        huggingface:
+          enabled: false
+        inworld:
+          enabled: false
+        kilocode:
+          enabled: false
+        kimi:
+          enabled: false
+        litellm:
+          enabled: false
+        lmstudio:
+          enabled: false
+        memory-core:
+          enabled: false
+        microsoft:
+          enabled: false
+        microsoft-foundry:
+          enabled: false
+        minimax:
+          enabled: false
+        mistral:
+          enabled: false
+        moonshot:
+          enabled: false
+        nvidia:
+          enabled: false
+        ollama:
+          enabled: false
+        openai:
+          enabled: false
+        opencode:
+          enabled: false
+        opencode-go:
+          enabled: false
+        openrouter:
+          enabled: false
+        phone-control:
+          enabled: false
+        qianfan:
+          enabled: false
+        qqbot:
+          enabled: false
+        qwen:
+          enabled: false
+        runway:
+          enabled: false
+        senseaudio:
+          enabled: false
+        sglang:
+          enabled: false
+        stepfun:
+          enabled: false
+        synthetic:
+          enabled: false
+        talk-voice:
+          enabled: false
+        telegram:
+          enabled: false
+        tencent:
+          enabled: false
+        together:
+          enabled: false
+        tts-local-cli:
+          enabled: false
+        venice:
+          enabled: false
+        vercel-ai-gateway:
+          enabled: false
+        vllm:
+          enabled: false
+        volcengine:
+          enabled: false
+        voyage:
+          enabled: false
+        vydra:
+          enabled: false
+        web-readability:
+          enabled: false
+        xai:
+          enabled: false
+        xiaomi:
+          enabled: false
+        zai:
+          enabled: false
     agents:
       defaults:
         model:
@@ -164,8 +311,8 @@ openclaw:
         userTimezone: "America/New_York"
         subagents:
           maxSpawnDepth: 2
-          maxChildrenPerAgent: 5
-          maxConcurrent: 8
+          maxChildrenPerAgent: 2
+          maxConcurrent: 3
           runTimeoutSeconds: 900
           archiveAfterMinutes: 60
       list:
@@ -200,10 +347,6 @@ openclaw:
             profile: "full"
             allow:
               - "group:web"
-              - "mcp__rag__rag_search"
-              - "mcp__rag__rag_search_all"
-              - "mcp__rag__rag_index"
-              - "mcp__rag__rag_status"
           sandbox:
             mode: "off"
 
@@ -216,10 +359,6 @@ openclaw:
             profile: "full"
             allow:
               - "group:web"
-              - "mcp__rag__rag_search"
-              - "mcp__rag__rag_search_all"
-              - "mcp__rag__rag_index"
-              - "mcp__rag__rag_status"
           subagents:
             allowAgents:
               - "bolt"
@@ -238,10 +377,6 @@ openclaw:
               - "group:fs"
               - "group:memory"
               - "group:sessions"
-              - "mcp__rag__rag_search"
-              - "mcp__rag__rag_search_all"
-              - "mcp__rag__rag_index"
-              - "mcp__rag__rag_status"
           sandbox:
             mode: "off"
 
@@ -252,11 +387,6 @@ openclaw:
           model: "fireworks/accounts/fireworks/models/glm-5p1"
           tools:
             profile: "full"
-            allow:
-              - "mcp__rag__rag_search"
-              - "mcp__rag__rag_search_all"
-              - "mcp__rag__rag_index"
-              - "mcp__rag__rag_status"
           sandbox:
             mode: "off"
 
@@ -271,10 +401,6 @@ openclaw:
               - "group:fs"
               - "group:web"
               - "group:memory"
-              - "mcp__rag__rag_search"
-              - "mcp__rag__rag_search_all"
-              - "mcp__rag__rag_index"
-              - "mcp__rag__rag_status"
           sandbox:
             mode: "off"
 
@@ -287,10 +413,6 @@ openclaw:
             profile: "full"
             allow:
               - "group:web"
-              - "mcp__rag__rag_search"
-              - "mcp__rag__rag_search_all"
-              - "mcp__rag__rag_index"
-              - "mcp__rag__rag_status"
           subagents:
             allowAgents:
               - "bolt"
@@ -306,10 +428,6 @@ openclaw:
             profile: "full"
             allow:
               - "group:web"
-              - "mcp__rag__rag_search"
-              - "mcp__rag__rag_search_all"
-              - "mcp__rag__rag_index"
-              - "mcp__rag__rag_status"
           sandbox:
             mode: "off"
 
@@ -325,10 +443,6 @@ openclaw:
               - "group:fs"
               - "group:memory"
               - "group:sessions"
-              - "mcp__rag__rag_search"
-              - "mcp__rag__rag_search_all"
-              - "mcp__rag__rag_index"
-              - "mcp__rag__rag_status"
           sandbox:
             mode: "off"
 
@@ -339,11 +453,6 @@ openclaw:
           model: "fireworks/accounts/fireworks/models/deepseek-v4-pro"
           tools:
             profile: "full"
-            allow:
-              - "mcp__rag__rag_search"
-              - "mcp__rag__rag_search_all"
-              - "mcp__rag__rag_index"
-              - "mcp__rag__rag_status"
           sandbox:
             mode: "off"
 
@@ -367,15 +476,6 @@ openclaw:
     approvals:
       exec:
         enabled: false
-    mcp:
-      servers:
-        rag:
-          command: "/home/openclaw/.openclaw/mcp-servers/rag/.venv/bin/python"
-          args:
-            - "/home/openclaw/.openclaw/mcp-servers/rag/server.py"
-          env:
-            RAG_API_URL: "http://rag-service.apps-prod.svc.cluster.local:8000"
-            RAG_API_TOKEN: "${RAG_API_TOKEN}"
     cron:
       enabled: false
       maxConcurrentRuns: 2
@@ -389,7 +489,7 @@ openclaw:
           - "server_error"
     channels:
       telegram:
-        enabled: true
+        enabled: false
         botToken: "${TELEGRAM_BOT_TOKEN}"
         execApprovals:
           enabled: false
@@ -456,8 +556,8 @@ openclaw:
 
   resources:
     requests:
-      cpu: "500m"
-      memory: "1Gi"
+      cpu: "2"
+      memory: "4Gi"
     limits:
       cpu: "6000m"
       memory: "8Gi"
