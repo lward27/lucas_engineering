@@ -1,0 +1,10 @@
+{{- if .Values.hermes.serviceAccount.create }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.hermes.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.hermes.name }}
+automountServiceAccountToken: {{ .Values.hermes.serviceAccount.automountToken }}
+{{- end }}

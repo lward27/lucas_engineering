@@ -1,0 +1,34 @@
+{{- if .Values.hermes.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.hermes.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.hermes.name }}
+  annotations:
+    cert-manager.io/cluster-issuer: {{ .Values.hermes.ingress.clusterIssuer }}
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    {{- with .Values.hermes.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.hermes.ingress.className }}
+  tls:
+    - hosts:
+        - {{ .Values.hermes.ingress.host }}
+      secretName: {{ .Values.hermes.ingress.tlsSecretName }}
+  rules:
+    - host: {{ .Values.hermes.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.hermes.name }}
+                port:
+                  name: {{ .Values.hermes.ingress.servicePortName }}
+{{- end }}

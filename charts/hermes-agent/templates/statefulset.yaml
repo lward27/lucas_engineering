@@ -1,0 +1,257 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.hermes.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.hermes.name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: 1
+  serviceName: {{ .Values.hermes.name }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.hermes.name }}
+      app.kubernetes.io/instance: {{ .Values.hermes.name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.hermes.name }}
+        app.kubernetes.io/instance: {{ .Values.hermes.name }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      serviceAccountName: {{ .Values.hermes.name }}
+      automountServiceAccountToken: {{ .Values.hermes.serviceAccount.automountToken }}
+      securityContext:
+        fsGroup: 10000
+        runAsUser: 10000
+        runAsGroup: 10000
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: init-config
+          image: busybox:1.37
+          command:
+            - sh
+            - /config/init-config.sh
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: config
+              mountPath: /config
+              readOnly: true
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+
+        {{- if .Values.hermes.tools.kubectl.enabled }}
+        - name: install-kubectl
+          image: {{ .Values.hermes.tools.kubectl.image }}
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - |
+              cp /opt/bitnami/kubectl/bin/kubectl /tools/kubectl
+              chmod +x /tools/kubectl
+          volumeMounts:
+            - name: tools-bin
+              mountPath: /tools
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+        {{- end }}
+
+        {{- if .Values.hermes.tools.gh.enabled }}
+        - name: install-gh
+          image: {{ .Values.hermes.tools.gh.image }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: GH_VERSION
+              value: {{ .Values.hermes.tools.gh.version | quote }}
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+              LOCAL=/data/.local/bin
+              if [ -x "$LOCAL/gh" ]; then
+                exit 0
+              fi
+              apk add --no-cache curl tar gzip ca-certificates
+              mkdir -p "$LOCAL"
+              cd /tmp
+              curl -fsSL "https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_amd64.tar.gz" -o gh.tar.gz
+              tar xzf gh.tar.gz
+              cp "gh_${GH_VERSION}_linux_amd64/bin/gh" "$LOCAL/gh"
+              chmod +x "$LOCAL/gh"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: tmp
+              mountPath: /tmp
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+        {{- end }}
+      containers:
+        - name: gateway
+          image: {{ .Values.hermes.image.repository }}:{{ .Values.hermes.image.tag }}
+          imagePullPolicy: {{ .Values.hermes.image.pullPolicy }}
+          args:
+            - gateway
+            - run
+          {{- if or .Values.hermes.gateway.apiServer.enabled .Values.hermes.gateway.webhook.enabled }}
+          ports:
+            {{- if .Values.hermes.gateway.apiServer.enabled }}
+            - name: api-server
+              containerPort: {{ .Values.hermes.gateway.apiServer.port }}
+              protocol: TCP
+            {{- end }}
+            {{- if .Values.hermes.gateway.webhook.enabled }}
+            - name: webhook
+              containerPort: {{ .Values.hermes.gateway.webhook.port }}
+              protocol: TCP
+            {{- end }}
+          {{- end }}
+          env:
+            - name: HERMES_HOME
+              value: /opt/data
+            - name: HERMES_UID
+              value: "10000"
+            - name: HERMES_GID
+              value: "10000"
+            - name: HOME
+              value: /opt/data
+            - name: TZ
+              value: {{ .Values.hermes.config.timezone | quote }}
+            - name: PATH
+              value: "/opt/tools:/opt/data/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            - name: KUBECONFIG
+              value: /opt/data/home/.kube/config
+            - name: API_SERVER_ENABLED
+              value: {{ .Values.hermes.gateway.apiServer.enabled | quote }}
+            - name: API_SERVER_HOST
+              value: {{ .Values.hermes.gateway.apiServer.host | quote }}
+            - name: API_SERVER_PORT
+              value: {{ .Values.hermes.gateway.apiServer.port | quote }}
+            - name: WEBHOOK_PORT
+              value: {{ .Values.hermes.gateway.webhook.port | quote }}
+            {{- if .Values.hermes.gateway.telegram.allowFrom }}
+            - name: TELEGRAM_ALLOWED_USERS
+              value: {{ join "," .Values.hermes.gateway.telegram.allowFrom | quote }}
+            {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.hermes.secrets.apiKeysName }}
+                optional: {{ .Values.hermes.secrets.apiKeysOptional }}
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - grep -q gateway_state /opt/data/gateway_state.json && grep -q running /opt/data/gateway_state.json
+            failureThreshold: 6
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - test -f /opt/data/gateway.pid
+            failureThreshold: 6
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            timeoutSeconds: 5
+          resources:
+            {{- toYaml .Values.hermes.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: data
+              mountPath: /opt/data
+            - name: tools-bin
+              mountPath: /opt/tools
+            - name: tmp
+              mountPath: /tmp
+            - name: kubeconfig
+              mountPath: /opt/data/home/.kube
+              readOnly: true
+            - name: ssh-keys
+              mountPath: /opt/data/home/.ssh
+              readOnly: true
+
+        {{- if .Values.hermes.dashboard.enabled }}
+        - name: dashboard
+          image: {{ .Values.hermes.image.repository }}:{{ .Values.hermes.image.tag }}
+          imagePullPolicy: {{ .Values.hermes.image.pullPolicy }}
+          args:
+            - dashboard
+            - --host
+            - 0.0.0.0
+            - --port
+            - {{ .Values.hermes.dashboard.port | quote }}
+            - --no-open
+            - --insecure
+          ports:
+            - name: dashboard
+              containerPort: {{ .Values.hermes.dashboard.port }}
+              protocol: TCP
+          env:
+            - name: HERMES_HOME
+              value: /opt/data
+            - name: HERMES_UID
+              value: "10000"
+            - name: HERMES_GID
+              value: "10000"
+            - name: HOME
+              value: /opt/data
+            - name: HERMES_DASHBOARD_TUI
+              value: {{ ternary "1" "0" .Values.hermes.dashboard.embeddedChat | quote }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.hermes.secrets.apiKeysName }}
+                optional: {{ .Values.hermes.secrets.apiKeysOptional }}
+          resources:
+            {{- toYaml .Values.hermes.dashboardResources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: data
+              mountPath: /opt/data
+            - name: tmp
+              mountPath: /tmp
+        {{- end }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Values.hermes.name }}-data
+        - name: config
+          configMap:
+            name: {{ .Values.hermes.name }}-config
+            defaultMode: 0755
+        - name: tools-bin
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+        - name: kubeconfig
+          secret:
+            secretName: {{ .Values.hermes.secrets.kubeconfigName }}
+            optional: {{ .Values.hermes.secrets.kubeconfigOptional }}
+            defaultMode: 0600
+        - name: ssh-keys
+          secret:
+            secretName: {{ .Values.hermes.secrets.sshName }}
+            optional: {{ .Values.hermes.secrets.sshOptional }}
+            defaultMode: 0600

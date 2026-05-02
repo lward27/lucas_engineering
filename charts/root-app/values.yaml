@@ -31,6 +31,8 @@ apps:
     enabled: true
   nanoclaw:
     enabled: false
+  hermes-agent:
+    enabled: true
   openclaw:
     enabled: true
   openfaas:

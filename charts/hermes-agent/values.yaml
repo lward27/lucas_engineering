@@ -1,0 +1,108 @@
+hermes:
+  name: hermes-agent
+
+  image:
+    repository: nousresearch/hermes-agent
+    tag: "v2026.4.30"
+    pullPolicy: IfNotPresent
+
+  serviceAccount:
+    create: true
+    automountToken: false
+
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 10Gi
+
+  secrets:
+    # Create this manually. Expected keys are whichever providers/platforms you enable,
+    # for example FIREWORKS_API_KEY, GH_TOKEN, TELEGRAM_BOT_TOKEN, and API_SERVER_KEY.
+    apiKeysName: hermes-api-keys
+    apiKeysOptional: true
+    # Optional secret with key "config" containing a kubeconfig for cluster operations.
+    kubeconfigName: hermes-kubeconfig
+    kubeconfigOptional: true
+    # Optional secret with id_ed25519, id_ed25519.pub, known_hosts, and config.
+    sshName: hermes-ssh
+    sshOptional: true
+
+  config:
+    overwriteOnStart: false
+    timezone: America/New_York
+    model:
+      provider: fireworks
+      default: accounts/fireworks/routers/kimi-k2p6-turbo
+    providers:
+      fireworks:
+        name: Fireworks
+        baseUrl: https://api.fireworks.ai/inference/v1
+        keyEnv: FIREWORKS_API_KEY
+        transport: openai_chat
+    terminal:
+      cwd: /opt/data/workspace
+    display:
+      compact: true
+      toolProgress: all
+      interimAssistantMessages: true
+
+  gateway:
+    telegram:
+      enabled: true
+      dmPolicy: allowlist
+      allowFrom:
+        - "8635782483"
+    apiServer:
+      enabled: false
+      host: 0.0.0.0
+      port: 8642
+    webhook:
+      enabled: false
+      port: 8644
+
+  dashboard:
+    enabled: true
+    port: 9119
+    embeddedChat: true
+
+  tools:
+    kubectl:
+      enabled: true
+      image: bitnami/kubectl:latest
+    gh:
+      enabled: true
+      image: alpine:3.20
+      version: 2.69.0
+
+  service:
+    type: ClusterIP
+
+  ingress:
+    enabled: true
+    className: nginx
+    host: hermes.lucas.engineering
+    clusterIssuer: letsencrypt-prod
+    tlsSecretName: hermes-lucas-engineering-tls
+    # Set to dashboard or api-server when enabling ingress.
+    servicePortName: dashboard
+    annotations: {}
+
+  networkPolicy:
+    enabled: true
+    homelabCidr: 192.168.20.0/24
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: "2"
+      memory: 4Gi
+
+  dashboardResources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi

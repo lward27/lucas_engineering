@@ -1,0 +1,16 @@
+{{- if .Values.hermes.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.hermes.name }}-data
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.hermes.name }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.hermes.persistence.storageClass }}
+  resources:
+    requests:
+      storage: {{ .Values.hermes.persistence.size }}
+{{- end }}

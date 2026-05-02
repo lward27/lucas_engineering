@@ -1,0 +1,58 @@
+{{- if .Values.hermes.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Values.hermes.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.hermes.name }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.hermes.name }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    {{- if or .Values.hermes.dashboard.enabled .Values.hermes.gateway.apiServer.enabled .Values.hermes.gateway.webhook.enabled }}
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        {{- if .Values.hermes.dashboard.enabled }}
+        - port: {{ .Values.hermes.dashboard.port }}
+          protocol: TCP
+        {{- end }}
+        {{- if .Values.hermes.gateway.apiServer.enabled }}
+        - port: {{ .Values.hermes.gateway.apiServer.port }}
+          protocol: TCP
+        {{- end }}
+        {{- if .Values.hermes.gateway.webhook.enabled }}
+        - port: {{ .Values.hermes.gateway.webhook.port }}
+          protocol: TCP
+        {{- end }}
+    {{- end }}
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+  egress:
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    - ports:
+        - port: 443
+          protocol: TCP
+    - to:
+        - ipBlock:
+            cidr: {{ .Values.hermes.networkPolicy.homelabCidr }}
+      ports:
+        - port: 22
+          protocol: TCP
+    - ports:
+        - port: 6443
+          protocol: TCP
+{{- end }}

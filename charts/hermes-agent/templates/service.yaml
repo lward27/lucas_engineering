@@ -1,0 +1,33 @@
+{{- if or .Values.hermes.dashboard.enabled .Values.hermes.gateway.apiServer.enabled .Values.hermes.gateway.webhook.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.hermes.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.hermes.name }}
+spec:
+  type: {{ .Values.hermes.service.type }}
+  selector:
+    app.kubernetes.io/name: {{ .Values.hermes.name }}
+    app.kubernetes.io/instance: {{ .Values.hermes.name }}
+  ports:
+    {{- if .Values.hermes.dashboard.enabled }}
+    - name: dashboard
+      port: {{ .Values.hermes.dashboard.port }}
+      targetPort: dashboard
+      protocol: TCP
+    {{- end }}
+    {{- if .Values.hermes.gateway.apiServer.enabled }}
+    - name: api-server
+      port: {{ .Values.hermes.gateway.apiServer.port }}
+      targetPort: api-server
+      protocol: TCP
+    {{- end }}
+    {{- if .Values.hermes.gateway.webhook.enabled }}
+    - name: webhook
+      port: {{ .Values.hermes.gateway.webhook.port }}
+      targetPort: webhook
+      protocol: TCP
+    {{- end }}
+{{- end }}

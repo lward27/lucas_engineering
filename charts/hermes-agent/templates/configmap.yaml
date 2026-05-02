@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.hermes.name }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.hermes.name }}
+data:
+  config.yaml: |
+    model:
+      default: {{ .Values.hermes.config.model.default | quote }}
+      provider: {{ .Values.hermes.config.model.provider | quote }}
+
+    providers:
+    {{- range $name, $provider := .Values.hermes.config.providers }}
+      {{ $name }}:
+        name: {{ $provider.name | quote }}
+        base_url: {{ $provider.baseUrl | quote }}
+        key_env: {{ $provider.keyEnv | quote }}
+        transport: {{ $provider.transport | quote }}
+    {{- end }}
+
+    terminal:
+      cwd: {{ .Values.hermes.config.terminal.cwd | quote }}
+
+    display:
+      compact: {{ .Values.hermes.config.display.compact }}
+      tool_progress: {{ .Values.hermes.config.display.toolProgress | quote }}
+      interim_assistant_messages: {{ .Values.hermes.config.display.interimAssistantMessages }}
+
+    platforms:
+      telegram:
+        enabled: {{ .Values.hermes.gateway.telegram.enabled }}
+        dm_policy: {{ .Values.hermes.gateway.telegram.dmPolicy | quote }}
+        allow_from:
+        {{- if .Values.hermes.gateway.telegram.allowFrom }}
+        {{- range .Values.hermes.gateway.telegram.allowFrom }}
+          - {{ . | quote }}
+        {{- end }}
+        {{- else }}
+          []
+        {{- end }}
+      api_server:
+        enabled: {{ .Values.hermes.gateway.apiServer.enabled }}
+        extra:
+          host: {{ .Values.hermes.gateway.apiServer.host | quote }}
+          port: {{ .Values.hermes.gateway.apiServer.port }}
+      webhook:
+        enabled: {{ .Values.hermes.gateway.webhook.enabled }}
+        extra:
+          port: {{ .Values.hermes.gateway.webhook.port }}
+
+    gateway_timeout: 1800
+    gateway_timeout_warning: 900
+
+  init-config.sh: |
+    #!/bin/sh
+    set -eu
+
+    mkdir -p /data/cron /data/sessions /data/logs /data/hooks /data/memories /data/skills /data/skins /data/plans /data/workspace /data/home
+
+    if [ "{{ .Values.hermes.config.overwriteOnStart }}" = "true" ] || [ ! -f /data/config.yaml ]; then
+      cp /config/config.yaml /data/config.yaml
+    fi
+
+    if [ ! -f /data/SOUL.md ]; then
+      cat > /data/SOUL.md <<'EOF'
+    You are Hermes Agent running as a standalone Kubernetes workload for Lucas.
+    You are separate from OpenClaw. Do not assume OpenClaw state, storage, or identity.
+    Prefer GitOps changes for cluster-managed applications.
+    EOF
+    fi
+
+    if [ ! -f /data/.env ]; then
+      touch /data/.env
+    fi
+
+    chmod 700 /data/home || true
+    chmod 640 /data/config.yaml /data/.env || true
