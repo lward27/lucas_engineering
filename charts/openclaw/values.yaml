@@ -19,6 +19,25 @@ openclaw:
     uvImage: "ghcr.io/astral-sh/uv:0.6-bookworm-slim"
 
   config:
+    skills:
+      # OpenClaw only blocks bundled skills when this allowlist is non-empty.
+      # k8s-status is a workspace skill, so this intentionally blocks every
+      # bundled skill while entries below keep the Kubernetes skill enabled.
+      allowBundled:
+        - "k8s-status"
+      entries:
+        k8s-status:
+          enabled: true
+        browser-automation:
+          enabled: false
+        homelab-ssh:
+          enabled: false
+        qqbot-channel:
+          enabled: false
+        qqbot-media:
+          enabled: false
+        qqbot-remind:
+          enabled: false
     agents:
       defaults:
         model:
@@ -135,9 +154,6 @@ openclaw:
               - "mcp__rag__rag_search_all"
               - "mcp__rag__rag_index"
               - "mcp__rag__rag_status"
-            deny:
-              - "gateway"
-              - "cron"
           sandbox:
             mode: "off"
 
