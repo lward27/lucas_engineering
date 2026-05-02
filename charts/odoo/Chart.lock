@@ -1,0 +1,6 @@
+dependencies:
+- name: odoo
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 28.2.10
+digest: sha256:6644dc7262f1f95456db6155d0e36648deb8c4a847a7d36e8026cdfebbcfb638
+generated: "2026-05-02T06:21:55.233799-04:00"

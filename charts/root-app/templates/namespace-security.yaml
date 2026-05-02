@@ -10,6 +10,7 @@
   "directus"
   "forge-platform"
   "homepage"
+  "odoo"
   "registry"
 }}
 {{- range $ns := $baselineNamespaces }}

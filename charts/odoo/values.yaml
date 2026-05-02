@@ -1,0 +1,79 @@
+odoo:
+  odooEmail: admin@lucas.engineering
+  existingSecret: odoo-auth
+  allowEmptyPassword: false
+  loadDemoData: false
+
+  service:
+    type: ClusterIP
+
+  # The chart's NetworkPolicy template also reads containerPorts.https.
+  containerPorts:
+    http: 8069
+    https: 8072
+
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hostname: odoo.lucas.engineering
+    path: /
+    pathType: Prefix
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/proxy-body-size: "64m"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    tls: false
+    extraTls:
+      - hosts:
+          - odoo.lucas.engineering
+        secretName: odoo-lucas-engineering-tls
+
+  persistence:
+    enabled: true
+    storageClass: local-path
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+
+  resourcesPreset: "none"
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: "2"
+      memory: 2Gi
+
+  volumePermissions:
+    enabled: true
+
+  postgresql:
+    enabled: true
+    auth:
+      username: bn_odoo
+      database: bitnami_odoo
+      existingSecret: odoo-postgresql-auth
+    architecture: standalone
+    primary:
+      persistence:
+        enabled: true
+        storageClass: local-path
+        accessModes:
+          - ReadWriteOnce
+        size: 8Gi
+      resourcesPreset: "none"
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: "1"
+          memory: 1Gi
+
+  networkPolicy:
+    enabled: true
+    allowExternal: false
+    allowExternalEgress: true
+    ingressNSMatchLabels:
+      kubernetes.io/metadata.name: ingress-nginx

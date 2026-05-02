@@ -77,6 +77,8 @@ apps:
     enabled: true
   ollama:
     enabled: true
+  odoo:
+    enabled: true
   rag-mcp-server:
     enabled: false
   clawspace:
