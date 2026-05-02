@@ -20,23 +20,126 @@ openclaw:
 
   config:
     skills:
-      # OpenClaw only blocks bundled skills when this allowlist is non-empty.
-      # k8s-status is a workspace skill, so this intentionally blocks every
-      # bundled skill while entries below keep the Kubernetes skill enabled.
+      # Block bundled skills at selection time and also mark every built-in
+      # skill disabled so the Control UI toggles default to off.
       allowBundled:
         - "k8s-status"
       entries:
-        k8s-status:
+        "k8s-status":
           enabled: true
-        browser-automation:
+        "browser-automation":
           enabled: false
-        homelab-ssh:
+        "homelab-ssh":
           enabled: false
-        qqbot-channel:
+        "qqbot-channel":
           enabled: false
-        qqbot-media:
+        "qqbot-media":
           enabled: false
-        qqbot-remind:
+        "qqbot-remind":
+          enabled: false
+        "1password":
+          enabled: false
+        "apple-notes":
+          enabled: false
+        "apple-reminders":
+          enabled: false
+        "bear-notes":
+          enabled: false
+        "blogwatcher":
+          enabled: false
+        "blucli":
+          enabled: false
+        "bluebubbles":
+          enabled: false
+        "camsnap":
+          enabled: false
+        "clawhub":
+          enabled: false
+        "coding-agent":
+          enabled: false
+        "discord":
+          enabled: false
+        "eightctl":
+          enabled: false
+        "gemini":
+          enabled: false
+        "gh-issues":
+          enabled: false
+        "gifgrep":
+          enabled: false
+        "github":
+          enabled: false
+        "gog":
+          enabled: false
+        "goplaces":
+          enabled: false
+        "healthcheck":
+          enabled: false
+        "himalaya":
+          enabled: false
+        "imsg":
+          enabled: false
+        "mcporter":
+          enabled: false
+        "model-usage":
+          enabled: false
+        "nano-pdf":
+          enabled: false
+        "node-connect":
+          enabled: false
+        "notion":
+          enabled: false
+        "obsidian":
+          enabled: false
+        "openai-whisper":
+          enabled: false
+        "openai-whisper-api":
+          enabled: false
+        "openhue":
+          enabled: false
+        "oracle":
+          enabled: false
+        "ordercli":
+          enabled: false
+        "peekaboo":
+          enabled: false
+        "sag":
+          enabled: false
+        "session-logs":
+          enabled: false
+        "sherpa-onnx-tts":
+          enabled: false
+        "skill-creator":
+          enabled: false
+        "slack":
+          enabled: false
+        "songsee":
+          enabled: false
+        "sonoscli":
+          enabled: false
+        "spotify-player":
+          enabled: false
+        "summarize":
+          enabled: false
+        "taskflow":
+          enabled: false
+        "taskflow-inbox-triage":
+          enabled: false
+        "things-mac":
+          enabled: false
+        "tmux":
+          enabled: false
+        "trello":
+          enabled: false
+        "video-frames":
+          enabled: false
+        "voice-call":
+          enabled: false
+        "wacli":
+          enabled: false
+        "weather":
+          enabled: false
+        "xurl":
           enabled: false
     agents:
       defaults:
