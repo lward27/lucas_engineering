@@ -62,6 +62,9 @@ spec:
               mountPath: /tools
           securityContext:
             allowPrivilegeEscalation: false
+            runAsUser: 0
+            runAsGroup: 0
+            runAsNonRoot: false
             capabilities:
               drop: [ALL]
         {{- end }}
@@ -96,6 +99,9 @@ spec:
               mountPath: /tmp
           securityContext:
             allowPrivilegeEscalation: false
+            runAsUser: 0
+            runAsGroup: 0
+            runAsNonRoot: false
             capabilities:
               drop: [ALL]
         {{- end }}
