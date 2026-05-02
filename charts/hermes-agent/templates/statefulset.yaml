@@ -89,7 +89,7 @@ spec:
               mkdir -p "$LOCAL"
               cd /tmp
               curl -fsSL "https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_amd64.tar.gz" -o gh.tar.gz
-              tar xzf gh.tar.gz
+              tar --no-same-owner -xzf gh.tar.gz "gh_${GH_VERSION}_linux_amd64/bin/gh"
               cp "gh_${GH_VERSION}_linux_amd64/bin/gh" "$LOCAL/gh"
               chmod +x "$LOCAL/gh"
           volumeMounts:
