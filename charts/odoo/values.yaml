@@ -1,4 +1,11 @@
 odoo:
+  global:
+    security:
+      allowInsecureImages: true
+
+  image:
+    repository: bitnamilegacy/odoo
+
   odooEmail: admin@lucas.engineering
   existingSecret: odoo-auth
   allowEmptyPassword: false
@@ -50,6 +57,8 @@ odoo:
 
   postgresql:
     enabled: true
+    image:
+      repository: bitnamilegacy/postgresql
     auth:
       username: bn_odoo
       database: bitnami_odoo
