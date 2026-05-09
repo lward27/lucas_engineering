@@ -144,6 +144,8 @@ spec:
                 rm -rf "$DEST"
                 mv "$DEST.tmp" "$DEST"
               fi
+              cd "$DEST"
+              npm install --silent --no-fund --no-audit --progress=false
           volumeMounts:
             - name: data
               mountPath: /data
