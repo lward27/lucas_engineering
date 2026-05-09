@@ -107,6 +107,24 @@ spec:
         {{- end }}
 
         {{- if and .Values.hermes.dashboard.enabled .Values.hermes.dashboard.embeddedChat }}
+        - name: cleanup-dashboard-tui
+          image: busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              rm -rf /data/ui-tui /data/ui-tui.tmp
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 0
+            runAsGroup: 0
+            runAsNonRoot: false
+            capabilities:
+              drop: [ALL]
+
         - name: prepare-dashboard-tui
           image: {{ .Values.hermes.image.repository }}:{{ .Values.hermes.image.tag }}
           imagePullPolicy: {{ .Values.hermes.image.pullPolicy }}
@@ -123,19 +141,17 @@ spec:
                 mkdir -p "$DEST.tmp"
                 cp -R "$SRC/." "$DEST.tmp/"
                 echo "{{ .Values.hermes.image.tag }}" > "$DEST.tmp/.hermes-image-tag"
-                chown -R 10000:10000 "$DEST.tmp"
                 rm -rf "$DEST"
                 mv "$DEST.tmp" "$DEST"
               fi
-              chown -R 10000:10000 "$DEST"
           volumeMounts:
             - name: data
               mountPath: /data
           securityContext:
             allowPrivilegeEscalation: false
-            runAsUser: 0
-            runAsGroup: 0
-            runAsNonRoot: false
+            runAsUser: 10000
+            runAsGroup: 10000
+            runAsNonRoot: true
             capabilities:
               drop: [ALL]
         {{- end }}
