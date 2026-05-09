@@ -64,6 +64,7 @@ hermes:
     enabled: true
     port: 9119
     embeddedChat: true
+    tuiDir: /opt/data/ui-tui
 
   tools:
     kubectl:

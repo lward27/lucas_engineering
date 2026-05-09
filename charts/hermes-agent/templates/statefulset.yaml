@@ -105,6 +105,40 @@ spec:
             capabilities:
               drop: [ALL]
         {{- end }}
+
+        {{- if and .Values.hermes.dashboard.enabled .Values.hermes.dashboard.embeddedChat }}
+        - name: prepare-dashboard-tui
+          image: {{ .Values.hermes.image.repository }}:{{ .Values.hermes.image.tag }}
+          imagePullPolicy: {{ .Values.hermes.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+              SRC=/opt/hermes/ui-tui
+              DEST=/data/ui-tui
+              MARKER="$DEST/.hermes-image-tag"
+              if [ ! -f "$DEST/dist/entry.js" ] || [ ! -f "$MARKER" ] || [ "$(cat "$MARKER")" != "{{ .Values.hermes.image.tag }}" ]; then
+                rm -rf "$DEST.tmp"
+                mkdir -p "$DEST.tmp"
+                cp -R "$SRC/." "$DEST.tmp/"
+                echo "{{ .Values.hermes.image.tag }}" > "$DEST.tmp/.hermes-image-tag"
+                chown -R 10000:10000 "$DEST.tmp"
+                rm -rf "$DEST"
+                mv "$DEST.tmp" "$DEST"
+              fi
+              chown -R 10000:10000 "$DEST"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 0
+            runAsGroup: 0
+            runAsNonRoot: false
+            capabilities:
+              drop: [ALL]
+        {{- end }}
       containers:
         - name: gateway
           image: {{ .Values.hermes.image.repository }}:{{ .Values.hermes.image.tag }}
@@ -221,6 +255,14 @@ spec:
               value: "10000"
             - name: HOME
               value: /opt/data
+            - name: TZ
+              value: {{ .Values.hermes.config.timezone | quote }}
+            - name: PATH
+              value: "/opt/tools:/opt/data/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            - name: KUBECONFIG
+              value: /opt/data/home/.kube/config
+            - name: HERMES_TUI_DIR
+              value: {{ .Values.hermes.dashboard.tuiDir | quote }}
             - name: HERMES_DASHBOARD_TUI
               value: {{ ternary "1" "0" .Values.hermes.dashboard.embeddedChat | quote }}
           envFrom:
@@ -236,8 +278,16 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /opt/data
+            - name: tools-bin
+              mountPath: /opt/tools
             - name: tmp
               mountPath: /tmp
+            - name: kubeconfig
+              mountPath: /opt/data/home/.kube
+              readOnly: true
+            - name: ssh-keys
+              mountPath: /opt/data/home/.ssh
+              readOnly: true
         {{- end }}
       volumes:
         - name: data
