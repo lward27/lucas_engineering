@@ -34,19 +34,19 @@ hermes:
     syncModelProvidersOnStart: true
     timezone: America/New_York
     model:
-      provider: lmstudio
+      provider: custom:lmstudio_lan
       default: google/gemma-4-e4b
     providers:
-      lmstudio:
-        name: LM Studio
+      lmstudio_lan:
+        name: LM Studio LAN
         baseUrl: http://192.168.50.145:1234/v1
         keyEnv: ""
-        transport: openai_chat
+        transport: chat_completions
       fireworks:
         name: Fireworks
         baseUrl: https://api.fireworks.ai/inference/v1
         keyEnv: FIREWORKS_API_KEY
-        transport: openai_chat
+        transport: chat_completions
     terminal:
       cwd: /opt/data/workspace
     display:

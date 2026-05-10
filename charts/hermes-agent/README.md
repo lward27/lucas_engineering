@@ -20,7 +20,7 @@ kubectl -n hermes-agent create secret generic hermes-api-keys \
 Use a Telegram bot token that is not used by OpenClaw if both agents should run
 at the same time.
 
-LM Studio is configured as the default inference provider through its
+LM Studio is configured as the default custom inference provider through its
 OpenAI-compatible endpoint at `http://192.168.50.145:1234/v1`, using model
 `google/gemma-4-e4b`. It does not require a secret. Keep `FIREWORKS_API_KEY` in
 `hermes-api-keys` to continue using the Fireworks provider/models as an option.
