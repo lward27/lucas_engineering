@@ -47,6 +47,43 @@ spec:
             capabilities:
               drop: [ALL]
 
+        {{- if .Values.hermes.config.syncModelProvidersOnStart }}
+        - name: sync-model-providers
+          image: {{ .Values.hermes.image.repository }}:{{ .Values.hermes.image.tag }}
+          imagePullPolicy: {{ .Values.hermes.image.pullPolicy }}
+          env:
+            - name: HERMES_HOME
+              value: /opt/data
+            - name: HOME
+              value: /opt/data
+            - name: TZ
+              value: {{ .Values.hermes.config.timezone | quote }}
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+              HERMES=/opt/hermes/.venv/bin/hermes
+              "$HERMES" config set model.provider {{ .Values.hermes.config.model.provider | quote }}
+              "$HERMES" config set model.default {{ .Values.hermes.config.model.default | quote }}
+              {{- range $name, $provider := .Values.hermes.config.providers }}
+              "$HERMES" config set providers.{{ $name }}.name {{ $provider.name | quote }}
+              "$HERMES" config set providers.{{ $name }}.base_url {{ $provider.baseUrl | quote }}
+              "$HERMES" config set providers.{{ $name }}.key_env {{ $provider.keyEnv | quote }}
+              "$HERMES" config set providers.{{ $name }}.transport {{ $provider.transport | quote }}
+              {{- end }}
+          volumeMounts:
+            - name: data
+              mountPath: /opt/data
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 10000
+            runAsGroup: 10000
+            runAsNonRoot: true
+            capabilities:
+              drop: [ALL]
+        {{- end }}
+
         {{- if .Values.hermes.tools.kubectl.enabled }}
         - name: install-kubectl
           image: {{ .Values.hermes.tools.kubectl.image }}

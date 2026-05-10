@@ -55,4 +55,7 @@ spec:
     - ports:
         - port: 6443
           protocol: TCP
+    {{- with .Values.hermes.networkPolicy.extraEgress }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 {{- end }}
