@@ -308,11 +308,13 @@ spec:
           args:
             - dashboard
             - --host
-            - 0.0.0.0
+            - {{ ternary "127.0.0.1" "0.0.0.0" .Values.hermes.dashboard.proxy.enabled }}
             - --port
             - {{ .Values.hermes.dashboard.port | quote }}
             - --no-open
+            {{- if not .Values.hermes.dashboard.proxy.enabled }}
             - --insecure
+            {{- end }}
           ports:
             - name: dashboard
               containerPort: {{ .Values.hermes.dashboard.port }}
@@ -359,6 +361,83 @@ spec:
             - name: ssh-keys
               mountPath: /opt/data/home/.ssh
               readOnly: true
+
+        {{- if .Values.hermes.dashboard.proxy.enabled }}
+        - name: dashboard-proxy
+          image: {{ .Values.hermes.dashboard.proxy.image }}
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - |
+              cat > /tmp/nginx.conf <<'EOF'
+              pid /tmp/nginx.pid;
+              events {}
+              http {
+                access_log /dev/stdout;
+                error_log /dev/stderr notice;
+                client_body_temp_path /tmp/client_temp;
+                proxy_temp_path /tmp/proxy_temp;
+                fastcgi_temp_path /tmp/fastcgi_temp;
+                uwsgi_temp_path /tmp/uwsgi_temp;
+                scgi_temp_path /tmp/scgi_temp;
+
+                map $http_upgrade $connection_upgrade {
+                  default upgrade;
+                  '' close;
+                }
+
+                server {
+                  listen {{ .Values.hermes.dashboard.proxy.port }};
+
+                  location / {
+                    proxy_pass http://127.0.0.1:{{ .Values.hermes.dashboard.port }};
+                    proxy_http_version 1.1;
+                    proxy_set_header Host 127.0.0.1:{{ .Values.hermes.dashboard.port }};
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection $connection_upgrade;
+                    proxy_read_timeout 3600s;
+                    proxy_send_timeout 3600s;
+                    proxy_buffering off;
+                    proxy_request_buffering off;
+                  }
+                }
+              }
+              EOF
+              nginx -c /tmp/nginx.conf -g 'daemon off;'
+          ports:
+            - name: dashboard-proxy
+              containerPort: {{ .Values.hermes.dashboard.proxy.port }}
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /api/status
+              port: dashboard-proxy
+            failureThreshold: 6
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/status
+              port: dashboard-proxy
+            failureThreshold: 6
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 5
+          resources:
+            {{- toYaml .Values.hermes.dashboardProxyResources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 10000
+            runAsGroup: 10000
+            runAsNonRoot: true
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+        {{- end }}
         {{- end }}
       volumes:
         - name: data

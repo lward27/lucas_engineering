@@ -15,7 +15,7 @@ spec:
     {{- if .Values.hermes.dashboard.enabled }}
     - name: dashboard
       port: {{ .Values.hermes.dashboard.port }}
-      targetPort: dashboard
+      targetPort: {{ ternary "dashboard-proxy" "dashboard" .Values.hermes.dashboard.proxy.enabled }}
       protocol: TCP
     {{- end }}
     {{- if .Values.hermes.gateway.apiServer.enabled }}

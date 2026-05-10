@@ -76,6 +76,13 @@ hermes:
     port: 9119
     embeddedChat: true
     tuiDir: /opt/data/ui-tui
+    proxy:
+      # Hermes dashboard WebSocket endpoints intentionally reject non-loopback
+      # peers. Ingress traffic reaches the pod from the ingress controller IP,
+      # so route it through an in-pod loopback proxy before it hits Uvicorn.
+      enabled: true
+      image: nginxinc/nginx-unprivileged:1.27-alpine
+      port: 9120
 
   tools:
     kubectl:
@@ -125,3 +132,11 @@ hermes:
     limits:
       cpu: "1"
       memory: 1Gi
+
+  dashboardProxyResources:
+    requests:
+      cpu: 25m
+      memory: 32Mi
+    limits:
+      cpu: 250m
+      memory: 128Mi

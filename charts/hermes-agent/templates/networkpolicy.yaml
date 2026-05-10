@@ -21,7 +21,7 @@ spec:
               kubernetes.io/metadata.name: ingress-nginx
       ports:
         {{- if .Values.hermes.dashboard.enabled }}
-        - port: {{ .Values.hermes.dashboard.port }}
+        - port: {{ ternary .Values.hermes.dashboard.proxy.port .Values.hermes.dashboard.port .Values.hermes.dashboard.proxy.enabled }}
           protocol: TCP
         {{- end }}
         {{- if .Values.hermes.gateway.apiServer.enabled }}
