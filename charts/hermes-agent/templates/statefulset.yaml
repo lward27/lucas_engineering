@@ -274,7 +274,9 @@ spec:
               command:
                 - sh
                 - -c
-                - test -f /opt/data/gateway.pid
+                - >-
+                  pgrep -f '/opt/hermes/.venv/bin/[h]ermes gateway run' >/dev/null &&
+                  grep -q '"gateway_state": "running"' /opt/data/gateway_state.json
             failureThreshold: 6
             initialDelaySeconds: 60
             periodSeconds: 20
