@@ -32,6 +32,9 @@ hermes:
     # Existing PVC-backed installs keep /data/config.yaml. This targeted sync
     # updates GitOps-managed model/provider keys without replacing the rest.
     syncModelProvidersOnStart: true
+    # Remove obsolete provider keys from the PVC config during model/provider sync.
+    pruneProviderKeysOnStart:
+      - lmstudio
     timezone: America/New_York
     model:
       provider: custom:lmstudio_lan

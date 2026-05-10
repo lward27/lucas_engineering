@@ -64,6 +64,20 @@ spec:
             - |
               set -eu
               HERMES=/opt/hermes/.venv/bin/hermes
+              {{- if .Values.hermes.config.pruneProviderKeysOnStart }}
+              /opt/hermes/.venv/bin/python3 - <<'PY'
+              from pathlib import Path
+              import yaml
+
+              config_path = Path("/opt/data/config.yaml")
+              data = yaml.safe_load(config_path.read_text()) or {}
+              providers = data.get("providers")
+              if isinstance(providers, dict):
+                  for provider_key in {{ .Values.hermes.config.pruneProviderKeysOnStart | toJson }}:
+                      providers.pop(provider_key, None)
+                  config_path.write_text(yaml.safe_dump(data, sort_keys=False))
+              PY
+              {{- end }}
               "$HERMES" config set model.provider {{ .Values.hermes.config.model.provider | quote }}
               "$HERMES" config set model.default {{ .Values.hermes.config.model.default | quote }}
               {{- range $name, $provider := .Values.hermes.config.providers }}
