@@ -1,8 +1,14 @@
 # Hermes Agent
 
-Standalone Hermes Agent deployment. This chart is intentionally separate from
-OpenClaw: it uses its own namespace, PVC, secrets, ingress host, and runtime
-state.
+Standalone Hermes Agent front door. This chart is intentionally separate from
+OpenClaw: it uses its own namespace, ingress host, and runtime state.
+
+The default mode is `hermes.runtime.mode=external`: Kubernetes keeps the
+cert-manager/nginx ingress path for `https://hermes.lucas.engineering`, while
+the actual Hermes process runs on the desktop at `192.168.50.145:9120`.
+
+Set `hermes.runtime.mode=kubernetes` to run Hermes in-cluster as the original
+StatefulSet-backed deployment.
 
 ## Required manual secrets
 
@@ -44,8 +50,9 @@ The messaging gateway can use Telegram long polling and does not need ingress.
 Only enable ingress when exposing the dashboard, API server, or webhooks.
 
 This chart exposes the Hermes Web UI/dashboard on
-`https://hermes.lucas.engineering` and embeds the chat UI there while leaving
-Telegram enabled.
+`https://hermes.lucas.engineering` and embeds the chat UI. In external mode, the
+Service has no selector and an EndpointSlice sends traffic to the desktop
+reverse proxy.
 
 The dashboard can store API keys. If it is exposed publicly, protect it before
 adding the Cloudflare route.

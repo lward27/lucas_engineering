@@ -1,0 +1,18 @@
+{{- if eq .Values.hermes.runtime.mode "external" }}
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: {{ .Values.hermes.name }}-desktop
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.hermes.name }}
+    kubernetes.io/service-name: {{ .Values.hermes.name }}
+addressType: IPv4
+ports:
+  - name: dashboard
+    port: {{ .Values.hermes.external.port }}
+    protocol: TCP
+endpoints:
+  - addresses:
+      - {{ .Values.hermes.external.host | quote }}
+{{- end }}

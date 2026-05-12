@@ -1,4 +1,19 @@
-{{- if or .Values.hermes.dashboard.enabled .Values.hermes.gateway.apiServer.enabled .Values.hermes.gateway.webhook.enabled }}
+{{- if eq .Values.hermes.runtime.mode "external" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.hermes.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.hermes.name }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: dashboard
+      port: {{ .Values.hermes.dashboard.port }}
+      targetPort: {{ .Values.hermes.external.port }}
+      protocol: TCP
+{{- else if or .Values.hermes.dashboard.enabled .Values.hermes.gateway.apiServer.enabled .Values.hermes.gateway.webhook.enabled }}
 apiVersion: v1
 kind: Service
 metadata:

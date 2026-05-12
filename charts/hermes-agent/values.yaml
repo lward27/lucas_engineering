@@ -1,6 +1,15 @@
 hermes:
   name: hermes-agent
 
+  runtime:
+    # kubernetes: run Hermes in this chart as a StatefulSet.
+    # external: keep only the cluster front door and proxy to a desktop host.
+    mode: external
+
+  external:
+    host: 192.168.50.145
+    port: 9120
+
   image:
     repository: nousresearch/hermes-agent
     tag: "v2026.4.30"

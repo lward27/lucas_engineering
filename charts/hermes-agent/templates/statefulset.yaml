@@ -1,3 +1,4 @@
+{{- if eq .Values.hermes.runtime.mode "kubernetes" }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -465,3 +466,4 @@ spec:
             secretName: {{ .Values.hermes.secrets.sshName }}
             optional: {{ .Values.hermes.secrets.sshOptional }}
             defaultMode: 0600
+{{- end }}
