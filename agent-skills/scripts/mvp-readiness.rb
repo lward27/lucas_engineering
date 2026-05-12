@@ -69,7 +69,6 @@ hermes_values = YAML.safe_load(File.read(File.join(ROOT, "charts/hermes-agent/va
 runtime_mode = hermes_values.dig("hermes", "runtime", "mode")
 external_host = hermes_values.dig("hermes", "external", "host")
 external_port = hermes_values.dig("hermes", "external", "port")
-external_api_port = hermes_values.dig("hermes", "external", "apiPort")
 api_enabled = hermes_values.dig("hermes", "gateway", "apiServer", "enabled")
 automount_token = hermes_values.dig("hermes", "serviceAccount", "automountToken")
 
@@ -81,10 +80,10 @@ checks << {
 }
 
 checks << {
-  name: "Hermes external API service port configured",
-  ok: api_enabled == true && !!external_api_port,
+  name: "Hermes external dashboard/API port configured",
+  ok: api_enabled == true && !!external_port,
   required: true,
-  note: "Hermes API is expected to run on the desktop and be reachable by Codex/Hermes orchestration tooling."
+  note: "Desktop Hermes serves dashboard and authenticated /api routes from the same external port."
 }
 
 checks << {

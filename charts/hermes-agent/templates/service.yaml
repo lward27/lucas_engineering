@@ -13,12 +13,6 @@ spec:
       port: {{ .Values.hermes.dashboard.port }}
       targetPort: {{ .Values.hermes.external.port }}
       protocol: TCP
-    {{- if .Values.hermes.gateway.apiServer.enabled }}
-    - name: api-server
-      port: {{ .Values.hermes.gateway.apiServer.port }}
-      targetPort: {{ .Values.hermes.external.apiPort }}
-      protocol: TCP
-    {{- end }}
 {{- else if or .Values.hermes.dashboard.enabled .Values.hermes.gateway.apiServer.enabled .Values.hermes.gateway.webhook.enabled }}
 apiVersion: v1
 kind: Service

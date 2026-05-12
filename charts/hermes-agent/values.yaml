@@ -8,11 +8,9 @@ hermes:
 
   external:
     host: 192.168.50.145
+    # Desktop Hermes serves dashboard and authenticated /api routes from the
+    # same Uvicorn/Caddy front door.
     port: 9120
-    # Desktop Hermes serves dashboard and API routes from the same Uvicorn/Caddy
-    # front door. The chart can still expose a logical api-server Service port,
-    # but the EndpointSlice must target this desktop port.
-    apiPort: 9120
 
   image:
     repository: nousresearch/hermes-agent

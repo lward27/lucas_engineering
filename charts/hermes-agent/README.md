@@ -51,8 +51,9 @@ Only enable ingress when exposing the dashboard, API server, or webhooks.
 This chart exposes the Hermes Web UI/dashboard on
 `https://hermes.lucas.engineering` and embeds the chat UI. The desktop process
 also serves authenticated `/api/*` routes from the same `192.168.50.145:9120`
-front door. In external mode, the Service has no selector and an EndpointSlice
-sends traffic to the desktop reverse proxy.
+front door. In external mode, the Service has no selector, exposes the
+dashboard port only, and an EndpointSlice sends traffic to the desktop reverse
+proxy. Use the dashboard Service port for API paths as well.
 
 The dashboard can store API keys. If it is exposed publicly, protect it before
 adding the Cloudflare route.
