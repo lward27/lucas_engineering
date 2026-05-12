@@ -1,0 +1,71 @@
+{{- if .Values.rbac.readonlyObserver.enabled }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Values.rbac.readonlyObserver.clusterRoleName }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
+  labels:
+{{ include "agentic-platform.labels" . | indent 4 }}
+    agentic.lucas.engineering/role: readonly-observer
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/log
+      - services
+      - endpoints
+      - events
+      - configmaps
+      - namespaces
+      - persistentvolumeclaims
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+      - replicasets
+      - statefulsets
+      - daemonsets
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["batch"]
+    resources:
+      - jobs
+      - cronjobs
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["networking.k8s.io"]
+    resources:
+      - ingresses
+      - networkpolicies
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["argoproj.io"]
+    resources:
+      - applications
+      - applicationsets
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["tekton.dev"]
+    resources:
+      - pipelineruns
+      - taskruns
+      - pipelines
+      - tasks
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Values.rbac.readonlyObserver.clusterRoleBindingName }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-4"
+  labels:
+{{ include "agentic-platform.labels" . | indent 4 }}
+    agentic.lucas.engineering/role: readonly-observer
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Values.hermes.serviceAccountName }}
+    namespace: {{ .Values.hermes.namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ .Values.rbac.readonlyObserver.clusterRoleName }}
+{{- end }}

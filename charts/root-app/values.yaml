@@ -1,4 +1,6 @@
 apps:
+  agentic-platform:
+    enabled: true
   argo-cd:
     enabled: true
   homepage:

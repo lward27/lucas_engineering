@@ -1,0 +1,103 @@
+version: 1
+description: Tool grants for Hermes-only phase 1 agents.
+
+grants:
+  hermes-readonly-planning:
+    kubernetes:
+      allowed: false
+    github:
+      repositories:
+        - lward27/lucas_engineering
+      verbs:
+        - read
+    filesystem:
+      read:
+        - docs
+        - diagrams
+        - charts
+        - agent-skills
+      write:
+        - docs
+        - agent-skills/examples
+    network:
+      egress:
+        - github.com
+    requiresApproval: false
+
+  hermes-readonly-review:
+    kubernetes:
+      allowed: false
+    github:
+      repositories:
+        - lward27/lucas_engineering
+      verbs:
+        - read
+    filesystem:
+      read:
+        - docs
+        - diagrams
+        - charts
+        - agent-skills
+      write: []
+    network:
+      egress:
+        - github.com
+    requiresApproval: false
+
+  hermes-readonly-observability:
+    kubernetes:
+      allowed: true
+      verbs:
+        - get
+        - list
+        - watch
+      namespaces:
+        - argocd
+        - apps
+        - apps-prod
+        - hermes-agent
+        - monitoring
+        - sandbox
+    observability:
+      grafana: read
+      prometheus: read
+      mimir: read
+      tempo: read
+    filesystem:
+      read:
+        - docs
+        - agent-skills
+      write:
+        - agent-skills/run-logs
+    network:
+      egress:
+        - grafana
+        - prometheus
+        - mimir
+        - tempo
+        - kubernetes.default.svc
+    requiresApproval: false
+
+  hermes-gitops-proposer:
+    kubernetes:
+      allowed: false
+    github:
+      repositories:
+        - lward27/lucas_engineering
+      verbs:
+        - read
+        - branch
+        - pull-request
+    filesystem:
+      read:
+        - charts
+        - docs
+        - agent-skills
+      write:
+        - charts
+        - docs
+    network:
+      egress:
+        - github.com
+    requiresApproval: true
+    approvalReason: Required before modifying live GitOps paths or creating release PRs.

@@ -1,0 +1,23 @@
+flowchart TB
+  User["User"] --> Codex["Codex Orchestrator"]
+  Codex --> Skills["Reusable Skills"]
+  Codex --> Registry["Agent Registry"]
+  Registry --> Hermes["Hermes Agents"]
+  Registry -.-> Custom["Future Custom Harness Agents"]
+  Skills --> Hermes
+  Skills -.-> Custom
+  Hermes --> GitHub["GitHub"]
+  Custom -.-> GitHub
+  GitHub --> Tekton["Tekton Pipelines"]
+  Tekton --> RegistrySvc["Container Registry"]
+  GitHub --> Argo["Argo CD"]
+  Argo --> K8s["Kubernetes Apps"]
+  RegistrySvc --> K8s
+  K8s --> OTEL["OTEL Collector"]
+  OTEL --> Prom["Prometheus"]
+  OTEL --> Tempo["Tempo"]
+  OTEL --> Mimir["Mimir"]
+  Prom --> Grafana["Grafana"]
+  Tempo --> Grafana
+  Mimir --> Grafana
+  Grafana --> Codex

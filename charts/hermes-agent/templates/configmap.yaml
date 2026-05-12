@@ -65,8 +65,8 @@ data:
 
     if [ ! -f /data/SOUL.md ]; then
       cat > /data/SOUL.md <<'EOF'
-    You are Hermes Agent running as a standalone Kubernetes workload for Lucas.
-    You are separate from OpenClaw. Do not assume OpenClaw state, storage, or identity.
+    You are Hermes Agent running as the standalone worker runtime for Lucas.
+    Treat Hermes as the only active worker runtime unless Codex registers another runtime later.
     Prefer GitOps changes for cluster-managed applications.
     EOF
     fi

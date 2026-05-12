@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hermes-agent
+  labels:
+    app.kubernetes.io/part-of: agentic-sdlc
+    agentic.lucas.engineering/purpose: hermes-worker-runtime
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: agents
+  labels:
+    app.kubernetes.io/part-of: agentic-sdlc
+    agentic.lucas.engineering/purpose: agent-workers
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: agent-runtime
+  labels:
+    app.kubernetes.io/part-of: agentic-sdlc
+    agentic.lucas.engineering/purpose: orchestration
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ci
+  labels:
+    app.kubernetes.io/part-of: agentic-sdlc
+    agentic.lucas.engineering/purpose: builds
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gitops
+  labels:
+    app.kubernetes.io/part-of: agentic-sdlc
+    agentic.lucas.engineering/purpose: release-automation
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+  labels:
+    app.kubernetes.io/part-of: agentic-sdlc
+    agentic.lucas.engineering/purpose: telemetry
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: apps
+  labels:
+    app.kubernetes.io/part-of: agentic-sdlc
+    agentic.lucas.engineering/purpose: application-workloads
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sandbox
+  labels:
+    app.kubernetes.io/part-of: agentic-sdlc
+    agentic.lucas.engineering/purpose: autonomous-test-deployments
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: secrets
+  labels:
+    app.kubernetes.io/part-of: agentic-sdlc
+    agentic.lucas.engineering/purpose: secret-management

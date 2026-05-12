@@ -1,0 +1,22 @@
+flowchart LR
+  Codex["Codex"] --> Plan["Planning Agent"]
+  Codex --> Spec["Specification Agent"]
+  Codex --> Code["Coding Agent"]
+  Codex --> Review["Reviewer Agent"]
+  Codex --> Build["Build Agent"]
+  Codex --> GitOps["GitOps Agent"]
+  Codex --> Deploy["Deployment Agent"]
+  Codex --> Observe["Observability Agent"]
+  Codex --> Incident["Incident/Rollback Agent"]
+  Codex --> Docs["Documentation Agent"]
+  Plan --> Spec
+  Spec --> Code
+  Code --> Review
+  Review --> Build
+  Build --> GitOps
+  GitOps --> Deploy
+  Deploy --> Observe
+  Observe --> Incident
+  Incident --> GitOps
+  Observe --> Docs
+  Deploy --> Docs

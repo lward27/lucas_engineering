@@ -1,7 +1,7 @@
 # Hermes Agent
 
-Standalone Hermes Agent front door. This chart is intentionally separate from
-OpenClaw: it uses its own namespace, ingress host, and runtime state.
+Standalone Hermes Agent front door. This chart owns the Hermes namespace,
+ingress host, and runtime state for the Hermes-only agent platform.
 
 The default mode is `hermes.runtime.mode=external`: Kubernetes keeps the
 cert-manager/nginx ingress path for `https://hermes.lucas.engineering`, while
@@ -23,8 +23,7 @@ kubectl -n hermes-agent create secret generic hermes-api-keys \
   --from-literal=TELEGRAM_BOT_TOKEN='...'
 ```
 
-Use a Telegram bot token that is not used by OpenClaw if both agents should run
-at the same time.
+Use a Telegram bot token dedicated to Hermes.
 
 LM Studio is configured as the default custom inference provider through its
 OpenAI-compatible endpoint at `http://192.168.50.145:1234/v1`, using model
@@ -50,9 +49,10 @@ The messaging gateway can use Telegram long polling and does not need ingress.
 Only enable ingress when exposing the dashboard, API server, or webhooks.
 
 This chart exposes the Hermes Web UI/dashboard on
-`https://hermes.lucas.engineering` and embeds the chat UI. In external mode, the
-Service has no selector and an EndpointSlice sends traffic to the desktop
-reverse proxy.
+`https://hermes.lucas.engineering` and embeds the chat UI. The desktop process
+also serves authenticated `/api/*` routes from the same `192.168.50.145:9120`
+front door. In external mode, the Service has no selector and an EndpointSlice
+sends traffic to the desktop reverse proxy.
 
 The dashboard can store API keys. If it is exposed publicly, protect it before
 adding the Cloudflare route.

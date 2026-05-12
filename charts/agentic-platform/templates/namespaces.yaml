@@ -1,0 +1,12 @@
+{{- range .Values.namespaces }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .name }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
+  labels:
+    app.kubernetes.io/part-of: {{ $.Values.labels.partOf | quote }}
+    agentic.lucas.engineering/purpose: {{ .purpose | quote }}
+{{- end }}

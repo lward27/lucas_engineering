@@ -1,0 +1,47 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hermes-agent-readonly-egress
+  namespace: hermes-agent
+  labels:
+    app.kubernetes.io/part-of: agentic-sdlc
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: hermes-agent
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+      ports:
+        - port: 80
+          protocol: TCP
+        - port: 9090
+          protocol: TCP
+        - port: 3000
+          protocol: TCP
+        - port: 3200
+          protocol: TCP
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: argocd
+      ports:
+        - port: 443
+          protocol: TCP
+        - port: 8080
+          protocol: TCP
+    - ports:
+        - port: 443
+          protocol: TCP
+    - ports:
+        - port: 6443
+          protocol: TCP

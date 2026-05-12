@@ -1,0 +1,31 @@
+sequenceDiagram
+  participant U as User
+  participant C as Codex
+  participant P as Planning Agent
+  participant A as Coding Agent
+  participant R as Reviewer Agent
+  participant B as Build Agent
+  participant G as GitOps Agent
+  participant D as Deployment Agent
+  participant O as Observability Agent
+
+  U->>C: High-level goal
+  C->>P: Clarify and draft spec
+  P-->>C: Spec and assumptions
+  C->>U: Approval request for spec if needed
+  U-->>C: Approved spec
+  C->>A: Scoped implementation task
+  A-->>C: Patch and test notes
+  C->>R: Review diff
+  R-->>C: Findings or approval
+  C->>B: Trigger Tekton build
+  B-->>C: Image digest
+  C->>G: Update GitOps manifests
+  G-->>C: Manifest PR
+  C->>U: Approval request for live release
+  U-->>C: Release approved
+  C->>D: Sync Argo CD
+  D-->>C: Deployment health
+  C->>O: Observe golden signals
+  O-->>C: Telemetry report
+  C-->>U: Final report or rollback recommendation

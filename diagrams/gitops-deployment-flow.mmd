@@ -1,0 +1,14 @@
+flowchart TD
+  Source["Application Source Repo"] --> PR["Application PR"]
+  PR --> Merge["Merge Approved Commit"]
+  Merge --> Tekton["Tekton PipelineRun"]
+  Tekton --> Image["Image Digest"]
+  Image --> Reg["Container Registry"]
+  Image --> ManifestPR["GitOps Manifest PR"]
+  ManifestPR --> GitOpsMerge["Merge GitOps PR"]
+  GitOpsMerge --> Argo["Argo CD Sync"]
+  Argo --> Cluster["Kubernetes Cluster"]
+  Cluster --> Verify["Health and Observability Verification"]
+  Verify --> Success["Final Report"]
+  Verify --> Rollback["Rollback PR and Sync"]
+  Rollback --> Argo

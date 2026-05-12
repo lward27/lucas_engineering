@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lucas.engineering/schemas/agent-registry.schema.json",
+  "title": "Agent Registry",
+  "type": "object",
+  "required": ["version", "agents"],
+  "additionalProperties": true,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "defaults": {
+      "type": "object"
+    },
+    "agents": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "displayName",
+          "status",
+          "runtime",
+          "endpoint",
+          "capabilities",
+          "allowedSkills",
+          "toolGrant",
+          "secretPolicy",
+          "concurrency"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "disabled"]
+          },
+          "runtime": {
+            "type": "string",
+            "enum": ["hermes", "custom-harness", "codex-worker"]
+          },
+          "endpoint": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["kubernetes-service", "external-http", "queue", "manual", "none"]
+              },
+              "namespace": {
+                "type": "string"
+              },
+              "service": {
+                "type": "string"
+              },
+              "portName": {
+                "type": "string"
+              },
+              "baseUrl": {
+                "type": "string"
+              },
+              "dashboardUrl": {
+                "type": "string"
+              }
+            }
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "allowedSkills": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "toolGrant": {
+            "type": "string"
+          },
+          "secretPolicy": {
+            "type": "object",
+            "required": ["rawSecretAccess"],
+            "properties": {
+              "allowedSecretClasses": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "rawSecretAccess": {
+                "type": "boolean",
+                "const": false
+              }
+            }
+          },
+          "concurrency": {
+            "type": "object",
+            "required": ["maxTasks", "maxChildren"],
+            "properties": {
+              "maxTasks": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "maxChildren": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "futureRuntimes": {
+      "type": "array"
+    }
+  }
+}

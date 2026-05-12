@@ -1,0 +1,94 @@
+version: 1
+description: Skill catalog for the lucas_engineering agentic SDLC platform.
+
+skills:
+  - name: permission-checker
+    status: implemented
+    category: governance
+    risk: low
+    executable: false
+  - name: approval-gate-manager
+    status: implemented
+    category: governance
+    risk: low
+    executable: false
+  - name: prometheus-query-runner
+    status: implemented
+    category: observability
+    risk: low
+    executable: false
+  - name: argocd-health-check
+    status: implemented
+    category: gitops
+    risk: low
+    executable: false
+  - name: goal-intake
+    status: implemented
+    category: planning
+    risk: low
+    executable: false
+  - name: requirements-clarifier
+    status: implemented
+    category: planning
+    risk: low
+    executable: false
+  - name: spec-writer
+    status: implemented
+    category: planning
+    risk: low
+    executable: false
+  - name: task-decomposer
+    status: implemented
+    category: planning
+    risk: low
+    executable: false
+  - name: architecture-reviewer
+    status: implemented
+    category: planning
+    risk: low
+    executable: false
+  - name: repo-analyzer
+    status: implemented
+    category: coding
+    risk: low
+    executable: false
+  - name: code-reviewer
+    status: implemented
+    category: coding
+    risk: low
+    executable: false
+  - name: change-risk-assessor
+    status: implemented
+    category: governance
+    risk: low
+    executable: false
+  - name: grafana-dashboard-reader
+    status: implemented
+    category: observability
+    risk: low
+    executable: false
+  - name: tempo-trace-analyzer
+    status: implemented
+    category: observability
+    risk: low
+    executable: false
+  - name: mimir-metrics-analyzer
+    status: implemented
+    category: observability
+    risk: low
+    executable: false
+  - name: otel-signal-reviewer
+    status: implemented
+    category: observability
+    risk: low
+    executable: false
+  - name: deployment-observer
+    status: implemented
+    category: observability
+    risk: low
+    executable: false
+  - name: github-gitops-release
+    status: implemented
+    category: gitops
+    risk: high
+    executable: false

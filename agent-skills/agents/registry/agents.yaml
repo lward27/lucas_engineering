@@ -1,0 +1,179 @@
+version: 1
+description: Hermes-only phase 1 agent registry for the lucas_engineering agentic SDLC platform.
+
+defaults:
+  runtime: hermes
+  phase: 1
+  namespace: hermes-agent
+  serviceAccount:
+    namespace: hermes-agent
+    name: hermes-agent
+  invocation:
+    transport: hermes-api
+    apiUrl: http://192.168.50.145:9120
+    dashboardUrl: https://hermes.lucas.engineering
+    note: Hermes runs on the desktop host. Kubernetes ingress fronts the dashboard, and API orchestration targets the same desktop service on /api routes.
+  modelPolicy:
+    providerPreference:
+      - fireworks
+      - local
+    defaultModel: accounts/fireworks/routers/kimi-k2p6-turbo
+  auditSink:
+    type: git-artifact
+    path: agent-skills/run-logs/
+
+agents:
+  - id: hermes-planning
+    displayName: Hermes Planning Agent
+    status: active
+    runtime: hermes
+    endpoint:
+      type: external-http
+      baseUrl: http://192.168.50.145:9120
+      dashboardUrl: https://hermes.lucas.engineering
+    capabilities:
+      - planning
+      - specification
+      - task-decomposition
+    allowedSkills:
+      - goal-intake
+      - requirements-clarifier
+      - spec-writer
+      - task-decomposer
+      - architecture-reviewer
+      - permission-checker
+      - approval-gate-manager
+    toolGrant: hermes-readonly-planning
+    contextPolicy:
+      include:
+        - docs
+        - diagrams
+        - charts/root-app
+        - charts/hermes-agent
+        - agent-skills
+      exclude:
+        - secret-values
+        - kubeconfig-values
+    secretPolicy:
+      allowedSecretClasses: []
+      rawSecretAccess: false
+    concurrency:
+      maxTasks: 1
+      maxChildren: 0
+
+  - id: hermes-reviewer
+    displayName: Hermes Reviewer Agent
+    status: active
+    runtime: hermes
+    endpoint:
+      type: external-http
+      baseUrl: http://192.168.50.145:9120
+      dashboardUrl: https://hermes.lucas.engineering
+    capabilities:
+      - code-review
+      - manifest-review
+      - risk-assessment
+    allowedSkills:
+      - repo-analyzer
+      - code-reviewer
+      - architecture-reviewer
+      - change-risk-assessor
+      - permission-checker
+    toolGrant: hermes-readonly-review
+    contextPolicy:
+      include:
+        - application-diff
+        - gitops-diff
+        - docs
+        - charts
+        - agent-skills
+      exclude:
+        - secret-values
+        - production-kubeconfig
+    secretPolicy:
+      allowedSecretClasses: []
+      rawSecretAccess: false
+    concurrency:
+      maxTasks: 1
+      maxChildren: 0
+
+  - id: hermes-observability
+    displayName: Hermes Observability Agent
+    status: active
+    runtime: hermes
+    endpoint:
+      type: external-http
+      baseUrl: http://192.168.50.145:9120
+      dashboardUrl: https://hermes.lucas.engineering
+    capabilities:
+      - observability
+      - deployment-health
+      - incident-triage
+    allowedSkills:
+      - grafana-dashboard-reader
+      - prometheus-query-runner
+      - tempo-trace-analyzer
+      - mimir-metrics-analyzer
+      - otel-signal-reviewer
+      - deployment-observer
+      - argocd-health-check
+      - permission-checker
+    toolGrant: hermes-readonly-observability
+    contextPolicy:
+      include:
+        - app-name
+        - namespace
+        - deployment-timestamp
+        - dashboard-uids
+        - service-labels
+      exclude:
+        - secret-values
+    secretPolicy:
+      allowedSecretClasses:
+        - grafana-readonly-token
+        - prometheus-readonly-token
+        - argocd-readonly-token
+      rawSecretAccess: false
+    concurrency:
+      maxTasks: 2
+      maxChildren: 0
+
+  - id: hermes-gitops-release
+    displayName: Hermes GitOps Release Agent
+    status: planned
+    runtime: hermes
+    endpoint:
+      type: external-http
+      baseUrl: http://192.168.50.145:9120
+      dashboardUrl: https://hermes.lucas.engineering
+    capabilities:
+      - gitops
+      - pull-request
+      - manifest-update
+    allowedSkills:
+      - github-gitops-release
+      - argocd-health-check
+      - permission-checker
+      - approval-gate-manager
+      - change-risk-assessor
+    toolGrant: hermes-gitops-proposer
+    contextPolicy:
+      include:
+        - image-digest
+        - chart-path
+        - target-environment
+        - rollback-revision
+      exclude:
+        - secret-values
+    secretPolicy:
+      allowedSecretClasses:
+        - github-pr-token
+      rawSecretAccess: false
+    concurrency:
+      maxTasks: 1
+      maxChildren: 0
+
+futureRuntimes:
+  - runtime: custom-harness
+    status: future
+    note: Keep schema support only. Do not register active custom harness workers until a harness exists and has scoped RBAC, network policy, and audit logging.

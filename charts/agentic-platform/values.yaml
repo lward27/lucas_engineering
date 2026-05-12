@@ -1,0 +1,48 @@
+labels:
+  partOf: agentic-sdlc
+
+namespaces:
+  - name: hermes-agent
+    purpose: hermes-worker-runtime
+  - name: agents
+    purpose: agent-workers
+  - name: agent-runtime
+    purpose: orchestration
+  - name: ci
+    purpose: builds
+  - name: gitops
+    purpose: release-automation
+  - name: monitoring
+    purpose: telemetry
+  - name: apps
+    purpose: application-workloads
+  - name: sandbox
+    purpose: autonomous-test-deployments
+  - name: secrets
+    purpose: secret-management
+
+hermes:
+  namespace: hermes-agent
+  serviceAccountName: hermes-agent
+  appLabelName: hermes-agent
+  runtimeMode: external-desktop
+  desktop:
+    host: 192.168.50.145
+    dashboardUrl: https://hermes.lucas.engineering
+    apiUrl: http://192.168.50.145:9120
+
+rbac:
+  readonlyObserver:
+    enabled: true
+    clusterRoleName: hermes-readonly-observer
+    clusterRoleBindingName: hermes-agent-readonly-observer
+
+networkPolicies:
+  agentRuntimeDefaultDeny:
+    enabled: true
+  hermesReadonlyEgress:
+    # Disabled for external-desktop mode. Kubernetes NetworkPolicies only apply
+    # to pods, while Hermes now runs on the desktop and uses its local network.
+    enabled: false
+    observabilityNamespace: monitoring
+    argocdNamespace: argocd

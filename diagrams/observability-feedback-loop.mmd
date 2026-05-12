@@ -1,0 +1,15 @@
+flowchart TB
+  Deploy["Deployment"] --> Apps["Apps"]
+  Apps --> OTEL["OTEL Collector"]
+  Apps --> Logs["Logs"]
+  OTEL --> Metrics["Prometheus/Mimir Metrics"]
+  OTEL --> Traces["Tempo Traces"]
+  Metrics --> Grafana["Grafana Dashboards"]
+  Traces --> Grafana
+  Logs --> Grafana
+  Grafana --> Observer["Observability Agent"]
+  Observer --> Decision{"Healthy?"}
+  Decision -->|Yes| Report["Final Report"]
+  Decision -->|No| Incident["Incident/Rollback Agent"]
+  Incident --> Rollback["Rollback or Iteration"]
+  Rollback --> Deploy
