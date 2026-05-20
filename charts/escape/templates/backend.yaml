@@ -132,6 +132,7 @@ spec:
                 - name: Host
                   value: {{ .Values.backend.host }}
             periodSeconds: 10
+            timeoutSeconds: 5
           livenessProbe:
             tcpSocket:
               port: http
