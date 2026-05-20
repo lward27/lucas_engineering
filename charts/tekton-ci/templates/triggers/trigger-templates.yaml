@@ -28,10 +28,8 @@ spec:
       spec:
         pipelineRef:
           name: clone-build-push
-        serviceAccountName: tekton-ci-pipeline-sa
-        podTemplate:
-          securityContext:
-            fsGroup: 65532
+        taskRunTemplate:
+          serviceAccountName: tekton-ci-pipeline-sa
         workspaces:
           - name: shared-data
             volumeClaimTemplate:
