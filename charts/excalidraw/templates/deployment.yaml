@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.nameOverride }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.nameOverride }}
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/part-of: excalidraw
+spec:
+  replicas: {{ .Values.frontend.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.nameOverride }}
+      app.kubernetes.io/component: frontend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.nameOverride }}
+        app.kubernetes.io/component: frontend
+        app.kubernetes.io/part-of: excalidraw
+    spec:
+      containers:
+        - name: excalidraw
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          env:
+            - name: VITE_APP_WS_SERVER_URL
+              value: {{ .Values.frontend.roomUrl | quote }}
+          ports:
+            - name: http
+              containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            {{- toYaml .Values.frontend.resources | nindent 12 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.nameOverride }}-room
+  labels:
+    app.kubernetes.io/name: {{ .Values.nameOverride }}-room
+    app.kubernetes.io/component: room
+    app.kubernetes.io/part-of: excalidraw
+spec:
+  replicas: {{ .Values.room.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.nameOverride }}-room
+      app.kubernetes.io/component: room
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.nameOverride }}-room
+        app.kubernetes.io/component: room
+        app.kubernetes.io/part-of: excalidraw
+    spec:
+      containers:
+        - name: excalidraw-room
+          image: "{{ .Values.room.image.repository }}:{{ .Values.room.image.tag }}"
+          imagePullPolicy: {{ .Values.room.image.pullPolicy }}
+          env:
+            - name: CORS_ORIGIN
+              value: {{ .Values.room.corsOrigin | quote }}
+          ports:
+            - name: http
+              containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            {{- toYaml .Values.room.resources | nindent 12 }}

@@ -1,0 +1,40 @@
+nameOverride: excalidraw
+
+frontend:
+  image:
+    repository: registry.lucas.engineering/excalidraw
+    tag: collab-latest
+    pullPolicy: Always
+  replicas: 1
+  host: draw.lucas.engineering
+  roomUrl: https://draw-room.lucas.engineering
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+room:
+  image:
+    repository: excalidraw/excalidraw-room
+    tag: latest
+    pullPolicy: Always
+  replicas: 1
+  host: draw-room.lucas.engineering
+  corsOrigin: https://draw.lucas.engineering
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+ingress:
+  className: nginx
+  clusterIssuer: letsencrypt-prod
+
+networkPolicy:
+  enabled: true

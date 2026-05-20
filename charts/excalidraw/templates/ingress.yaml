@@ -1,0 +1,61 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.nameOverride }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.nameOverride }}
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/part-of: excalidraw
+  annotations:
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  tls:
+    - hosts:
+        - {{ .Values.frontend.host }}
+      secretName: draw-lucas-engineering-tls
+  rules:
+    - host: {{ .Values.frontend.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.nameOverride }}
+                port:
+                  name: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.nameOverride }}-room
+  labels:
+    app.kubernetes.io/name: {{ .Values.nameOverride }}-room
+    app.kubernetes.io/component: room
+    app.kubernetes.io/part-of: excalidraw
+  annotations:
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  tls:
+    - hosts:
+        - {{ .Values.room.host }}
+      secretName: draw-room-lucas-engineering-tls
+  rules:
+    - host: {{ .Values.room.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.nameOverride }}-room
+                port:
+                  name: http

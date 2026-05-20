@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.nameOverride }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.nameOverride }}
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/part-of: excalidraw
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: {{ .Values.nameOverride }}
+    app.kubernetes.io/component: frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.nameOverride }}-room
+  labels:
+    app.kubernetes.io/name: {{ .Values.nameOverride }}-room
+    app.kubernetes.io/component: room
+    app.kubernetes.io/part-of: excalidraw
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: {{ .Values.nameOverride }}-room
+    app.kubernetes.io/component: room
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

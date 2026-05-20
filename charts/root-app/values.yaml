@@ -87,3 +87,5 @@ apps:
     enabled: false
   clawspace:
     enabled: true
+  excalidraw:
+    enabled: false
