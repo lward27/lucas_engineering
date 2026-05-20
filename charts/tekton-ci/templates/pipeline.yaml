@@ -13,6 +13,10 @@ spec:
     - name: repo-url
       type: string
       description: The git repo URL to clone from.
+    - name: revision
+      type: string
+      description: Git branch, tag, SHA, or ref to build.
+      default: ""
     - name: image-reference
       type: string
       description: Full image reference to build and push (registry/name:tag).
@@ -52,6 +56,8 @@ spec:
       params:
         - name: url
           value: $(params.repo-url)
+        - name: revision
+          value: $(params.revision)
 
     - name: build-push
       runAfter:
