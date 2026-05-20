@@ -55,6 +55,9 @@ spec:
               {{- range $.Values.registry.kanikoExtraArgs }}
               - {{ . | quote }}
               {{- end }}
+              {{- range $svc.kanikoExtraArgs }}
+              - {{ . | quote }}
+              {{- end }}
           - name: deployment
             value: {{ $svc.deployment | default "" | quote }}
           - name: deployment-namespace

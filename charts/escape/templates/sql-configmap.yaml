@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.nameOverride }}-schema
+  labels:
+    app.kubernetes.io/part-of: {{ .Values.nameOverride }}
+data:
+  10_schema.sql: |
+{{ .Files.Get "files/sql/schema.sql" | indent 4 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.nameOverride }}-seed
+  labels:
+    app.kubernetes.io/part-of: {{ .Values.nameOverride }}
+data:
+  seed.sql: |
+{{ .Files.Get "files/sql/seed.sql" | indent 4 }}

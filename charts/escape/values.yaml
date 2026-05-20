@@ -1,0 +1,61 @@
+nameOverride: escape
+
+frontend:
+  image:
+    repository: docker-registry.registry.svc.cluster.local:5000/escape-v1-front
+    tag: latest
+    pullPolicy: Always
+  replicas: 1
+  host: escape.lucas.engineering
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+backend:
+  image:
+    repository: docker-registry.registry.svc.cluster.local:5000/escape-v1-back
+    tag: latest
+    pullPolicy: Always
+  replicas: 1
+  host: escape-api.lucas.engineering
+  secretName: escape-backend-secret
+  databaseSecretName: escape-postgresql-auth
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+postgresql:
+  image:
+    repository: postgres
+    tag: "16"
+    pullPolicy: IfNotPresent
+  database: escape
+  user: postgres
+  secretName: escape-postgresql-auth
+  persistence:
+    storageClass: local-path
+    size: 5Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+ingress:
+  className: nginx
+  clusterIssuer: letsencrypt-prod
+  frontendTlsSecretName: escape-lucas-engineering-tls
+  backendTlsSecretName: escape-api-lucas-engineering-tls
+
+networkPolicy:
+  enabled: true

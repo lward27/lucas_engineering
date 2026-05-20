@@ -1,0 +1,55 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.nameOverride }}-frontend
+  labels:
+    app.kubernetes.io/name: {{ .Values.nameOverride }}-frontend
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/part-of: {{ .Values.nameOverride }}
+  annotations:
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  tls:
+    - hosts:
+        - {{ .Values.frontend.host }}
+      secretName: {{ .Values.ingress.frontendTlsSecretName }}
+  rules:
+    - host: {{ .Values.frontend.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.nameOverride }}-frontend
+                port:
+                  name: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.nameOverride }}-backend
+  labels:
+    app.kubernetes.io/name: {{ .Values.nameOverride }}-backend
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: {{ .Values.nameOverride }}
+  annotations:
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  tls:
+    - hosts:
+        - {{ .Values.backend.host }}
+      secretName: {{ .Values.ingress.backendTlsSecretName }}
+  rules:
+    - host: {{ .Values.backend.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.nameOverride }}-backend
+                port:
+                  name: http

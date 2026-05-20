@@ -89,3 +89,5 @@ apps:
     enabled: true
   excalidraw:
     enabled: true
+  escape:
+    enabled: true

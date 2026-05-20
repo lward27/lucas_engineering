@@ -119,3 +119,26 @@ services:
     deployment: data-log-visual-backend
     deploymentNamespace: apps-prod
     workspaceStorageSize: 1Gi
+
+  escape-backend:
+    enabled: true
+    repoName: Escape_V1_back
+    repoURL: https://github.com/ClsDevTeam/Escape_V1_back.git
+    branch: migration-validation-functions
+    imageRef: docker-registry.registry.svc.cluster.local:5000/escape-v1-back:latest
+    deployment: escape-backend
+    deploymentNamespace: escape
+    workspaceStorageSize: 1Gi
+
+  escape-frontend:
+    enabled: true
+    repoName: ESCape-V1-Front
+    repoURL: https://github.com/ClsDevTeam/ESCape-V1-Front.git
+    branch: main
+    imageRef: docker-registry.registry.svc.cluster.local:5000/escape-v1-front:latest
+    deployment: escape-frontend
+    deploymentNamespace: escape
+    workspaceStorageSize: 1Gi
+    kanikoExtraArgs:
+      - --build-arg=VITE_API_BASE_URL=https://escape-api.lucas.engineering/api/
+      - --build-arg=VITE_DEFAULT_DATABASE=cls

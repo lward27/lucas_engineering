@@ -1,0 +1,159 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.nameOverride }}-backend
+  labels:
+    app.kubernetes.io/name: {{ .Values.nameOverride }}-backend
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: {{ .Values.nameOverride }}
+spec:
+  replicas: {{ .Values.backend.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.nameOverride }}-backend
+      app.kubernetes.io/component: backend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.nameOverride }}-backend
+        app.kubernetes.io/component: backend
+        app.kubernetes.io/part-of: {{ .Values.nameOverride }}
+    spec:
+      initContainers:
+        - name: wait-for-postgresql
+          image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
+          imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.secretName }}
+                  key: postgres-password
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h {{ .Values.nameOverride }}-postgresql -U {{ .Values.postgresql.user }} -d {{ .Values.postgresql.database }}; do
+                sleep 2
+              done
+      containers:
+        - name: backend
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          command:
+            - /app/docker/entrypoint.sh
+          args:
+            - gunicorn
+            - config.wsgi:application
+            - --bind
+            - 0.0.0.0:8000
+            - --workers
+            - "4"
+          env:
+            - name: DEBUG
+              value: "False"
+            - name: PROD
+              value: "True"
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.backend.secretName }}
+                  key: secret-key
+            - name: FERNET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.backend.secretName }}
+                  key: fernet-key
+            - name: DATABASE_NAMES
+              value: "default,cls"
+            - name: DEFAULT_DATABASE_NAME
+              value: {{ .Values.postgresql.database | quote }}
+            - name: DEFAULT_DATABASE_HOST
+              value: {{ .Values.nameOverride }}-postgresql
+            - name: DEFAULT_DATABASE_PORT
+              value: "5432"
+            - name: DEFAULT_DATABASE_USER
+              value: {{ .Values.postgresql.user | quote }}
+            - name: DEFAULT_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.secretName }}
+                  key: postgres-password
+            - name: CLS_DATABASE_NAME
+              value: {{ .Values.postgresql.database | quote }}
+            - name: CLS_DATABASE_HOST
+              value: {{ .Values.nameOverride }}-postgresql
+            - name: CLS_DATABASE_PORT
+              value: "5432"
+            - name: CLS_DATABASE_USER
+              value: {{ .Values.postgresql.user | quote }}
+            - name: CLS_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.secretName }}
+                  key: postgres-password
+            - name: DJANGO_ALLOWED_HOSTS
+              value: "{{ .Values.backend.host }},{{ .Values.nameOverride }}-backend,{{ .Values.nameOverride }}-backend.{{ .Release.Namespace }}.svc,{{ .Values.nameOverride }}-backend.{{ .Release.Namespace }}.svc.cluster.local"
+            - name: CORS_ALLOWED_ORIGINS
+              value: "https://{{ .Values.frontend.host }}"
+            - name: CSRF_TRUSTED_ORIGINS
+              value: "https://{{ .Values.frontend.host }},https://{{ .Values.backend.host }}"
+            - name: CSRF_COOKIE_DOMAIN
+              value: ".lucas.engineering"
+            - name: SESSION_COOKIE_DOMAIN
+              value: ".lucas.engineering"
+            - name: CSRF_COOKIE_SECURE
+              value: "True"
+            - name: SESSION_COOKIE_SECURE
+              value: "True"
+            - name: DJANGO_SUPERUSER_USERNAME
+              value: admin
+            - name: DJANGO_SUPERUSER_EMAIL
+              value: admin@escape.local
+            - name: DJANGO_SUPERUSER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.backend.secretName }}
+                  key: django-superuser-password
+            - name: ESCAPE_LOCAL_DATABASE_ALIAS
+              value: cls
+            - name: ESCAPE_LOCAL_SYSTEM_USER
+              value: ADMIN
+            - name: ESCAPE_LOCAL_GROUP
+              value: admin
+          ports:
+            - name: http
+              containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /api/cls/auth/csrf/
+              port: http
+              httpHeaders:
+                - name: Host
+                  value: {{ .Values.backend.host }}
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            {{- toYaml .Values.backend.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.nameOverride }}-backend
+  labels:
+    app.kubernetes.io/name: {{ .Values.nameOverride }}-backend
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: {{ .Values.nameOverride }}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: {{ .Values.nameOverride }}-backend
+    app.kubernetes.io/component: backend
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http
