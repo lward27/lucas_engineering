@@ -584,7 +584,7 @@ VALUES
  ('STAN', 'PART-CAMERA-DOME', 'DOME-4MP-IR', 135, '2026-04-15 00:00:00'),
  ('STAN', 'PART-CAMERA-BULLET', 'BULLET-4MP-IP', 115, '2026-04-18 00:00:00'),
  ('SARG', 'PART-KEYPAD-MORTISE', 'KP-8200-LN', 265, '2026-04-20 00:00:00'),
- ('MED', 'PART-KEY-BLANK-HIGHSEC', 'M3-KEY-REST', 16, '2026-04-25 00:00:00');
+ ('MED', 'PART-KEY-BLANK-HIGHSEC', 'M3-KEY-MED', 16, '2026-04-25 00:00:00');
 
 INSERT INTO exp_tables.customer (
  custno, lastname, firstname, add1, city, state, zip, phone1, creditrate, terms,
