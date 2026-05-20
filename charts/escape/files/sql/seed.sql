@@ -68,6 +68,7 @@ DELETE FROM exp_tables.counter WHERE name IN ('Customer', 'Dispatch', 'Employee'
 DELETE FROM exp_tables.dispatchpriority WHERE name IN ('HIGH', 'STD', 'LOW', 'EMRG', 'RUSH');
 DELETE FROM exp_tables.dispatchtype WHERE name IN ('SERV', 'SAFE', 'INST', 'ACCS', 'EMRG', 'CONS');
 DELETE FROM exp_tables.taxcodes WHERE code IN ('GST5', 'NONE', 'GSTHST', 'PST7', 'GSTPST');
+DELETE FROM exp_tables.creditratings WHERE name IN ('A', 'B', 'C', 'COD');
 DELETE FROM exp_tables.terms WHERE term IN ('Due on Receipt', 'Net 15', 'Net 30', 'Net 45', 'Net 60', '2/10 Net 30');
 DELETE FROM exp_tables.warehous WHERE wh IN ('0001', '0002', '0003', '0004', '0005', '0006', '0007', '0008', '0009', '0010');
 DELETE FROM exp_tables.sldept WHERE dept IN ('SV', 'SA', 'IN', '10', '20', '30', '40', '50', '60');
@@ -220,6 +221,13 @@ VALUES
  ('Net 45', 0, 45, 0, 0, 0, 0, 0, 'term-net-45'),
  ('Net 60', 0, 60, 0, 0, 0, 0, 0, 'term-net-60'),
  ('2/10 Net 30', 0, 30, 0, 0, 0, 10, 2, 'term-2-10-net-30');
+
+INSERT INTO exp_tables.creditratings (name, inactive, color, restrictdispatch)
+VALUES
+ ('A', 0, 4, 0),
+ ('B', 0, 2, 0),
+ ('C', 0, 3, 0),
+ ('COD', 0, 6, 0);
 
 INSERT INTO exp_tables.taxcodes (
  code, "desc", sales, acct1, tdesc1, rate1, vendor1, acct2, tdesc2, rate2, vendor2,
@@ -1086,5 +1094,25 @@ INSERT INTO exp_tables.reportviewcustomfield (
  ('112F7688-CBE4-47E2-A33E-F6C7FFA6AA33', 'd901fe5f-9249-49c4-8a3f-5e176626aef1', 4, 'datereceived', 0, 150, 2, 0, 3),
  ('112F7688-CBE4-47E2-A33E-F6C7FFA6AA33', 'd901fe5f-9249-49c4-8a3f-5e176626aef1', 5, 'status', 0, 130, 0, 0, 0),
  ('112F7688-CBE4-47E2-A33E-F6C7FFA6AA33', 'd901fe5f-9249-49c4-8a3f-5e176626aef1', 6, 'techname', 0, 160, 0, 0, 0);
+
+UPDATE exp_tables.counter
+SET next = lpad(GREATEST(next::integer, (SELECT COALESCE(MAX(custno::integer), 0) + 1 FROM exp_tables.customer))::text, 7, '0')
+WHERE name = 'Customer';
+
+UPDATE exp_tables.counter
+SET next = lpad(GREATEST(next::integer, (SELECT COALESCE(MAX(dispatch::integer), 0) + 1 FROM exp_tables.dispatch))::text, 6, '0')
+WHERE name = 'Dispatch';
+
+UPDATE exp_tables.counter
+SET next = lpad(GREATEST(next::integer, (SELECT COALESCE(MAX(empno::integer), 0) + 1 FROM exp_tables.employee))::text, 4, '0')
+WHERE name = 'Employee';
+
+UPDATE exp_tables.counter
+SET next = lpad(GREATEST(next::integer, (SELECT COALESCE(MAX(invoice::integer), 0) + 1 FROM exp_tables.sales))::text, 10, '0')
+WHERE name = 'Invoice';
+
+UPDATE exp_tables.counter
+SET next = lpad(GREATEST(next::bigint, (SELECT COALESCE(MAX(po::bigint), 0) + 1 FROM exp_tables.po))::text, 15, '0')
+WHERE name = 'PO';
 
 COMMIT;
