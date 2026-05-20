@@ -76,6 +76,18 @@ spec:
           value: $(params.userHome)
         - name: WORKSPACE_OUTPUT_PATH
           value: $(workspaces.output.path)
+        - name: GIT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: tekton-github-credentials
+              key: username
+              optional: true
+        - name: GIT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: tekton-github-credentials
+              key: password
+              optional: true
       securityContext:
         allowPrivilegeEscalation: false
         runAsNonRoot: true
@@ -95,6 +107,12 @@ spec:
         fi
 
         CHECKOUT_DIR="${WORKSPACE_OUTPUT_PATH}"
+
+        if [ -n "${GIT_USERNAME:-}" ] && [ -n "${GIT_PASSWORD:-}" ] ; then
+          mkdir -p "${PARAM_USER_HOME}"
+          printf "https://%s:%s@github.com\n" "${GIT_USERNAME}" "${GIT_PASSWORD}" > "${PARAM_USER_HOME}/.git-credentials"
+          git config --global credential.helper store
+        fi
 
         cleandir() {
           if [ -d "${CHECKOUT_DIR}" ] ; then
