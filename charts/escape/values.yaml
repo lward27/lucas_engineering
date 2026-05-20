@@ -2,7 +2,7 @@ nameOverride: escape
 
 frontend:
   image:
-    repository: docker-registry.registry.svc.cluster.local:5000/escape-v1-front
+    repository: registry.lucas.engineering/escape-v1-front
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -17,7 +17,7 @@ frontend:
 
 backend:
   image:
-    repository: docker-registry.registry.svc.cluster.local:5000/escape-v1-back
+    repository: registry.lucas.engineering/escape-v1-back
     tag: latest
     pullPolicy: Always
   replicas: 1
