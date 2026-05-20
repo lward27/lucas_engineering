@@ -64,7 +64,7 @@ DELETE FROM exp_tables.vendorlocations WHERE vendor IN ('ALGO', 'MULK', 'AMSE', 
 DELETE FROM exp_tables.vendor WHERE vendor IN ('ALGO', 'MULK', 'AMSE', 'KABA', 'HIDG', 'ASSA', 'YALE', 'DETE', 'STAN', 'HES', 'SARG', 'CORB', 'FALC', 'MED', 'SECU');
 DELETE FROM exp_tables.employee WHERE empno IN ('0001', '0002', '0003', '0004', '0005', '0006', '0007', '0008', '0009', '0010', '0011', '0012', '0013', '0014', '0015');
 DELETE FROM exp_tables.users WHERE "user" IN ('ADMIN', 'AVA', 'MASON', 'LENA', 'JORDAN', 'RILEY', 'CASEY', 'QUINN', 'SKYLER', 'DREW', 'REMI', 'TAYLOR', 'ALEX', 'JAMIE', 'MORGAN');
-DELETE FROM exp_tables.counter WHERE name IN ('Customer', 'Dispatch', 'Employee', 'Invoice', 'PO');
+DELETE FROM exp_tables.counter WHERE name IN ('Customer', 'Dispatch', 'Employee', 'Invoice', 'PO', 'GJ');
 DELETE FROM exp_tables.dispatchpriority WHERE name IN ('HIGH', 'STD', 'LOW', 'EMRG', 'RUSH');
 DELETE FROM exp_tables.dispatchtype WHERE name IN ('SERV', 'SAFE', 'INST', 'ACCS', 'EMRG', 'CONS');
 DELETE FROM exp_tables.taxcodes WHERE code IN ('GST5', 'NONE', 'GSTHST', 'PST7', 'GSTPST');
@@ -282,7 +282,8 @@ VALUES
  ('Dispatch', '000116'),
  ('Employee', '0016'),
  ('Invoice', '0000002016'),
- ('PO', '000000000000106');
+ ('PO', '000000000000106'),
+ ('GJ', '000001');
 
 INSERT INTO exp_tables.employee (
  empno, empname, skill, servicenum, search, lastname, firstname, add1, city, state, zip,
@@ -1114,5 +1115,9 @@ WHERE name = 'Invoice';
 UPDATE exp_tables.counter
 SET next = lpad(GREATEST(next::bigint, (SELECT COALESCE(MAX(po::bigint), 0) + 1 FROM exp_tables.po))::text, 15, '0')
 WHERE name = 'PO';
+
+UPDATE exp_tables.counter
+SET next = lpad(GREATEST(next::integer, (SELECT COALESCE(MAX(trannumber), 0) + 1 FROM exp_tables.finledger))::text, 6, '0')
+WHERE name = 'GJ';
 
 COMMIT;
