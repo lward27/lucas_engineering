@@ -88,4 +88,4 @@ apps:
   clawspace:
     enabled: true
   excalidraw:
-    enabled: false
+    enabled: true
