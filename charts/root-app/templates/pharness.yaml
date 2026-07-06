@@ -1,0 +1,24 @@
+{{- if (index .Values.apps "pharness").enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pharness
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/lward27/pharness.git
+    path: deploy/helm/pharness
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: pharness
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+{{- end }}

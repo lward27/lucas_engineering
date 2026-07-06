@@ -51,7 +51,19 @@ STORAGE[data-log-visual-backend]="1Gi"
 DOCKERFILE[data-log-visual-backend]="./backend/Dockerfile"
 CONTEXT[data-log-visual-backend]="./backend/"
 
-ALL_SERVICES=(finance-app-db-service finance-app-database-service finance-frontend yfinance-wrapper scraper-manager data-log-visual-frontend data-log-visual-backend)
+REPO_URL[pharness-runtime]="https://github.com/lward27/pharness.git"
+IMAGE_REF[pharness-runtime]="registry.lucas.engineering/pharness-runtime:latest"
+STORAGE[pharness-runtime]="8Gi"
+DOCKERFILE[pharness-runtime]="./deploy/docker/Dockerfile.runtime"
+CONTEXT[pharness-runtime]="./"
+
+REPO_URL[pharness-ui]="https://github.com/lward27/pharness.git"
+IMAGE_REF[pharness-ui]="registry.lucas.engineering/pharness-ui:latest"
+STORAGE[pharness-ui]="1Gi"
+DOCKERFILE[pharness-ui]="./deploy/docker/Dockerfile.ui"
+CONTEXT[pharness-ui]="./"
+
+ALL_SERVICES=(finance-app-db-service finance-app-database-service finance-frontend yfinance-wrapper scraper-manager data-log-visual-frontend data-log-visual-backend pharness-runtime pharness-ui)
 
 # ── helpers ─────────────────────────────────────────────────────────────────
 usage() {

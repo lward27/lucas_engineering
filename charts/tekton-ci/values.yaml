@@ -29,6 +29,30 @@ webhookIngress:
 # One entry per microservice. Each service gets its own TriggerBinding,
 # TriggerTemplate, and a route in the EventListener.
 services:
+  pharness-runtime:
+    enabled: true
+    repoName: pharness
+    repoURL: https://github.com/lward27/pharness.git
+    branch: main
+    imageRef: registry.lucas.engineering/pharness-runtime:latest
+    dockerfile: "./deploy/docker/Dockerfile.runtime"
+    context: "./"
+    deployment: pharness-api
+    deploymentNamespace: pharness
+    workspaceStorageSize: 8Gi
+
+  pharness-ui:
+    enabled: true
+    repoName: pharness
+    repoURL: https://github.com/lward27/pharness.git
+    branch: main
+    imageRef: registry.lucas.engineering/pharness-ui:latest
+    dockerfile: "./deploy/docker/Dockerfile.ui"
+    context: "./"
+    deployment: pharness-ui
+    deploymentNamespace: pharness
+    workspaceStorageSize: 1Gi
+
   finance-app-db-service:
     enabled: true
     repoName: finance_app_database_service
