@@ -14,7 +14,7 @@ spec:
         set -eu
         pip install --no-cache-dir -q -r requirements-runtime.txt pytest pytest-asyncio ruff mypy
         ruff check --exclude .venv packages services tools migrations
-        mypy packages services
+        mypy packages services tools
         pytest -q
         python -m compileall -q packages services migrations tools
 ---
@@ -33,7 +33,7 @@ spec:
         #!/bin/sh
         set -eu
         corepack enable
-        pnpm install --frozen-lockfile || true
+        pnpm install --frozen-lockfile --config.strictDepBuilds=false
         pnpm approve-builds --all
         pnpm rebuild
         pnpm typecheck
@@ -76,4 +76,3 @@ spec:
         git -c http.extraHeader="Authorization: Bearer ${GITHUB_TOKEN}" push origin "${branch}"
         payload="{\"title\":\"Promote Epheros $(params.source-sha)\",\"head\":\"${branch}\",\"base\":\"main\",\"body\":\"Tekton verification passed. Review the immutable web and API digests before merge.\"}"
         curl --fail-with-body -sS -X POST -H "Authorization: Bearer ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" -H "Content-Type: application/json" "https://api.github.com/repos/$(params.gitops-repo)/pulls" -d "${payload}"
-
