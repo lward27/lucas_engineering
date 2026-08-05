@@ -6,6 +6,13 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: 2m
     nginx.ingress.kubernetes.io/proxy-read-timeout: "30"
+    # Kubelet probes target Pod IPs directly. Block these paths at the public
+    # virtual host so the catch-all SPA route cannot expose unauthenticated
+    # liveness, readiness, or future metrics responses through the tunnel.
+    nginx.ingress.kubernetes.io/server-snippet: |
+      location = /health/live { return 404; }
+      location = /health/ready { return 404; }
+      location = /metrics { return 404; }
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   tls:
@@ -21,4 +28,3 @@ spec:
           - path: /
             pathType: Prefix
             backend: { service: { name: epheros-web, port: { name: http } } }
-
