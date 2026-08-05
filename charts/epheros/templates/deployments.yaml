@@ -25,7 +25,6 @@ spec:
             - { name: EPHEROS_APP_ENV, value: cluster }
             - { name: EPHEROS_CF_ACCESS_ISSUER, value: {{ .Values.auth.issuer | quote }} }
             - { name: EPHEROS_CF_ACCESS_AUDIENCE, value: {{ .Values.auth.audience | quote }} }
-            - { name: EPHEROS_CF_ACCESS_JWKS_URL, value: {{ .Values.auth.jwksUrl | quote }} }
             - { name: EPHEROS_PUBLIC_ORIGIN, value: {{ .Values.auth.publicOrigin | quote }} }
             - { name: EPHEROS_CSRF_SECRET, valueFrom: { secretKeyRef: { name: {{ .Values.secrets.app }}, key: csrf-secret } } }
           envFrom: [{ secretRef: { name: {{ .Values.secrets.app }} } }]
@@ -64,7 +63,6 @@ spec:
             - { name: EPHEROS_DATABASE_URL, valueFrom: { secretKeyRef: { name: {{ .Values.secrets.database }}, key: database-url } } }
             - { name: EPHEROS_CF_ACCESS_ISSUER, value: {{ .Values.auth.issuer | quote }} }
             - { name: EPHEROS_CF_ACCESS_AUDIENCE, value: {{ .Values.auth.audience | quote }} }
-            - { name: EPHEROS_CF_ACCESS_JWKS_URL, value: {{ .Values.auth.jwksUrl | quote }} }
             - { name: EPHEROS_PUBLIC_ORIGIN, value: {{ .Values.auth.publicOrigin | quote }} }
             - { name: EPHEROS_CSRF_SECRET, valueFrom: { secretKeyRef: { name: {{ .Values.secrets.app }}, key: csrf-secret } } }
           envFrom: [{ secretRef: { name: {{ .Values.secrets.app }} } }]

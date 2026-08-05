@@ -12,7 +12,7 @@ secrets:
   migrationDatabase: epheros-db-owner
   backup: epheros-db-backup
 database: { host: postgresql.apps-prod.svc.cluster.local, port: 5432, name: epheros }
-auth: { issuer: "", audience: "", jwksUrl: "", publicOrigin: "https://epheros.lucas.engineering" }
+auth: { issuer: "", audience: "", publicOrigin: "https://epheros.lucas.engineering" }
 ingress: { host: epheros.lucas.engineering, className: nginx, tlsSecretName: epheros-lucas-engineering-tls }
 backup:
   enabled: false
