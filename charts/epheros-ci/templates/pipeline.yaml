@@ -26,6 +26,10 @@ spec:
       runAfter: [fetch-source]
       taskRef: { name: epheros-python-verify }
       workspaces: [{ name: source, workspace: shared-data }]
+    - name: source-supply-chain
+      runAfter: [fetch-source]
+      taskRef: { name: epheros-source-supply-chain }
+      workspaces: [{ name: source, workspace: shared-data }]
     - name: web-verify
       runAfter: [fetch-source]
       taskRef: { name: epheros-web-verify }
@@ -35,7 +39,7 @@ spec:
       taskRef: { name: epheros-browser-verify }
       workspaces: [{ name: source, workspace: shared-data }]
     - name: build-web
-      runAfter: [python-verify, web-verify, browser-verify]
+      runAfter: [python-verify, source-supply-chain, web-verify, browser-verify]
       taskRef: { name: kaniko }
       workspaces: [{ name: source, workspace: shared-data }]
       params:
@@ -43,15 +47,31 @@ spec:
         - { name: DOCKERFILE, value: deploy/docker/Dockerfile.web }
         - { name: CONTEXT, value: ./ }
     - name: build-api
-      runAfter: [python-verify, web-verify, browser-verify]
+      runAfter: [python-verify, source-supply-chain, web-verify, browser-verify]
       taskRef: { name: kaniko }
       workspaces: [{ name: source, workspace: shared-data }]
       params:
         - { name: IMAGE, value: "$(params.api-image):$(params.source-sha)" }
         - { name: DOCKERFILE, value: deploy/docker/Dockerfile.api }
         - { name: CONTEXT, value: ./ }
+    - name: scan-web-image
+      runAfter: [build-web]
+      taskRef: { name: epheros-image-supply-chain }
+      workspaces: [{ name: source, workspace: shared-data }]
+      params:
+        - { name: image, value: $(params.web-image) }
+        - { name: digest, value: $(tasks.build-web.results.IMAGE_DIGEST) }
+        - { name: artifact-name, value: web }
+    - name: scan-api-image
+      runAfter: [build-api]
+      taskRef: { name: epheros-image-supply-chain }
+      workspaces: [{ name: source, workspace: shared-data }]
+      params:
+        - { name: image, value: $(params.api-image) }
+        - { name: digest, value: $(tasks.build-api.results.IMAGE_DIGEST) }
+        - { name: artifact-name, value: api }
     - name: gitops-pr
-      runAfter: [build-web, build-api]
+      runAfter: [scan-web-image, scan-api-image]
       taskRef: { name: epheros-gitops-pr }
       workspaces: [{ name: source, workspace: shared-data }]
       params:

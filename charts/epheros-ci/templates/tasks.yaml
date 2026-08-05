@@ -22,6 +22,28 @@ spec:
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
+  name: epheros-source-supply-chain
+  namespace: {{ .Values.namespace }}
+spec:
+  workspaces: [{ name: source }]
+  results:
+    - name: sbom-sha256
+      description: SHA-256 of the source SPDX JSON SBOM
+  steps:
+    - name: sbom-and-scan
+      image: aquasec/trivy@sha256:7cced7cae583819fc7806d4cbc0dbbc7cad18b99f7d3e235192e6da8c091045c
+      workingDir: $(workspaces.source.path)
+      script: |
+        #!/bin/sh
+        set -eu
+        mkdir -p .epheros-ci-artifacts
+        trivy fs --quiet --format spdx-json --output .epheros-ci-artifacts/source.sbom.spdx.json .
+        trivy fs --quiet --scanners vuln,secret --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 .
+        sha256sum .epheros-ci-artifacts/source.sbom.spdx.json | awk '{print $1}' > $(results.sbom-sha256.path)
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
   name: epheros-web-verify
   namespace: {{ .Values.namespace }}
 spec:
@@ -56,6 +78,38 @@ spec:
         corepack enable
         pnpm install --frozen-lockfile --config.strictDepBuilds=false
         pnpm test:e2e
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: epheros-image-supply-chain
+  namespace: {{ .Values.namespace }}
+spec:
+  params:
+    - { name: image, type: string }
+    - { name: digest, type: string }
+    - { name: artifact-name, type: string }
+  workspaces: [{ name: source }]
+  results:
+    - name: sbom-sha256
+      description: SHA-256 of the image SPDX JSON SBOM
+  volumes:
+    - name: registry-auth
+      secret: { secretName: {{ .Values.secrets.registryAuth }} }
+  steps:
+    - name: sbom-and-scan
+      image: aquasec/trivy@sha256:7cced7cae583819fc7806d4cbc0dbbc7cad18b99f7d3e235192e6da8c091045c
+      workingDir: $(workspaces.source.path)
+      volumeMounts: [{ name: registry-auth, mountPath: /root/.docker, readOnly: true }]
+      script: |
+        #!/bin/sh
+        set -eu
+        mkdir -p .epheros-ci-artifacts
+        image_ref="$(params.image)@$(params.digest)"
+        sbom=".epheros-ci-artifacts/$(params.artifact-name).sbom.spdx.json"
+        trivy image --quiet --format spdx-json --output "${sbom}" "${image_ref}"
+        trivy image --quiet --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 "${image_ref}"
+        sha256sum "${sbom}" | awk '{print $1}' > $(results.sbom-sha256.path)
 ---
 apiVersion: tekton.dev/v1
 kind: Task

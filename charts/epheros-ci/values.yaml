@@ -10,4 +10,4 @@ registry:
   api: registry.lucas.engineering/epheros-api
 secrets:
   gitopsBot: epheros-gitops-bot
-
+  registryAuth: epheros-registry-auth
