@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: epheros-web
+  namespace: epheros
+  labels:
+{{ include "epheros.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount.web }}
+  selector:
+    matchLabels: { app.kubernetes.io/name: epheros-web }
+  template:
+    metadata:
+      labels: { app.kubernetes.io/name: epheros-web, app.kubernetes.io/part-of: epheros }
+    spec:
+      serviceAccountName: epheros-web
+      securityContext: { runAsNonRoot: true, seccompProfile: { type: RuntimeDefault } }
+      containers:
+        - name: web
+          image: {{ include "epheros.image" .Values.images.web | quote }}
+          imagePullPolicy: IfNotPresent
+          ports: [{ name: http, containerPort: 8001 }]
+          env:
+            - { name: EPHEROS_AUTH_MODE, value: cloudflare }
+            - { name: EPHEROS_APP_ENV, value: cluster }
+            - { name: EPHEROS_CF_ACCESS_ISSUER, value: {{ .Values.auth.issuer | quote }} }
+            - { name: EPHEROS_CF_ACCESS_AUDIENCE, value: {{ .Values.auth.audience | quote }} }
+            - { name: EPHEROS_CF_ACCESS_JWKS_URL, value: {{ .Values.auth.jwksUrl | quote }} }
+            - { name: EPHEROS_CSRF_SECRET, valueFrom: { secretKeyRef: { name: {{ .Values.secrets.app }}, key: csrf-secret } } }
+          envFrom: [{ secretRef: { name: {{ .Values.secrets.app }} } }]
+          securityContext: { allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: { drop: [ALL] } }
+          readinessProbe: { httpGet: { path: /health/ready, port: http }, periodSeconds: 10 }
+          livenessProbe: { httpGet: { path: /health/live, port: http }, periodSeconds: 20 }
+          resources:
+{{ toYaml .Values.resources.web | indent 12 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: epheros-api
+  namespace: epheros
+  labels:
+{{ include "epheros.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount.api }}
+  selector:
+    matchLabels: { app.kubernetes.io/name: epheros-api }
+  template:
+    metadata:
+      labels: { app.kubernetes.io/name: epheros-api, app.kubernetes.io/part-of: epheros }
+    spec:
+      serviceAccountName: epheros-api
+      securityContext: { runAsNonRoot: true, seccompProfile: { type: RuntimeDefault } }
+      containers:
+        - name: api
+          image: {{ include "epheros.image" .Values.images.api | quote }}
+          imagePullPolicy: IfNotPresent
+          ports: [{ name: http, containerPort: 8000 }]
+          env:
+            - { name: EPHEROS_AUTH_MODE, value: cloudflare }
+            - { name: EPHEROS_APP_ENV, value: cluster }
+            - { name: EPHEROS_REPOSITORY, value: postgres }
+            - { name: EPHEROS_DATABASE_URL, valueFrom: { secretKeyRef: { name: {{ .Values.secrets.database }}, key: database-url } } }
+            - { name: EPHEROS_CF_ACCESS_ISSUER, value: {{ .Values.auth.issuer | quote }} }
+            - { name: EPHEROS_CF_ACCESS_AUDIENCE, value: {{ .Values.auth.audience | quote }} }
+            - { name: EPHEROS_CF_ACCESS_JWKS_URL, value: {{ .Values.auth.jwksUrl | quote }} }
+            - { name: EPHEROS_CSRF_SECRET, valueFrom: { secretKeyRef: { name: {{ .Values.secrets.app }}, key: csrf-secret } } }
+          envFrom: [{ secretRef: { name: {{ .Values.secrets.app }} } }]
+          securityContext: { allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: { drop: [ALL] } }
+          readinessProbe: { httpGet: { path: /health/ready, port: http }, periodSeconds: 10 }
+          livenessProbe: { httpGet: { path: /health/live, port: http }, periodSeconds: 20 }
+          resources:
+{{ toYaml .Values.resources.api | indent 12 }}

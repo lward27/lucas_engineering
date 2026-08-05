@@ -1,0 +1,28 @@
+images:
+  web:
+    repository: registry.lucas.engineering/epheros-web
+    digest: ""
+  api:
+    repository: registry.lucas.engineering/epheros-api
+    digest: ""
+replicaCount: { web: 2, api: 2 }
+secrets:
+  app: epheros-app-config
+  database: epheros-db-app
+  migrationDatabase: epheros-db-owner
+  backup: epheros-db-backup
+database: { host: postgresql.apps-prod.svc.cluster.local, port: 5432, name: epheros }
+auth: { issuer: "", audience: "", jwksUrl: "" }
+ingress: { host: epheros.lucas.engineering, className: nginx, tlsSecretName: epheros-lucas-engineering-tls }
+backup:
+  enabled: false
+  schedule: "17 2 * * *"
+  s3Endpoint: ""
+  bucket: ""
+resources:
+  web:
+    requests: { cpu: 50m, memory: 96Mi }
+    limits: { cpu: 250m, memory: 256Mi }
+  api:
+    requests: { cpu: 100m, memory: 192Mi }
+    limits: { cpu: 500m, memory: 512Mi }

@@ -1,0 +1,79 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: epheros-python-verify
+  namespace: {{ .Values.namespace }}
+spec:
+  workspaces: [{ name: source }]
+  steps:
+    - name: verify
+      image: python:3.13-slim-bookworm
+      workingDir: $(workspaces.source.path)
+      script: |
+        #!/bin/sh
+        set -eu
+        pip install --no-cache-dir -q -r requirements-runtime.txt pytest pytest-asyncio ruff mypy
+        ruff check --exclude .venv packages services tools migrations
+        mypy packages services
+        pytest -q
+        python -m compileall -q packages services migrations tools
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: epheros-web-verify
+  namespace: {{ .Values.namespace }}
+spec:
+  workspaces: [{ name: source }]
+  steps:
+    - name: verify
+      image: node:24-bookworm-slim
+      workingDir: $(workspaces.source.path)/apps/web-ui
+      script: |
+        #!/bin/sh
+        set -eu
+        corepack enable
+        pnpm install --frozen-lockfile || true
+        pnpm approve-builds --all
+        pnpm rebuild
+        pnpm typecheck
+        pnpm test -- --run
+        pnpm build
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: epheros-gitops-pr
+  namespace: {{ .Values.namespace }}
+spec:
+  params:
+    - { name: gitops-repo, type: string }
+    - { name: source-sha, type: string }
+    - { name: web-digest, type: string }
+    - { name: api-digest, type: string }
+  workspaces: [{ name: source }]
+  steps:
+    - name: open-pr
+      image: alpine:3.22
+      workingDir: $(workspaces.source.path)
+      env:
+        - name: GITHUB_TOKEN
+          valueFrom: { secretKeyRef: { name: {{ .Values.secrets.gitopsBot }}, key: token } }
+      script: |
+        #!/bin/sh
+        set -eu
+        apk add --no-cache curl git >/dev/null
+        branch="epheros/$(params.source-sha)"
+        git -c http.extraHeader="Authorization: Bearer ${GITHUB_TOKEN}" clone "https://github.com/$(params.gitops-repo).git" .gitops
+        cd .gitops
+        git checkout -b "${branch}"
+        sed -i "/^  web:/,/^  api:/ s#^    digest:.*#    digest: \"$(params.web-digest)\"#" charts/epheros/values.yaml
+        sed -i "/^  api:/,/^replicaCount:/ s#^    digest:.*#    digest: \"$(params.api-digest)\"#" charts/epheros/values.yaml
+        git config user.name epheros-ci
+        git config user.email epheros-ci@users.noreply.github.com
+        git add charts/epheros/values.yaml
+        git commit -m "chore(epheros): promote $(params.source-sha)"
+        git -c http.extraHeader="Authorization: Bearer ${GITHUB_TOKEN}" push origin "${branch}"
+        payload="{\"title\":\"Promote Epheros $(params.source-sha)\",\"head\":\"${branch}\",\"base\":\"main\",\"body\":\"Tekton verification passed. Review the immutable web and API digests before merge.\"}"
+        curl --fail-with-body -sS -X POST -H "Authorization: Bearer ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" -H "Content-Type: application/json" "https://api.github.com/repos/$(params.gitops-repo)/pulls" -d "${payload}"
+

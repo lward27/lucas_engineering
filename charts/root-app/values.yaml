@@ -93,3 +93,7 @@ apps:
     enabled: true
   escape:
     enabled: true
+  epheros:
+    enabled: false
+  epheros-ci:
+    enabled: false

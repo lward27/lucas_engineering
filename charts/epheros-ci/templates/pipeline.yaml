@@ -1,0 +1,58 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: epheros-build-promote
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: epheros-ci
+    app.kubernetes.io/part-of: epheros
+spec:
+  params:
+    - { name: repo-url, type: string, default: {{ .Values.source.repoUrl | quote }} }
+    - { name: revision, type: string, default: {{ .Values.source.branch | quote }} }
+    - { name: source-sha, type: string }
+    - { name: web-image, type: string, default: {{ .Values.registry.web | quote }} }
+    - { name: api-image, type: string, default: {{ .Values.registry.api | quote }} }
+    - { name: gitops-repo, type: string, default: {{ .Values.gitops.repo | quote }} }
+  workspaces: [{ name: shared-data }]
+  tasks:
+    - name: fetch-source
+      taskRef: { name: git-clone }
+      workspaces: [{ name: output, workspace: shared-data }]
+      params:
+        - { name: url, value: $(params.repo-url) }
+        - { name: revision, value: $(params.source-sha) }
+    - name: python-verify
+      runAfter: [fetch-source]
+      taskRef: { name: epheros-python-verify }
+      workspaces: [{ name: source, workspace: shared-data }]
+    - name: web-verify
+      runAfter: [fetch-source]
+      taskRef: { name: epheros-web-verify }
+      workspaces: [{ name: source, workspace: shared-data }]
+    - name: build-web
+      runAfter: [python-verify, web-verify]
+      taskRef: { name: kaniko }
+      workspaces: [{ name: source, workspace: shared-data }]
+      params:
+        - { name: IMAGE, value: "$(params.web-image):$(params.source-sha)" }
+        - { name: DOCKERFILE, value: deploy/docker/Dockerfile.web }
+        - { name: CONTEXT, value: ./ }
+    - name: build-api
+      runAfter: [python-verify, web-verify]
+      taskRef: { name: kaniko }
+      workspaces: [{ name: source, workspace: shared-data }]
+      params:
+        - { name: IMAGE, value: "$(params.api-image):$(params.source-sha)" }
+        - { name: DOCKERFILE, value: deploy/docker/Dockerfile.api }
+        - { name: CONTEXT, value: ./ }
+    - name: gitops-pr
+      runAfter: [build-web, build-api]
+      taskRef: { name: epheros-gitops-pr }
+      workspaces: [{ name: source, workspace: shared-data }]
+      params:
+        - { name: gitops-repo, value: $(params.gitops-repo) }
+        - { name: source-sha, value: $(params.source-sha) }
+        - { name: web-digest, value: "$(tasks.build-web.results.IMAGE_DIGEST)" }
+        - { name: api-digest, value: "$(tasks.build-api.results.IMAGE_DIGEST)" }
+

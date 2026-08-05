@@ -1,0 +1,13 @@
+namespace: tekton-pipelines
+source:
+  repoUrl: https://github.com/JenaSys/epheros-platform.git
+  branch: main
+gitops:
+  repo: lward27/lucas_engineering
+  branch: main
+registry:
+  web: registry.lucas.engineering/epheros-web
+  api: registry.lucas.engineering/epheros-api
+secrets:
+  gitopsBot: epheros-gitops-bot
+

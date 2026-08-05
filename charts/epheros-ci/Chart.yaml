@@ -1,0 +1,7 @@
+apiVersion: v2
+name: epheros-ci
+description: Epheros verification, immutable image build, and GitOps promotion pipeline
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+

@@ -1,0 +1,44 @@
+{{- if .Values.backup.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: epheros-backup
+  namespace: epheros
+  labels:
+{{ include "epheros.labels" . | indent 4 }}
+spec:
+  schedule: {{ .Values.backup.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata: { labels: { app.kubernetes.io/name: epheros-backup, app.kubernetes.io/part-of: epheros } }
+        spec:
+          restartPolicy: Never
+          serviceAccountName: epheros-backup
+          volumes: [{ name: backup, emptyDir: { sizeLimit: 2Gi } }]
+          initContainers:
+            - name: pgdump
+              image: postgres:17-bookworm
+              command: ["/bin/sh", "-c"]
+              args: ["set -eu; pg_dump --format=custom --no-owner --no-acl \"$EPHEROS_DATABASE_URL\" | gzip > /backup/epheros.dump.gz; sha256sum /backup/epheros.dump.gz > /backup/epheros.dump.gz.sha256"]
+              env:
+                - { name: EPHEROS_DATABASE_URL, valueFrom: { secretKeyRef: { name: {{ .Values.secrets.backup }}, key: database-url } } }
+              volumeMounts: [{ name: backup, mountPath: /backup }]
+              securityContext: { runAsNonRoot: true, allowPrivilegeEscalation: false, capabilities: { drop: [ALL] } }
+          containers:
+            - name: upload
+              image: amazon/aws-cli:2.27.41
+              command: ["sh", "-c"]
+              args: ["set -eu; aws --endpoint-url \"$S3_ENDPOINT\" s3 cp /backup/epheros.dump.gz \"s3://$S3_BUCKET/$(date -u +%Y/%m/%d)/epheros.dump.gz\"; aws --endpoint-url \"$S3_ENDPOINT\" s3 cp /backup/epheros.dump.gz.sha256 \"s3://$S3_BUCKET/$(date -u +%Y/%m/%d)/epheros.dump.gz.sha256\""]
+              env:
+                - { name: AWS_ACCESS_KEY_ID, valueFrom: { secretKeyRef: { name: {{ .Values.secrets.backup }}, key: access-key } } }
+                - { name: AWS_SECRET_ACCESS_KEY, valueFrom: { secretKeyRef: { name: {{ .Values.secrets.backup }}, key: secret-key } } }
+                - { name: AWS_DEFAULT_REGION, value: us-east-1 }
+                - { name: S3_ENDPOINT, value: {{ .Values.backup.s3Endpoint | quote }} }
+                - { name: S3_BUCKET, value: {{ .Values.backup.bucket | quote }} }
+              volumeMounts: [{ name: backup, mountPath: /backup, readOnly: true }]
+              securityContext: { runAsNonRoot: true, allowPrivilegeEscalation: false, capabilities: { drop: [ALL] } }
+{{- end }}
