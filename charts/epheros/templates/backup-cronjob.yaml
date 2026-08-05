@@ -21,7 +21,7 @@ spec:
           volumes: [{ name: backup, emptyDir: { sizeLimit: 2Gi } }]
           initContainers:
             - name: pgdump
-              image: postgres:17-bookworm
+              image: postgres:17-bookworm@sha256:a37f62b259d97a1cdee2f0c3e14c3c28e8df80aa4c91af1faf63392cecbee138
               command: ["/bin/sh", "-c"]
               args: ["set -eu; pg_dump --format=custom --no-owner --no-acl \"$EPHEROS_DATABASE_URL\" | gzip > /backup/epheros.dump.gz; sha256sum /backup/epheros.dump.gz > /backup/epheros.dump.gz.sha256"]
               env:
@@ -30,7 +30,7 @@ spec:
               securityContext: { runAsNonRoot: true, allowPrivilegeEscalation: false, capabilities: { drop: [ALL] } }
           containers:
             - name: upload
-              image: amazon/aws-cli:2.27.41
+              image: amazon/aws-cli:2.27.41@sha256:bc6b7bba44ce38f9604ede49c584824af919047ea03fbcc7c7610671fdef95d8
               command: ["sh", "-c"]
               args: ["set -eu; aws --endpoint-url \"$S3_ENDPOINT\" s3 cp /backup/epheros.dump.gz \"s3://$S3_BUCKET/$(date -u +%Y/%m/%d)/epheros.dump.gz\"; aws --endpoint-url \"$S3_ENDPOINT\" s3 cp /backup/epheros.dump.gz.sha256 \"s3://$S3_BUCKET/$(date -u +%Y/%m/%d)/epheros.dump.gz.sha256\""]
               env:

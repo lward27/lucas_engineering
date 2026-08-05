@@ -7,7 +7,7 @@ spec:
   workspaces: [{ name: source }]
   steps:
     - name: verify
-      image: python:3.13-slim-bookworm
+      image: python:3.13-slim-bookworm@sha256:67a1e1f215ccda113cfc024e8639049257e88f273898f595b61476d128d387e8
       workingDir: $(workspaces.source.path)
       script: |
         #!/bin/sh
@@ -27,7 +27,7 @@ spec:
   workspaces: [{ name: source }]
   steps:
     - name: verify
-      image: node:24-bookworm-slim
+      image: node:24-bookworm-slim@sha256:3638d9a6fe4030bd716be989438248074489337ba3275657f93595428be4fc03
       workingDir: $(workspaces.source.path)/apps/web-ui
       script: |
         #!/bin/sh
@@ -54,7 +54,7 @@ spec:
   workspaces: [{ name: source }]
   steps:
     - name: open-pr
-      image: alpine:3.22
+      image: alpine:3.22@sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce
       workingDir: $(workspaces.source.path)
       env:
         - name: GITHUB_TOKEN
