@@ -12,7 +12,8 @@ spec:
       script: |
         #!/bin/sh
         set -eu
-        pip install --no-cache-dir -q -r requirements-runtime.txt pytest pytest-asyncio ruff mypy
+        pip install --no-cache-dir --require-hashes -q -r requirements-dev.txt
+        pip check
         ruff check --exclude .venv packages services tools migrations
         mypy packages services tools
         pytest -q
@@ -34,8 +35,6 @@ spec:
         set -eu
         corepack enable
         pnpm install --frozen-lockfile --config.strictDepBuilds=false
-        pnpm approve-builds --all
-        pnpm rebuild
         pnpm typecheck
         pnpm test -- --run
         pnpm build

@@ -13,6 +13,8 @@ secrets:
   backup: epheros-db-backup
 database: { host: postgresql.apps-prod.svc.cluster.local, port: 5432, name: epheros }
 auth: { issuer: "", audience: "", publicOrigin: "https://epheros.lucas.engineering" }
+observability:
+  otlpEndpoint: "opentelemetry-collector.monitoring.svc.cluster.local:4317"
 ingress: { host: epheros.lucas.engineering, className: nginx, tlsSecretName: epheros-lucas-engineering-tls }
 backup:
   enabled: false
