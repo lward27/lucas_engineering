@@ -30,8 +30,12 @@ spec:
       runAfter: [fetch-source]
       taskRef: { name: epheros-web-verify }
       workspaces: [{ name: source, workspace: shared-data }]
+    - name: browser-verify
+      runAfter: [fetch-source]
+      taskRef: { name: epheros-browser-verify }
+      workspaces: [{ name: source, workspace: shared-data }]
     - name: build-web
-      runAfter: [python-verify, web-verify]
+      runAfter: [python-verify, web-verify, browser-verify]
       taskRef: { name: kaniko }
       workspaces: [{ name: source, workspace: shared-data }]
       params:
@@ -39,7 +43,7 @@ spec:
         - { name: DOCKERFILE, value: deploy/docker/Dockerfile.web }
         - { name: CONTEXT, value: ./ }
     - name: build-api
-      runAfter: [python-verify, web-verify]
+      runAfter: [python-verify, web-verify, browser-verify]
       taskRef: { name: kaniko }
       workspaces: [{ name: source, workspace: shared-data }]
       params:
@@ -55,4 +59,3 @@ spec:
         - { name: source-sha, value: $(params.source-sha) }
         - { name: web-digest, value: "$(tasks.build-web.results.IMAGE_DIGEST)" }
         - { name: api-digest, value: "$(tasks.build-api.results.IMAGE_DIGEST)" }
-

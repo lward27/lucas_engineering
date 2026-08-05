@@ -42,6 +42,24 @@ spec:
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
+  name: epheros-browser-verify
+  namespace: {{ .Values.namespace }}
+spec:
+  workspaces: [{ name: source }]
+  steps:
+    - name: verify
+      image: mcr.microsoft.com/playwright:v1.62.1-noble@sha256:dcc5531e97840b9b5e794f2814476b21571c5124a3fca2267d73041f56e7580e
+      workingDir: $(workspaces.source.path)/apps/web-ui
+      script: |
+        #!/bin/sh
+        set -eu
+        corepack enable
+        pnpm install --frozen-lockfile --config.strictDepBuilds=false
+        pnpm test:e2e
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
   name: epheros-gitops-pr
   namespace: {{ .Values.namespace }}
 spec:
