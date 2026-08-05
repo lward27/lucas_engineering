@@ -14,7 +14,14 @@ spec:
       labels: { app.kubernetes.io/name: epheros-web, app.kubernetes.io/part-of: epheros }
     spec:
       serviceAccountName: epheros-web
+      automountServiceAccountToken: false
       securityContext: { runAsNonRoot: true, seccompProfile: { type: RuntimeDefault } }
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels: { app.kubernetes.io/name: epheros-web }
       containers:
         - name: web
           image: {{ include "epheros.image" .Values.images.web | quote }}
@@ -50,7 +57,14 @@ spec:
       labels: { app.kubernetes.io/name: epheros-api, app.kubernetes.io/part-of: epheros }
     spec:
       serviceAccountName: epheros-api
+      automountServiceAccountToken: false
       securityContext: { runAsNonRoot: true, seccompProfile: { type: RuntimeDefault } }
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels: { app.kubernetes.io/name: epheros-api }
       containers:
         - name: api
           image: {{ include "epheros.image" .Values.images.api | quote }}

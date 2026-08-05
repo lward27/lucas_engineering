@@ -15,6 +15,7 @@ spec:
     spec:
       restartPolicy: Never
       serviceAccountName: epheros-migrate
+      automountServiceAccountToken: false
       securityContext: { runAsNonRoot: true, seccompProfile: { type: RuntimeDefault } }
       containers:
         - name: migrate
