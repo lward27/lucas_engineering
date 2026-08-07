@@ -1,10 +1,10 @@
 images:
   web:
     repository: registry.lucas.engineering/epheros-web
-    digest: ""
+    digest: "sha256:3551ef9d78815567f11dcdcfbe759103beb39f77be5be3be8958908f40c4706f"
   api:
     repository: registry.lucas.engineering/epheros-api
-    digest: ""
+    digest: "sha256:800d9b62ff8f7d503168a0bb8db1acb10d3152fe213d76cf94c8a558718a2997"
 replicaCount: { web: 2, api: 2 }
 secrets:
   app: epheros-app-config
@@ -12,7 +12,9 @@ secrets:
   migrationDatabase: epheros-db-owner
   backup: epheros-db-backup
 database: { host: postgresql.apps-prod.svc.cluster.local, port: 5432, name: epheros }
-auth: { issuer: "", audience: "", publicOrigin: "https://epheros.lucas.engineering" }
+# Cloudflare issuer, audience, JWKS, and CSRF material are supplied only by
+# the out-of-band epheros-app-config Secret; never commit them here.
+auth: { publicOrigin: "https://epheros.lucas.engineering" }
 observability:
   otlpEndpoint: "opentelemetry-collector.monitoring.svc.cluster.local:4317"
 ingress: { host: epheros.lucas.engineering, className: nginx, tlsSecretName: epheros-lucas-engineering-tls }

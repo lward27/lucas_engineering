@@ -9,6 +9,9 @@ ingress-nginx:
         http: 30080
         https: 30443
     config:
+      # Epheros uses a reviewed server snippet solely to keep probe and metrics
+      # endpoints cluster-only while its application routes remain public.
+      allow-snippet-annotations: "true"
       use-forwarded-headers: "true"
       compute-real-ip: "true"
       proxy-real-ip-cidr: "192.168.20.0/24"
