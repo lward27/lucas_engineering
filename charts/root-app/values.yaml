@@ -94,6 +94,6 @@ apps:
   escape:
     enabled: true
   epheros:
-    enabled: false
+    enabled: true
   epheros-ci:
     enabled: false
