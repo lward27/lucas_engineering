@@ -4,6 +4,7 @@ metadata:
   name: epheros
   namespace: epheros
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/proxy-body-size: 2m
     nginx.ingress.kubernetes.io/proxy-read-timeout: "30"
     # Kubelet probes target Pod IPs directly. Block these paths at the public
