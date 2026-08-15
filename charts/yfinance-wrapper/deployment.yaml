@@ -29,8 +29,8 @@ spec:
     spec:
       containers:
       - name: yfinance-wrapper
-        image: registry.lucas.engineering/yfinance_wrapper:latest
-        imagePullPolicy: Always
+        image: registry.lucas.engineering/yfinance_wrapper@sha256:850341f37100a0e90711b54733e06eeb52cb268244c6bbc07c25ef1b3c932cce
+        imagePullPolicy: IfNotPresent
         env:
         - name: OTEL_SERVICE_NAME
           value: "yfinance-wrapper"
