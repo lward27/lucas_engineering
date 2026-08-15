@@ -12,6 +12,9 @@ spec:
     repoURL: https://github.com/lward27/pharness.git
     path: deploy/helm/pharness
     targetRevision: HEAD
+    helm:
+      valueFiles:
+        - values-yfinance-production.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: pharness
