@@ -73,12 +73,14 @@ services:
     workspaceStorageSize: 1Gi
 
   yfinance-wrapper:
-    enabled: true
+    # PHarness owns this release path. The push webhook must not build a mutable
+    # tag or restart production; use pharness-yfinance-build explicitly.
+    enabled: false
     repoName: yfinance_wrapper
     repoURL: https://github.com/lward27/yfinance_wrapper.git
     branch: main
-    imageRef: docker-registry.registry.svc.cluster.local:5000/yfinance_wrapper:latest
-    deployment: yfinance-wrapper
+    imageRef: registry.lucas.engineering/yfinance_wrapper
+    deployment: ""
     deploymentNamespace: apps-prod
     workspaceStorageSize: 1Gi
 

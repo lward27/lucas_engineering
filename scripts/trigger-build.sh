@@ -8,7 +8,6 @@
 # Examples:
 #   ./scripts/trigger-build.sh finance-app-db-service
 #   ./scripts/trigger-build.sh finance-frontend
-#   ./scripts/trigger-build.sh yfinance-wrapper
 #   ./scripts/trigger-build.sh scraper-manager
 #   ./scripts/trigger-build.sh all
 
@@ -30,10 +29,6 @@ STORAGE[finance-app-database-service]="1Gi"
 REPO_URL[finance-frontend]="https://github.com/lward27/finance-frontend.git"
 IMAGE_REF[finance-frontend]="registry.lucas.engineering/finance-frontend:latest"
 STORAGE[finance-frontend]="1Gi"
-
-REPO_URL[yfinance-wrapper]="https://github.com/lward27/yfinance_wrapper.git"
-IMAGE_REF[yfinance-wrapper]="registry.lucas.engineering/yfinance_wrapper:latest"
-STORAGE[yfinance-wrapper]="1Gi"
 
 REPO_URL[scraper-manager]="https://github.com/lward27/scraper_manager.git"
 IMAGE_REF[scraper-manager]="registry.lucas.engineering/scraper_manager:latest"
@@ -63,7 +58,7 @@ STORAGE[pharness-ui]="1Gi"
 DOCKERFILE[pharness-ui]="./deploy/docker/Dockerfile.ui"
 CONTEXT[pharness-ui]="./"
 
-ALL_SERVICES=(finance-app-db-service finance-app-database-service finance-frontend yfinance-wrapper scraper-manager data-log-visual-frontend data-log-visual-backend pharness-runtime pharness-ui)
+ALL_SERVICES=(finance-app-db-service finance-app-database-service finance-frontend scraper-manager data-log-visual-frontend data-log-visual-backend pharness-runtime pharness-ui)
 
 # ── helpers ─────────────────────────────────────────────────────────────────
 usage() {

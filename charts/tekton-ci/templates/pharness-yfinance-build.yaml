@@ -1,0 +1,109 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: pharness-yfinance-build
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: tekton-ci
+    app.kubernetes.io/component: yfinance-wrapper
+    pharness.dev/release-path: supervised-production
+spec:
+  description: >-
+    Build one immutable yfinance-wrapper source commit. This Pipeline only
+    publishes git-<sha>; it never patches or restarts a workload.
+  params:
+    - name: revision
+      type: string
+      description: Full lowercase 40-character source commit SHA.
+    - name: dockerfile
+      type: string
+      default: ./Dockerfile
+    - name: context
+      type: string
+      default: ./
+  workspaces:
+    - name: shared-data
+  results:
+    - name: IMAGE_URL
+      value: $(tasks.build-push.results.IMAGE_URL)
+    - name: IMAGE_DIGEST
+      value: $(tasks.build-push.results.IMAGE_DIGEST)
+    - name: SOURCE_COMMIT
+      value: $(tasks.fetch-source.results.commit)
+  tasks:
+    - name: validate-revision
+      params:
+        - name: revision
+          value: $(params.revision)
+      taskSpec:
+        params:
+          - name: revision
+        steps:
+          - name: validate
+            image: docker.io/library/alpine@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc
+            env:
+              - name: REVISION
+                value: $(params.revision)
+            script: |
+              #!/bin/sh
+              set -eu
+              case "$REVISION" in
+                *[!0-9a-f]*|'') exit 1 ;;
+              esac
+              test "${#REVISION}" -eq 40
+    - name: fetch-source
+      runAfter: [validate-revision]
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-data
+      params:
+        - name: url
+          value: https://github.com/lward27/yfinance_wrapper.git
+        - name: revision
+          value: $(params.revision)
+        - name: gitInitImage
+          value: ghcr.io/tektoncd/github.com/tektoncd/pipeline/cmd/git-init@sha256:28ff94e63e4058afc3f15b4c11c08cf3b54fa91faa646a4bbac90380cd7158df
+    - name: verify-checkout
+      runAfter: [fetch-source]
+      params:
+        - name: requested
+          value: $(params.revision)
+        - name: resolved
+          value: $(tasks.fetch-source.results.commit)
+      taskSpec:
+        params:
+          - name: requested
+          - name: resolved
+        steps:
+          - name: compare
+            image: docker.io/library/alpine@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc
+            env:
+              - name: REQUESTED
+                value: $(params.requested)
+              - name: RESOLVED
+                value: $(params.resolved)
+            script: |
+              #!/bin/sh
+              set -eu
+              test "$REQUESTED" = "$RESOLVED"
+    - name: build-push
+      runAfter: [verify-checkout]
+      taskRef:
+        name: kaniko
+      workspaces:
+        - name: source
+          workspace: shared-data
+      params:
+        - name: IMAGE
+          value: registry.lucas.engineering/yfinance_wrapper:git-$(params.revision)
+        - name: DOCKERFILE
+          value: $(params.dockerfile)
+        - name: CONTEXT
+          value: $(params.context)
+        - name: BUILDER_IMAGE
+          value: gcr.io/kaniko-project/executor@sha256:a7ea9f69d77d7e7a0ea821f15069be45420a536f81ab5787a988659e48c25377
+        - name: EXTRA_ARGS
+          value:
+            - --skip-tls-verify

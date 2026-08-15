@@ -29,7 +29,7 @@ spec:
       default: []
     - name: BUILDER_IMAGE
       description: The Kaniko executor image to use.
-      default: gcr.io/kaniko-project/executor:v1.12.1-debug
+      default: gcr.io/kaniko-project/executor@sha256:a7ea9f69d77d7e7a0ea821f15069be45420a536f81ab5787a988659e48c25377
   workspaces:
     - name: source
       description: Holds the build context and Dockerfile.
