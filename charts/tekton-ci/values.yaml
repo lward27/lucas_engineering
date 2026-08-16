@@ -30,26 +30,31 @@ webhookIngress:
 # TriggerTemplate, and a route in the EventListener.
 services:
   pharness-runtime:
-    enabled: true
+    # PHarness releases are built only by the reviewed immutable-SHA release
+    # workflow. The push webhook must not publish a mutable tag or restart the
+    # digest-pinned Deployment.
+    enabled: false
     repoName: pharness
     repoURL: https://github.com/lward27/pharness.git
     branch: main
-    imageRef: registry.lucas.engineering/pharness-runtime:latest
+    imageRef: registry.lucas.engineering/pharness-runtime
     dockerfile: "./deploy/docker/Dockerfile.runtime"
     context: "./"
-    deployment: pharness-api
+    deployment: ""
     deploymentNamespace: pharness
     workspaceStorageSize: 8Gi
 
   pharness-ui:
-    enabled: true
+    # The UI follows the same reviewed source SHA and digest-pinning release
+    # commit as the API and Python runner.
+    enabled: false
     repoName: pharness
     repoURL: https://github.com/lward27/pharness.git
     branch: main
-    imageRef: registry.lucas.engineering/pharness-ui:latest
+    imageRef: registry.lucas.engineering/pharness-ui
     dockerfile: "./deploy/docker/Dockerfile.ui"
     context: "./"
-    deployment: pharness-ui
+    deployment: ""
     deploymentNamespace: pharness
     workspaceStorageSize: 1Gi
 
