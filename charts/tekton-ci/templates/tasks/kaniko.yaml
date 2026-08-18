@@ -18,6 +18,11 @@ spec:
   params:
     - name: IMAGE
       description: Full image reference to build and push (registry/name:tag).
+    - name: RESULT_IMAGE_URL
+      description: >-
+        Optional image reference to report when the push uses an internal route
+        to the same registry storage.
+      default: ""
     - name: DOCKERFILE
       description: Path to the Dockerfile to build.
       default: ./Dockerfile
@@ -58,5 +63,8 @@ spec:
       image: docker.io/library/bash:5.1.4@sha256:c523c636b722339f41b6a431b44588ab2f762c5de5ec3bd7964420ff982fb1d9
       script: |
         set -e
-        image="$(params.IMAGE)"
+        image="$(params.RESULT_IMAGE_URL)"
+        if [ -z "${image}" ]; then
+          image="$(params.IMAGE)"
+        fi
         echo -n "${image}" | tee "$(results.IMAGE_URL.path)"
