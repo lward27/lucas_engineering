@@ -13,8 +13,9 @@ metadata:
     tekton.dev/displayName: "Build and push container image using Kaniko"
 spec:
   description: >-
-    Build a Dockerfile with Kaniko and push to a registry.
-    Stores the image digest as a result for traceability.
+    Cold fallback for the remote BuildKit path. Build a Dockerfile with Kaniko,
+    authenticate to the method-protected registry gateway, and preserve digest
+    results.
   params:
     - name: IMAGE
       description: Full image reference to build and push (registry/name:tag).
@@ -29,8 +30,9 @@ spec:
     - name: CONTEXT
       description: The build context used by Kaniko.
       default: ./
-    - name: EXTRA_ARGS
+    - name: BUILD_ARGS
       type: array
+      description: Optional Dockerfile build arguments in NAME=value form.
       default: []
     - name: BUILDER_IMAGE
       description: The Kaniko executor image to use.
@@ -38,27 +40,76 @@ spec:
   workspaces:
     - name: source
       description: Holds the build context and Dockerfile.
-    - name: dockerconfig
-      description: Optional docker config.json for registry auth (mount as Secret).
-      optional: true
-      mountPath: /kaniko/.docker
   results:
     - name: IMAGE_DIGEST
       description: Digest of the image just built.
     - name: IMAGE_URL
       description: URL of the image just built.
+  volumes:
+    - name: registry-auth
+      secret:
+        secretName: lucas-registry-push
+        defaultMode: 0400
+        items:
+          - key: .dockerconfigjson
+            path: config.json
+    - name: registry-internal-ca
+      secret:
+        secretName: registry-internal-ca
+        defaultMode: 0444
+        items:
+          - key: ca.crt
+            path: additional-ca-cert-bundle.crt
   steps:
     - name: build-and-push
       workingDir: $(workspaces.source.path)
       image: $(params.BUILDER_IMAGE)
+      env:
+        - { name: PUBLIC_IMAGE, value: $(params.IMAGE) }
+        - { name: DOCKERFILE, value: $(params.DOCKERFILE) }
+        - { name: CONTEXT, value: $(params.CONTEXT) }
+      command: [/busybox/sh, -ec]
       args:
-        - $(params.EXTRA_ARGS)
-        - --dockerfile=$(params.DOCKERFILE)
-        - --context=$(workspaces.source.path)/$(params.CONTEXT)
-        - --destination=$(params.IMAGE)
-        - --digest-file=$(results.IMAGE_DIGEST.path)
+        - |
+          case "$PUBLIC_IMAGE" in
+            registry.lucas.engineering/*) image_path="${PUBLIC_IMAGE#registry.lucas.engineering/}" ;;
+            *) echo "fallback destination must use registry.lucas.engineering" >&2; exit 1 ;;
+          esac
+          test -n "$image_path"
+          case "$DOCKERFILE" in /*|*../*|../*) echo "unsafe Dockerfile path" >&2; exit 1 ;; esac
+          case "$CONTEXT" in /*|*../*|../*) echo "unsafe context path" >&2; exit 1 ;; esac
+
+          build_args_file=/tmp/kaniko-build-args
+          : >"$build_args_file"
+          for build_arg in "$@"; do
+            name="${build_arg%%=*}"
+            case "$build_arg" in *=*) ;; *) echo "build argument must be NAME=value" >&2; exit 1 ;; esac
+            case "$name" in ''|[0-9]*|*[!A-Za-z0-9_]*) echo "invalid build argument name" >&2; exit 1 ;; esac
+            printf '%s\n' "$build_arg" >>"$build_args_file"
+          done
+
+          set -- \
+            --registry-certificate=registry-write-gateway.registry.svc.cluster.local:8443=/kaniko/ssl/certs/additional-ca-cert-bundle.crt \
+            --dockerfile="$DOCKERFILE" \
+            --context="$(workspaces.source.path)/$CONTEXT" \
+            --destination="registry-write-gateway.registry.svc.cluster.local:8443/$image_path" \
+            --digest-file="$(results.IMAGE_DIGEST.path)"
+          while IFS= read -r build_arg; do
+            set -- "$@" --build-arg="$build_arg"
+          done <"$build_args_file"
+          exec /kaniko/executor "$@"
+        - build-args
+        - $(params.BUILD_ARGS[*])
       securityContext:
         runAsUser: 0
+        allowPrivilegeEscalation: false
+        capabilities: { drop: [ALL] }
+      volumeMounts:
+        - { name: registry-auth, mountPath: /kaniko/.docker, readOnly: true }
+        - name: registry-internal-ca
+          mountPath: /kaniko/ssl/certs/additional-ca-cert-bundle.crt
+          subPath: additional-ca-cert-bundle.crt
+          readOnly: true
     - name: write-url
       image: docker.io/library/bash:5.1.4@sha256:c523c636b722339f41b6a431b44588ab2f762c5de5ec3bd7964420ff982fb1d9
       script: |

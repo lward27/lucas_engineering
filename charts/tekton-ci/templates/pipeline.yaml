@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/part-of: tekton-ci
 spec:
   description: |
-    Clone a git repo, build a Docker image with Kaniko, and push to the registry.
+    Clone a git repo, build through the isolated desktop BuildKit, and push to the registry.
     Reused by all microservice triggers via parameterized TriggerTemplates.
   params:
     - name: repo-url
@@ -28,11 +28,11 @@ spec:
       type: string
       description: Build context directory relative to the repo root.
       default: "./"
-    - name: kaniko-extra-args
+    - name: build-args
       type: array
-      description: Extra arguments to pass to the Kaniko executor.
+      description: Dockerfile build arguments in NAME=value form.
       default:
-        {{- range .Values.registry.kanikoExtraArgs }}
+        {{- range .Values.registry.buildArgs }}
         - {{ . | quote }}
         {{- end }}
     - name: deployment
@@ -45,7 +45,7 @@ spec:
       default: "apps-prod"
   workspaces:
     - name: shared-data
-      description: Shared workspace between git-clone and kaniko tasks.
+      description: Shared workspace between git-clone and image-build tasks.
   tasks:
     - name: fetch-source
       taskRef:
@@ -63,7 +63,7 @@ spec:
       runAfter:
         - fetch-source
       taskRef:
-        name: kaniko
+        name: remote-buildkit
       workspaces:
         - name: source
           workspace: shared-data
@@ -74,8 +74,8 @@ spec:
           value: $(params.dockerfile)
         - name: CONTEXT
           value: $(params.context)
-        - name: EXTRA_ARGS
-          value: $(params.kaniko-extra-args[*])
+        - name: BUILD_ARGS
+          value: $(params.build-args[*])
 
     - name: rollout-restart
       runAfter:

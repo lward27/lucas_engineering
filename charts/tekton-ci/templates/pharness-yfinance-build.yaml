@@ -91,24 +91,16 @@ spec:
     - name: build-push
       runAfter: [verify-checkout]
       taskRef:
-        name: kaniko
+        name: remote-buildkit
       workspaces:
         - name: source
           workspace: shared-data
       params:
         - name: IMAGE
-          # The public registry hostname is proxied by Cloudflare, whose request
-          # size limit rejects large registry blob uploads. This Service reaches
-          # the same registry storage directly from the cluster.
-          value: docker-registry.registry.svc.cluster.local:5000/yfinance_wrapper:git-$(params.revision)
+          value: registry.lucas.engineering/yfinance_wrapper:git-$(params.revision)
         - name: RESULT_IMAGE_URL
           value: registry.lucas.engineering/yfinance_wrapper:git-$(params.revision)
         - name: DOCKERFILE
           value: $(params.dockerfile)
         - name: CONTEXT
           value: $(params.context)
-        - name: BUILDER_IMAGE
-          value: gcr.io/kaniko-project/executor@sha256:a7ea9f69d77d7e7a0ea821f15069be45420a536f81ab5787a988659e48c25377
-        - name: EXTRA_ARGS
-          value:
-            - --insecure-registry=docker-registry.registry.svc.cluster.local:5000
