@@ -1,0 +1,13 @@
+[Unit]
+Description=Firewall guard for desktop BuildKit services
+Before=buildkit-k3s.service buildkit-talos.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStartPre=-/usr/sbin/nft delete table inet buildkit_guard
+ExecStart=/usr/sbin/nft -f /etc/buildkit/buildkit-firewall.nft
+ExecStop=-/usr/sbin/nft delete table inet buildkit_guard
+
+[Install]
+WantedBy=multi-user.target

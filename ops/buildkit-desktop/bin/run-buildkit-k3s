@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+
+if ! grep -qE '^[[:space:]]*192\.168\.20\.210[[:space:]]+.*registry\.lucas\.engineering([[:space:]]|$)' /etc/hosts; then
+  printf '%s\n' '192.168.20.210 registry.lucas.engineering' >>/etc/hosts
+fi
+
+exec /usr/local/lib/buildkit/current/bin/buildkitd \
+  --config /etc/buildkit/k3s/buildkitd.toml

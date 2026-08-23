@@ -1,0 +1,33 @@
+[Unit]
+Description=Rootless BuildKit for the K3s cluster
+Wants=network-online.target
+After=network-online.target buildkit-firewall.service
+Requires=buildkit-firewall.service
+
+[Service]
+Type=simple
+User=buildkit-k3s
+Group=buildkit-k3s
+Slice=buildkit.slice
+Environment=HOME=/var/lib/buildkit-k3s
+Environment=XDG_RUNTIME_DIR=/run/buildkit-k3s
+Environment=TMPDIR=/tmp
+RuntimeDirectory=buildkit-k3s
+RuntimeDirectoryMode=0700
+ExecStartPre=/usr/bin/test -r /etc/buildkit/k3s/pki/server-key.pem
+ExecStartPre=/usr/bin/test -r /etc/buildkit/k3s/registry-internal-ca.pem
+ExecStart=/usr/bin/rootlesskit --state-dir=/run/buildkit-k3s/rootlesskit --net=slirp4netns --cidr=10.241.40.0/24 --copy-up=/etc --disable-host-loopback --port-driver=builtin -p 192.168.50.145:12340:1234/tcp -p 127.0.0.1:16060:6060/tcp /usr/local/libexec/run-buildkit-k3s
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=90s
+KillMode=mixed
+Delegate=yes
+Nice=10
+OOMScoreAdjust=500
+MemoryMax=8G
+TasksMax=8192
+LimitNOFILE=1048576
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

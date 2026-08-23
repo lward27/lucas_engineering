@@ -2,6 +2,8 @@ docker-registry:
   configPath: /etc/distribution
   service:
     type: ClusterIP
+    # The authenticated gateway proxies to this stable backend address.
+    clusterIP: 10.43.146.139
   ingress:
     enabled: true
     className: nginx
@@ -14,6 +16,7 @@ docker-registry:
     - hosts:
       - registry.lucas.engineering
       secretName: registry-lucas-engineering-tls
+    className: nginx
   persistence:
     enabled: true
     size: 10Gi
@@ -24,3 +27,9 @@ docker-registry:
     requests:
       cpu: 50m
       memory: 128Mi
+
+# Flip this only after the internal TLS NodePort has passed authenticated push
+# tests. It moves the public Ingress behind the method-aware gateway and
+# applies the backend/gateway NetworkPolicies in the same GitOps sync.
+registryGateway:
+  enforceWrites: false
