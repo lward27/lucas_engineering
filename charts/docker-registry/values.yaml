@@ -5,7 +5,8 @@ docker-registry:
     # The authenticated gateway proxies to this stable backend address.
     clusterIP: 10.43.146.139
   ingress:
-    enabled: true
+    # The first-party Ingress now targets the authenticated gateway.
+    enabled: false
     className: nginx
     hosts:
       - registry.lucas.engineering
@@ -32,4 +33,4 @@ docker-registry:
 # tests. It moves the public Ingress behind the method-aware gateway and
 # applies the backend/gateway NetworkPolicies in the same GitOps sync.
 registryGateway:
-  enforceWrites: false
+  enforceWrites: true
