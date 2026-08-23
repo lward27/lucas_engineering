@@ -50,12 +50,12 @@ spec:
             value: {{ $svc.dockerfile | default "./Dockerfile" | quote }}
           - name: context
             value: {{ $svc.context | default "./" | quote }}
-          - name: kaniko-extra-args
+          - name: build-args
             value:
-              {{- range $.Values.registry.kanikoExtraArgs }}
+              {{- range $.Values.registry.buildArgs }}
               - {{ . | quote }}
               {{- end }}
-              {{- range $svc.kanikoExtraArgs }}
+              {{- range $svc.buildArgs }}
               - {{ . | quote }}
               {{- end }}
           - name: deployment

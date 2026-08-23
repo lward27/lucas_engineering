@@ -112,9 +112,8 @@ spec:
       value: "${DOCKERFILE[$svc]:-./Dockerfile}"
     - name: context
       value: "${CONTEXT[$svc]:-./}"
-    - name: kaniko-extra-args
-      value:
-        - --skip-tls-verify
+    - name: build-args
+      value: []
 MANIFEST
 
   local run_name
