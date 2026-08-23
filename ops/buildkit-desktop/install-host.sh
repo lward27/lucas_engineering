@@ -72,7 +72,10 @@ trap 'rm -rf "$tmpdir"' EXIT
 curl --fail --location --silent --show-error "$BUILDKIT_URL" -o "$tmpdir/$BUILDKIT_ARCHIVE"
 printf '%s  %s\n' "$BUILDKIT_SHA256" "$tmpdir/$BUILDKIT_ARCHIVE" | sha256sum --check --status
 mkdir -p "/usr/local/lib/buildkit/$BUILDKIT_VERSION"
-tar -xzf "$tmpdir/$BUILDKIT_ARCHIVE" -C "/usr/local/lib/buildkit/$BUILDKIT_VERSION" --strip-components=1
+tar -xzf "$tmpdir/$BUILDKIT_ARCHIVE" -C "/usr/local/lib/buildkit/$BUILDKIT_VERSION"
+test -x "/usr/local/lib/buildkit/$BUILDKIT_VERSION/bin/buildkitd"
+test -x "/usr/local/lib/buildkit/$BUILDKIT_VERSION/bin/buildctl"
+test -x "/usr/local/lib/buildkit/$BUILDKIT_VERSION/bin/buildkit-runc"
 ln -sfn "/usr/local/lib/buildkit/$BUILDKIT_VERSION" /usr/local/lib/buildkit/current
 
 install -d -m 0755 /etc/buildkit /usr/local/libexec /usr/local/sbin
