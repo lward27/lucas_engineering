@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+
+exec /usr/local/lib/buildkit/current/bin/buildkitd \
+  --config /etc/buildkit/talos/buildkitd.toml

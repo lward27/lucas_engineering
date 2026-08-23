@@ -1,0 +1,9 @@
+[Unit]
+Description=Aggregate resource limits for desktop BuildKit services
+
+[Slice]
+CPUQuota=1200%
+CPUWeight=25
+IOWeight=25
+MemoryHigh=10G
+MemoryMax=12G

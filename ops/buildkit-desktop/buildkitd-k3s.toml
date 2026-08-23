@@ -1,0 +1,38 @@
+root = "/storage/minio-fast/buildkit/k3s"
+insecure-entitlements = []
+
+[log]
+  format = "text"
+  level = "info"
+
+[grpc]
+  address = ["tcp://0.0.0.0:1234"]
+  debugAddress = "0.0.0.0:6060"
+  [grpc.tls]
+    cert = "/etc/buildkit/k3s/pki/server-cert.pem"
+    key = "/etc/buildkit/k3s/pki/server-key.pem"
+    ca = "/etc/buildkit/k3s/pki/ca.pem"
+
+[history]
+  maxAge = 604800
+  maxEntries = 100
+
+[cdi]
+  disabled = true
+
+[worker.oci]
+  enabled = true
+  rootless = true
+  snapshotter = "auto"
+  binary = "/usr/local/lib/buildkit/current/bin/buildkit-runc"
+  gc = true
+  reservedSpace = "10GB"
+  maxUsedSpace = "200GB"
+  minFreeSpace = "100GB"
+  max-parallelism = 1
+
+[worker.containerd]
+  enabled = false
+
+[registry."registry.lucas.engineering"]
+  ca = ["/etc/buildkit/k3s/registry-internal-ca.pem"]

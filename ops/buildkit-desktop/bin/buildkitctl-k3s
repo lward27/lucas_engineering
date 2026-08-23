@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+
+exec /usr/local/lib/buildkit/current/bin/buildctl \
+  --addr tcp://192.168.50.145:12340 \
+  --tlsservername buildkit-k3s.lucas.internal \
+  --tlscacert /etc/buildkit/k3s/pki/ca.pem \
+  --tlscert /etc/buildkit/k3s/pki/operator-cert.pem \
+  --tlskey /etc/buildkit/k3s/pki/operator-key.pem \
+  "$@"

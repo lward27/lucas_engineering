@@ -1,0 +1,32 @@
+[Unit]
+Description=Rootless BuildKit for the Talos cluster
+Wants=network-online.target
+After=network-online.target buildkit-firewall.service
+Requires=buildkit-firewall.service
+
+[Service]
+Type=simple
+User=buildkit-talos
+Group=buildkit-talos
+Slice=buildkit.slice
+Environment=HOME=/var/lib/buildkit-talos
+Environment=XDG_RUNTIME_DIR=/run/buildkit-talos
+Environment=TMPDIR=/tmp
+RuntimeDirectory=buildkit-talos
+RuntimeDirectoryMode=0700
+ExecStartPre=/usr/bin/test -r /etc/buildkit/talos/pki/server-key.pem
+ExecStart=/usr/bin/rootlesskit --state-dir=/run/buildkit-talos/rootlesskit --net=slirp4netns --cidr=10.241.41.0/24 --copy-up=/etc --disable-host-loopback --port-driver=builtin -p 192.168.50.145:12341:1234/tcp -p 127.0.0.1:16061:6060/tcp /usr/local/libexec/run-buildkit-talos
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=90s
+KillMode=mixed
+Delegate=yes
+Nice=10
+OOMScoreAdjust=500
+MemoryMax=8G
+TasksMax=8192
+LimitNOFILE=1048576
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

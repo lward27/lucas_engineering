@@ -1,0 +1,150 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: remote-buildkit
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/version: "0.32.2"
+    app.kubernetes.io/part-of: tekton-ci
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.38.0"
+    tekton.dev/categories: Image Build
+    tekton.dev/tags: image-build
+    tekton.dev/displayName: "Build and push through the isolated desktop BuildKit"
+spec:
+  description: >-
+    Build one Linux/AMD64 image through the K3s-only, mutually authenticated
+    desktop BuildKit service and preserve the image URL and digest contract.
+  params:
+    - name: IMAGE
+      description: Full image reference to build and push.
+    - name: RESULT_IMAGE_URL
+      description: Optional image reference to publish as the IMAGE_URL result.
+      default: ""
+    - name: DOCKERFILE
+      description: Dockerfile path relative to the source workspace.
+      default: ./Dockerfile
+    - name: CONTEXT
+      description: Build context path relative to the source workspace.
+      default: ./
+    - name: BUILD_ARGS
+      description: Dockerfile build arguments in NAME=value form.
+      type: array
+      default: []
+  workspaces:
+    - name: source
+      description: Holds the build context and Dockerfile.
+  results:
+    - name: IMAGE_DIGEST
+      description: Digest of the image just built.
+    - name: IMAGE_URL
+      description: URL of the image just built.
+  volumes:
+    - name: buildkit-client-tls
+      secret:
+        secretName: remote-buildkit-client-tls
+        defaultMode: 0400
+    - name: registry-auth
+      secret:
+        secretName: lucas-registry-push
+        defaultMode: 0400
+        items:
+          - key: .dockerconfigjson
+            path: config.json
+    - name: metadata
+      emptyDir:
+        sizeLimit: 16Mi
+    - name: tmp
+      emptyDir:
+        sizeLimit: 1Gi
+  steps:
+    - name: build-and-push
+      workingDir: $(workspaces.source.path)
+      image: docker.io/moby/buildkit@sha256:60d1f642e29dc938bd6c109ba5500849fccf41921927c5339788b8227f57feb9
+      env:
+        - { name: DOCKER_CONFIG, value: /var/run/registry }
+        - { name: HOME, value: /tmp }
+        - { name: TMPDIR, value: /tmp }
+        - { name: IMAGE, value: $(params.IMAGE) }
+        - { name: DOCKERFILE, value: $(params.DOCKERFILE) }
+        - { name: CONTEXT, value: $(params.CONTEXT) }
+      command: [/bin/sh, -ec]
+      args:
+        - |
+          case "$DOCKERFILE" in /*|*../*|../*) echo "unsafe Dockerfile path" >&2; exit 1 ;; esac
+          case "$CONTEXT" in /*|*../*|../*) echo "unsafe context path" >&2; exit 1 ;; esac
+          source_root="$(workspaces.source.path)"
+          context_dir="$source_root/$CONTEXT"
+          dockerfile_path="$source_root/$DOCKERFILE"
+          test -d "$context_dir"
+          test -f "$dockerfile_path"
+
+          build_args_file=/tmp/build-args
+          : >"$build_args_file"
+          for build_arg in "$@"; do
+            name="${build_arg%%=*}"
+            case "$build_arg" in *=*) ;; *) echo "build argument must be NAME=value" >&2; exit 1 ;; esac
+            case "$name" in ''|[0-9]*|*[!A-Za-z0-9_]*) echo "invalid build argument name" >&2; exit 1 ;; esac
+            printf '%s\n' "$build_arg" >>"$build_args_file"
+          done
+
+          set -- \
+            --addr tcp://k3s-buildkit.{{ .Values.namespace }}.svc.cluster.local:12340 \
+            --tlsservername buildkit-k3s.lucas.internal \
+            --tlscacert /var/run/buildkit-tls/ca.pem \
+            --tlscert /var/run/buildkit-tls/cert.pem \
+            --tlskey /var/run/buildkit-tls/key.pem \
+            build \
+            --frontend dockerfile.v0 \
+            --local "context=$context_dir" \
+            --local "dockerfile=$(dirname "$dockerfile_path")" \
+            --opt "filename=$(basename "$dockerfile_path")" \
+            --opt platform=linux/amd64 \
+            --output "type=image,name=$IMAGE,push=true" \
+            --metadata-file /var/run/buildkit-metadata/image.json
+
+          while IFS= read -r build_arg; do
+            set -- "$@" --opt "build-arg:$build_arg"
+          done <"$build_args_file"
+          exec buildctl "$@"
+        - build-args
+        - $(params.BUILD_ARGS[*])
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities: { drop: [ALL] }
+        seccompProfile: { type: RuntimeDefault }
+      volumeMounts:
+        - { name: buildkit-client-tls, mountPath: /var/run/buildkit-tls, readOnly: true }
+        - { name: registry-auth, mountPath: /var/run/registry, readOnly: true }
+        - { name: metadata, mountPath: /var/run/buildkit-metadata }
+        - { name: tmp, mountPath: /tmp }
+    - name: publish-results
+      image: docker.io/library/bash:5.1.4@sha256:c523c636b722339f41b6a431b44588ab2f762c5de5ec3bd7964420ff982fb1d9
+      env:
+        - { name: IMAGE, value: $(params.IMAGE) }
+        - { name: RESULT_IMAGE_URL, value: $(params.RESULT_IMAGE_URL) }
+      script: |
+        #!/usr/bin/env bash
+        set -euo pipefail
+        metadata=/var/run/buildkit-metadata/image.json
+        digest="$(sed -n 's/.*"containerimage.digest"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$metadata")"
+        hex="${digest#sha256:}"
+        case "$hex" in *[!0-9a-f]*|'') exit 1 ;; esac
+        test "${#hex}" -eq 64
+        printf '%s' "$digest" >"$(results.IMAGE_DIGEST.path)"
+        image="$RESULT_IMAGE_URL"
+        test -n "$image" || image="$IMAGE"
+        printf '%s' "$image" >"$(results.IMAGE_URL.path)"
+      securityContext:
+        runAsUser: 65532
+        runAsGroup: 65532
+        runAsNonRoot: true
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities: { drop: [ALL] }
+        seccompProfile: { type: RuntimeDefault }
+      volumeMounts:
+        - { name: metadata, mountPath: /var/run/buildkit-metadata, readOnly: true }

@@ -1,0 +1,35 @@
+root = "/storage/minio-fast/buildkit/talos"
+insecure-entitlements = []
+
+[log]
+  format = "text"
+  level = "info"
+
+[grpc]
+  address = ["tcp://0.0.0.0:1234"]
+  debugAddress = "0.0.0.0:6060"
+  [grpc.tls]
+    cert = "/etc/buildkit/talos/pki/server-cert.pem"
+    key = "/etc/buildkit/talos/pki/server-key.pem"
+    ca = "/etc/buildkit/talos/pki/ca.pem"
+
+[history]
+  maxAge = 604800
+  maxEntries = 100
+
+[cdi]
+  disabled = true
+
+[worker.oci]
+  enabled = true
+  rootless = true
+  snapshotter = "auto"
+  binary = "/usr/local/lib/buildkit/current/bin/buildkit-runc"
+  gc = true
+  reservedSpace = "10GB"
+  maxUsedSpace = "140GB"
+  minFreeSpace = "100GB"
+  max-parallelism = 1
+
+[worker.containerd]
+  enabled = false
