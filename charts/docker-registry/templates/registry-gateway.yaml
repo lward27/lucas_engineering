@@ -34,7 +34,10 @@ data:
             auth_basic_user_file /etc/nginx/auth/htpasswd;
           }
 
-          proxy_set_header Host $host;
+          # Preserve the internal :8443 authority so registry upload Location
+          # responses do not redirect in-cluster builders to default port 443.
+          proxy_set_header Host $http_host;
+          proxy_set_header X-Forwarded-Host $http_host;
           proxy_set_header X-Real-IP $remote_addr;
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
