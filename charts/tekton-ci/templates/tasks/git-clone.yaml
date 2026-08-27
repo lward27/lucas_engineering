@@ -14,7 +14,8 @@ metadata:
 spec:
   description: >-
     Clone a git repo from the provided URL into the output Workspace.
-    Uses the optional repository credential only during clone.
+    Public repositories only. Private repository access requires a separately
+    reviewed Task with a repository-scoped credential.
   workspaces:
     - name: output
       description: The git repo will be cloned onto the volume backing this Workspace.
@@ -76,18 +77,6 @@ spec:
           value: $(params.userHome)
         - name: WORKSPACE_OUTPUT_PATH
           value: $(workspaces.output.path)
-        - name: GIT_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: tekton-github-credentials
-              key: username
-              optional: true
-        - name: GIT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: tekton-github-credentials
-              key: password
-              optional: true
       securityContext:
         allowPrivilegeEscalation: false
         runAsNonRoot: true
@@ -103,24 +92,6 @@ spec:
         set -eu
 
         CHECKOUT_DIR="${WORKSPACE_OUTPUT_PATH}"
-        CREDENTIAL_FILE="${PARAM_USER_HOME}/.git-credentials"
-
-        cleanup_credentials() {
-          set +x
-          rm -f "${CREDENTIAL_FILE}"
-          git config --global --unset credential.helper >/dev/null 2>&1 || true
-        }
-        trap cleanup_credentials EXIT
-
-        if [ -n "${GIT_USERNAME:-}" ] && [ -n "${GIT_PASSWORD:-}" ] ; then
-          umask 077
-          mkdir -p "${PARAM_USER_HOME}"
-          printf "https://%s:%s@github.com\n" "${GIT_USERNAME}" "${GIT_PASSWORD}" > "${CREDENTIAL_FILE}"
-          git config --global credential.helper store
-        fi
-
-        # Credential setup must never run under shell tracing. Verbose output
-        # begins only after all secret-bearing commands have completed.
         if [ "${PARAM_VERBOSE}" = "true" ] ; then
           set -x
         fi
