@@ -1,5 +1,10 @@
 docker-registry:
   configPath: /etc/distribution
+  # Return relative upload URLs so authenticated in-cluster clients preserve
+  # the gateway's non-default :8443 authority across resumable blob uploads.
+  configData:
+    http:
+      relativeurls: true
   service:
     type: ClusterIP
     # The authenticated gateway proxies to this stable backend address.
