@@ -14,7 +14,7 @@ metadata:
 spec:
   description: >-
     Clone a git repo from the provided URL into the output Workspace.
-    Public repos only - no auth workspace needed.
+    Uses the optional repository credential only during clone.
   workspaces:
     - name: output
       description: The git repo will be cloned onto the volume backing this Workspace.
@@ -102,16 +102,27 @@ spec:
         #!/usr/bin/env sh
         set -eu
 
-        if [ "${PARAM_VERBOSE}" = "true" ] ; then
-          set -x
-        fi
-
         CHECKOUT_DIR="${WORKSPACE_OUTPUT_PATH}"
+        CREDENTIAL_FILE="${PARAM_USER_HOME}/.git-credentials"
+
+        cleanup_credentials() {
+          set +x
+          rm -f "${CREDENTIAL_FILE}"
+          git config --global --unset credential.helper >/dev/null 2>&1 || true
+        }
+        trap cleanup_credentials EXIT
 
         if [ -n "${GIT_USERNAME:-}" ] && [ -n "${GIT_PASSWORD:-}" ] ; then
+          umask 077
           mkdir -p "${PARAM_USER_HOME}"
-          printf "https://%s:%s@github.com\n" "${GIT_USERNAME}" "${GIT_PASSWORD}" > "${PARAM_USER_HOME}/.git-credentials"
+          printf "https://%s:%s@github.com\n" "${GIT_USERNAME}" "${GIT_PASSWORD}" > "${CREDENTIAL_FILE}"
           git config --global credential.helper store
+        fi
+
+        # Credential setup must never run under shell tracing. Verbose output
+        # begins only after all secret-bearing commands have completed.
+        if [ "${PARAM_VERBOSE}" = "true" ] ; then
+          set -x
         fi
 
         cleandir() {
