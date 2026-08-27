@@ -38,6 +38,11 @@ spec:
     - from:
         - ipBlock:
             cidr: 192.168.50.145/32
+        {{- range .Values.registryGateway.internalWriterNamespaces }}
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ . | quote }}
+        {{- end }}
       ports:
         - { protocol: TCP, port: 8443 }
   egress:

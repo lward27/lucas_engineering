@@ -34,3 +34,7 @@ docker-registry:
 # applies the backend/gateway NetworkPolicies in the same GitOps sync.
 registryGateway:
   enforceWrites: true
+  # In-cluster builders still authenticate at the gateway; this list only
+  # grants network reachability to the TLS write endpoint.
+  internalWriterNamespaces:
+    - tekton-pipelines
