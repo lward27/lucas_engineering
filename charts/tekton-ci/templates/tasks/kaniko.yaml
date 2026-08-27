@@ -79,7 +79,9 @@ spec:
           case "$DOCKERFILE" in /*|*../*|../*) echo "unsafe Dockerfile path" >&2; exit 1 ;; esac
           case "$CONTEXT" in /*|*../*|../*) echo "unsafe context path" >&2; exit 1 ;; esac
 
-          build_args_file=/tmp/kaniko-build-args
+          # The distroless Kaniko executor does not provide /tmp. /kaniko is
+          # present and writable for the lifetime of this isolated step.
+          build_args_file=/kaniko/build-args
           : >"$build_args_file"
           for build_arg in "$@"; do
             name="${build_arg%%=*}"
