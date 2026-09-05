@@ -6,7 +6,7 @@ resources:
   - network-policy.yaml
 images:
   - name: registry.lucas.engineering/yfinance_wrapper
-    digest: sha256:f1cfc06fcac62d7c37a4d7dc87237e2abe02df0d9c3824a7521c5359058879c1
+    digest: sha256:33f1a08b74c82fb5dc01ef0ebef8a1fa5e2fc0ac78be17dadd1f74bbf1e319ca
 patches:
   - path: deployment-patch.yaml
   - target:
