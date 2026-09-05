@@ -1,0 +1,24 @@
+root = "/var/lib/buildkit"
+insecure-entitlements = []
+
+[grpc]
+  address = ["tcp://0.0.0.0:12340"]
+  [grpc.tls]
+    cert = "/etc/buildkit/pki/server-cert.pem"
+    key = "/etc/buildkit/pki/server-key.pem"
+    ca = "/etc/buildkit/pki/ca.pem"
+
+[history]
+  maxAge = 604800
+  maxEntries = 100
+
+[worker.oci]
+  enabled = true
+  max-parallelism = 1
+  gc = true
+  reservedSpace = "5GB"
+  maxUsedSpace = "30GB"
+  minFreeSpace = "10GB"
+
+[worker.containerd]
+  enabled = false
