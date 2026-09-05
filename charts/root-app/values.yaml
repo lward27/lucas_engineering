@@ -23,6 +23,8 @@ apps:
     enabled: true
   finance-frontend:
     enabled: true
+  finance-staging:
+    enabled: true
   data-log-visual:
     enabled: true
   grafana:

@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "environment": "production",
+  "services": {
+    "database": "https://finance-db.lucas.engineering",
+    "yfinance": "https://yfinance.lucas.engineering",
+    "scraper": null
+  }
+}

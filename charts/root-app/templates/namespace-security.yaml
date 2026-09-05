@@ -4,6 +4,7 @@
 # =============================================================================
 {{- $baselineNamespaces := list
   "apps-prod"
+  "apps-staging"
   "blog"
   "cloudflared"
   "code-server"
