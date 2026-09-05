@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yfinance-wrapper
+spec:
+  template:
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: yfinance-wrapper
+          env:
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: deployment.environment=staging,service.namespace=apps-staging
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            periodSeconds: 10
+            timeoutSeconds: 3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi

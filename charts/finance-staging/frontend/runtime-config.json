@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "environment": "staging",
+  "services": {
+    "database": null,
+    "yfinance": "/api/yfinance",
+    "scraper": null
+  }
+}

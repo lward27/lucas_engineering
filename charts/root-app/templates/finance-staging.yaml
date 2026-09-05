@@ -1,0 +1,25 @@
+{{- if (index .Values.apps "finance-staging").enabled }}
+{{- range $binding := list (dict "name" "yfinance-staging" "path" "yfinance") (dict "name" "finance-frontend-staging" "path" "frontend") }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ $binding.name }}
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/lward27/lucas_engineering.git
+    path: charts/finance-staging/{{ $binding.path }}
+    targetRevision: main
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps-staging
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+{{- end }}
+{{- end }}

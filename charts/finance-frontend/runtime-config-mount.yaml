@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: finance-frontend
+spec:
+  template:
+    spec:
+      containers:
+        - name: finance-frontend
+          volumeMounts:
+            - name: runtime-config
+              mountPath: /usr/share/nginx/html/runtime-config.json
+              subPath: runtime-config.json
+              readOnly: true
+      volumes:
+        - name: runtime-config
+          configMap:
+            name: finance-runtime-config
