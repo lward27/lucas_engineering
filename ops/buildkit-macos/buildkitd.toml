@@ -22,3 +22,6 @@ insecure-entitlements = []
 
 [worker.containerd]
   enabled = false
+
+[registry."registry.lucas.engineering"]
+  ca = ["/etc/buildkit/pki/registry-ca.pem"]

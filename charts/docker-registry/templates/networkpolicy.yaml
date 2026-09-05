@@ -38,6 +38,9 @@ spec:
     - from:
         - ipBlock:
             cidr: 192.168.50.145/32
+        # Temporary M1 build host on the Lucas VPN; the desktop is powered off.
+        - ipBlock:
+            cidr: 192.168.2.2/32
         {{- range .Values.registryGateway.internalWriterNamespaces }}
         - namespaceSelector:
             matchLabels:
