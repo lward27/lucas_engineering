@@ -65,6 +65,10 @@ spec:
           value: $(params.revision)
         - name: gitInitImage
           value: ghcr.io/tektoncd/github.com/tektoncd/pipeline/cmd/git-init@sha256:28ff94e63e4058afc3f15b4c11c08cf3b54fa91faa646a4bbac90380cd7158df
+        - name: verbose
+          value: "false"
+        - name: sslVerify
+          value: "true"
     - name: verify-checkout
       runAfter: [fetch-source]
       params:
