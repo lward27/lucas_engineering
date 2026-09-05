@@ -68,11 +68,14 @@ services:
     workspaceStorageSize: 1Gi
 
   finance-frontend:
-    enabled: true
+    # PHarness owns digest-pinned staging and approved production promotion.
+    # Use pharness-finance-frontend-build; source pushes must not restart production.
+    enabled: false
+    repoName: finance-frontend
     repoURL: https://github.com/lward27/finance-frontend.git
     branch: main
-    imageRef: registry.lucas.engineering/finance-frontend:latest
-    deployment: finance-frontend
+    imageRef: registry.lucas.engineering/finance-frontend
+    deployment: ""
     deploymentNamespace: apps-prod
     workspaceStorageSize: 1Gi
 

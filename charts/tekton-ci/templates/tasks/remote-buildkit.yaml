@@ -131,6 +131,7 @@ spec:
         set -euo pipefail
         metadata=/var/run/buildkit-metadata/image.json
         digest="$(sed -n 's/.*"containerimage.digest"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$metadata")"
+        case "$digest" in sha256:*) ;; *) exit 1 ;; esac
         hex="${digest#sha256:}"
         case "$hex" in *[!0-9a-f]*|'') exit 1 ;; esac
         test "${#hex}" -eq 64
