@@ -69,3 +69,26 @@ deletion is not part of this procedure.
 The Mac is a temporary availability dependency. Its use does not satisfy M12's
 unattended operation gate until the actual accepted hosting arrangement has been
 observed for the required period.
+
+## Private registry writes
+
+A real PHarness Python runner build hit Cloudflare's HTTP 413 upload limit. Small
+smoke-image publication did not expose that boundary. The temporary Mac therefore
+uses the existing authenticated private TLS gateway at `192.168.20.210:32443`.
+GitOps grants only the Mac VPN address `192.168.2.2/32` access to that endpoint,
+alongside the existing desktop and in-cluster writers. Credentials remain required.
+
+The BuildKit container resolves the canonical registry hostname to that node and
+translates only its own outbound registry TCP/443 connection to the NodePort.
+The existing registry CA is mounted read-only; hostname verification remains on.
+This does not change Mac DNS, the Rancher Desktop engine, cluster DNS, or another
+container's routing. Recheck the VPN address and node endpoint before starting.
+
+The local PHarness release builder is a separate Rancher Desktop engine. Its
+large outputs may be exported as OCI archives and uploaded through the existing
+private TLS port-forward with authenticated bounded chunks. Verify every content
+hash, source/revision label, architecture, returned digest, and public digest read.
+Archive export can change manifest media types; record the actual published digest.
+This is publication of the same built source, not a second source build or a
+qualification result. Live private-path build/push proof remains required after
+changing the temporary BuildKit container.
