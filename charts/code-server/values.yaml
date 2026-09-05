@@ -69,6 +69,8 @@ codeServer:
     host: code.lucas.engineering
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-prod
+      cert-manager.io/private-key-rotation-policy: "Never"
+      cert-manager.io/revision-history-limit: "2147483647"
       nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
       nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     tls:

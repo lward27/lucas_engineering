@@ -8,6 +8,8 @@ metadata:
     app.kubernetes.io/part-of: {{ .Values.nameOverride }}
   annotations:
     cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
+    cert-manager.io/private-key-rotation-policy: "Never"
+    cert-manager.io/revision-history-limit: "2147483647"
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   tls:
@@ -36,6 +38,8 @@ metadata:
     app.kubernetes.io/part-of: {{ .Values.nameOverride }}
   annotations:
     cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
+    cert-manager.io/private-key-rotation-policy: "Never"
+    cert-manager.io/revision-history-limit: "2147483647"
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   tls:

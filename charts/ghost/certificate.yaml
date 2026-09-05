@@ -1,0 +1,18 @@
+# Adopt the existing certificate under the same GitOps application as its Ingress.
+# This certificate predates ingress-shim ownership; annotations alone cannot
+# preserve its defaults during the shared cert-manager upgrade.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: blog-lucas-engineering-tls
+  namespace: blog
+spec:
+  secretName: blog-lucas-engineering-tls
+  dnsNames:
+    - blog.lucas.engineering
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  privateKey:
+    rotationPolicy: Never
+  revisionHistoryLimit: 2147483647

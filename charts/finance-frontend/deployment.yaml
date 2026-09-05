@@ -42,6 +42,8 @@ metadata:
   name: finance-frontend
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    cert-manager.io/private-key-rotation-policy: "Never"
+    cert-manager.io/revision-history-limit: "2147483647"
 spec:
   ingressClassName: nginx
   rules:
