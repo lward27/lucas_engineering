@@ -1,9 +1,9 @@
 # ASTRA Finance staging readiness
 
 Updated 2026-09-05 from GitOps main
-`e70ac07b28904777a087dee6daabbc213faa8d51` for PHarness M02.
-Both staging applications are running their exact pinned images. The additional
-public-ingress exclusion below still requires post-merge isolation verification.
+`137262f4377c5f1d19379f73e83249d66d09a0fd` for PHarness M02.
+Both staging applications are Synced/Healthy and run their exact pinned images.
+All 13 required/denied network connections passed after the public-ingress correction.
 
 ## Scope and ownership
 
@@ -55,9 +55,11 @@ services too; it is not a general hostname firewall or protection against an
 arbitrary external relay.
 Neither staging Pod mounts a service-account token.
 
-Network policies select only these new staging applications. Their actual
-enforcement must be verified after deployment, including denied access to a
-production mutation path. Do not substitute a policy manifest for that test.
+Network policies select only these new staging applications. Post-deployment
+application-labelled probes denied all ten tested private/public production
+connections and allowed the three necessary staging-backend, Yahoo and telemetry
+connections. They sent no production mutation requests. Revalidate these paths
+after a policy, DNS, ingress or service-binding change.
 
 ## Pre-merge review
 
@@ -85,7 +87,12 @@ and POST to the backend proxy returned 403. These port-forward checks prove HTTP
 behavior, not policy enforcement. Separate application-labelled init-container
 probes confirmed the frontend reaches only its staging backend and blocks the
 observed private/public production targets. The backend public path finding is
-the reason for this policy correction. Probe Pods never become Ready endpoints.
+the reason for this policy correction. After GitOps merge `516c7fcb...`, the
+backend denied all five production paths while preserving Yahoo and collector
+access. A five-day MSFT history request still returned 200. Probe Pods never
+become Ready endpoints. Fresh staging yfinance request metrics, Pod/container-
+scoped logs and Tempo traces were also observed; frontend Nginx logs are present.
+Frontend application traces and request metrics are not established.
 
 The PHarness evidence directory owns the exact before/after results, image
 identities, timestamps, and remaining program gates.

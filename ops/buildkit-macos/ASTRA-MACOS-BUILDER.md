@@ -21,8 +21,9 @@ The daemon image is the pinned native ARM64 BuildKit v0.26.2 manifest in
 `start-rancher-desktop.sh`. It runs inside Rancher Desktop's VM with two CPUs,
 2 GiB memory, one parallel build, and its own bounded cache volume. Unlike the
 Ubuntu desktop's rootless daemon, this temporary container is privileged inside
-the VM. It mounts only its configuration, the existing three K3s TLS files, and
-its cache; it does not mount the Docker socket or a general Mac source directory.
+the VM. It mounts only its configuration, the existing three K3s TLS files,
+the private registry CA, and its cache. It does not mount the Docker socket or a
+general Mac source directory.
 Build contexts arrive through BuildKit's authenticated session.
 
 The worker advertises ARM64. Actual uncached `linux/amd64` execution has been
@@ -50,11 +51,14 @@ returned manifest digest, and pull/run that exact digest. PHarness's
 platform path only; it is not M07 source-build acceptance or M11 autonomous work.
 
 The initial public-registry push exposed unrelated GitOps key rotation; see
-[the registry correction](../../docs/ASTRA-REGISTRY-UPLOAD-STABILITY.md). The Mac
-currently reaches the public HTTPS registry route. Small authenticated uploads
-are qualified by the smoke test; large application-layer uploads through that
-route still require validation. Do not disable TLS or silently claim the old
-desktop's private NodePort routing exists on the Mac.
+[the registry correction](../../docs/ASTRA-REGISTRY-UPLOAD-STABILITY.md). The later
+PHarness runner build exposed Cloudflare's large-upload limit. The current Mac
+BuildKit container uses the verified private TLS route described below. A 112 MiB
+random-layer uncached AMD64 build/push completed at 2026-09-05 10:33:16 UTC within
+its 360-second bound. Rancher Desktop pulled and ran the exact published digest
+`sha256:355e86491465573b4f9e8c41b56e5b28714e74710b88191e399819040b10a144`
+with network disabled, verifying architecture and payload size. PHarness evidence
+`ASTRA-M02-MAC-PRIVATE-LARGE-UPLOAD.json` records the Job, revisions and results.
 
 ## Restore the desktop
 
@@ -86,9 +90,11 @@ container's routing. Recheck the VPN address and node endpoint before starting.
 
 The local PHarness release builder is a separate Rancher Desktop engine. Its
 large outputs may be exported as OCI archives and uploaded through the existing
-private TLS port-forward with authenticated bounded chunks. Verify every content
+private TLS gateway with authenticated bounded chunks (verified NodePort or
+port-forward transport). Verify every content
 hash, source/revision label, architecture, returned digest, and public digest read.
 Archive export can change manifest media types; record the actual published digest.
 This is publication of the same built source, not a second source build or a
-qualification result. Live private-path build/push proof remains required after
-changing the temporary BuildKit container.
+qualification result. The private BuildKit path is now proven by the large-image
+probe above; actual source/build linkage and autonomous application delivery
+remain PHarness M07 and M11 gates.
