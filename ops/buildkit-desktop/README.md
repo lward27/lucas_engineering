@@ -1,5 +1,11 @@
 # Dual rootless BuildKit services
 
+The desktop is powered off as of 2026-09-05. The owner selected the M1 Mac as the
+temporary `lucas_engineering` builder; see
+[the current Mac procedure](../buildkit-macos/ASTRA-MACOS-BUILDER.md). The desktop
+configuration below is retained for restoration. Do not run its multi-cluster
+credential-provisioning script to switch the K3s endpoint.
+
 This directory is the non-secret source of truth for the two BuildKit daemons
 on `ubuntu-desktop` (`192.168.50.145`). The desktop remains an Ubuntu desktop;
 it is not a Kubernetes node and does not run Docker.
