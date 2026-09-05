@@ -12,6 +12,12 @@ spec:
     repoURL: https://github.com/lward27/data-log-visual.git
     path: charts/data-log-visual
     targetRevision: HEAD
+    helm:
+      valuesObject:
+          ingress:
+            annotations:
+              cert-manager.io/private-key-rotation-policy: "Never"
+              cert-manager.io/revision-history-limit: "2147483647"
   destination:
     server: https://kubernetes.default.svc
     namespace: apps-prod

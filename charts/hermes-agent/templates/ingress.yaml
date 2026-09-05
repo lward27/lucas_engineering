@@ -8,6 +8,8 @@ metadata:
     app.kubernetes.io/name: {{ .Values.hermes.name }}
   annotations:
     cert-manager.io/cluster-issuer: {{ .Values.hermes.ingress.clusterIssuer }}
+    cert-manager.io/private-key-rotation-policy: "Never"
+    cert-manager.io/revision-history-limit: "2147483647"
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
