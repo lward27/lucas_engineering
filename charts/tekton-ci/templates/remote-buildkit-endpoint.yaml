@@ -29,7 +29,7 @@ ports:
     protocol: TCP
     port: 12340
 endpoints:
-  # Temporary owner-approved M1 Mac VPN address. See ops/buildkit-macos.
-  - addresses: ["192.168.2.2"]
+  # K3s-only desktop BuildKit; the Mac remains a documented manual fallback.
+  - addresses: ["192.168.50.145"]
     conditions:
       ready: true

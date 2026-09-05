@@ -1,14 +1,18 @@
 # ASTRA: Temporary M1 Mac BuildKit host
 
-The owner selected this M1 Mac on 2026-09-05 while `192.168.50.145` is powered off.
-This is the temporary build host for `lucas_engineering` only. It does not change
+The owner selected this M1 Mac on 2026-09-05 while `192.168.50.145` was powered off.
+The desktop returned later that day. The active GitOps endpoint now selects the
+desktop; this document retains the Mac fallback and its historical evidence.
+See [desktop restoration](../../docs/ASTRA-DESKTOP-BUILDKIT-RETURN.md).
+This fallback is for `lucas_engineering` only. It does not change
 the retired Talos environment or introduce another PHarness coding backend.
 
-## Current path
+## Mac fallback path
 
 Tekton's existing `remote-buildkit` Task connects to the existing Service
-`k3s-buildkit.tekton-pipelines.svc.cluster.local:12340`. Its EndpointSlice points
-to the Mac VPN address `192.168.2.2:12340`. An SSH local forward through Rancher
+`k3s-buildkit.tekton-pipelines.svc.cluster.local:12340`. To select the fallback,
+change its EndpointSlice through GitOps to the verified Mac VPN address,
+previously `192.168.2.2:12340`. An SSH local forward through Rancher
 Desktop's existing Lima connection reaches VM loopback `127.0.0.1:12344`, where
 Docker publishes the dedicated BuildKit container's TLS port.
 
@@ -33,6 +37,10 @@ through the cluster's TLS client. Never infer AMD64 support from the worker list
 ## Start and verify
 
 Run from this GitOps checkout with Rancher Desktop and the VPN active:
+
+These commands alone do not select the Mac for Tekton. Verify the endpoint and
+make the reviewed GitOps change after the fallback passes its checks. A failed
+desktop connection must not silently select a different builder.
 
 ```sh
 ./ops/buildkit-macos/start-rancher-desktop.sh
