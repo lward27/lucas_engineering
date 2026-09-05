@@ -1,0 +1,80 @@
+{
+  "verified_at": "2026-09-05T14:43:35.267553+00:00",
+  "source_base": "19e68c4be4adb35c79bb5c11efb95410c5e71f21",
+  "cluster_context": "lucas_engineering",
+  "helm_lint": "passed",
+  "targeted_server_dry_run": "passed: two Pipelines and remote-buildkit Task",
+  "guards": {
+    "checks_passed": 32,
+    "checks": [
+      "pharness-yfinance-build: three required results",
+      "pharness-yfinance-build: fixed source repository",
+      "pharness-yfinance-build: no deployment task",
+      "pharness-yfinance-build: immutable image and source label input",
+      "pharness-yfinance-build: revision sha",
+      "pharness-yfinance-build: revision branch",
+      "pharness-yfinance-build: revision short",
+      "pharness-yfinance-build: revision uppercase",
+      "pharness-yfinance-build: revision not-hex",
+      "pharness-yfinance-build: revision shell-text",
+      "pharness-yfinance-build: checkout match True",
+      "pharness-yfinance-build: checkout match False",
+      "pharness-finance-frontend-build: three required results",
+      "pharness-finance-frontend-build: fixed source repository",
+      "pharness-finance-frontend-build: no deployment task",
+      "pharness-finance-frontend-build: immutable image and source label input",
+      "pharness-finance-frontend-build: revision sha",
+      "pharness-finance-frontend-build: revision branch",
+      "pharness-finance-frontend-build: revision short",
+      "pharness-finance-frontend-build: revision uppercase",
+      "pharness-finance-frontend-build: revision not-hex",
+      "pharness-finance-frontend-build: revision shell-text",
+      "pharness-finance-frontend-build: checkout match True",
+      "pharness-finance-frontend-build: checkout match False",
+      "BuildKit result sha256",
+      "BuildKit exact result preserved",
+      "BuildKit result missing-prefix",
+      "BuildKit result short",
+      "BuildKit result uppercase",
+      "BuildKit result missing",
+      "frontend automatic production webhook absent",
+      "frontend trigger resources absent"
+    ],
+    "scope": "Rendered contracts and guard execution; no build, credentials or cluster mutations."
+  },
+  "rendered_changes": {
+    "added": [
+      [
+        "Pipeline",
+        "pharness-finance-frontend-build"
+      ]
+    ],
+    "removed": [
+      [
+        "TriggerBinding",
+        "finance-frontend-binding"
+      ],
+      [
+        "TriggerTemplate",
+        "finance-frontend-template"
+      ]
+    ],
+    "changed": [
+      [
+        "EventListener",
+        "github-webhook-listener"
+      ],
+      [
+        "Pipeline",
+        "pharness-yfinance-build"
+      ],
+      [
+        "Task",
+        "remote-buildkit"
+      ]
+    ]
+  },
+  "active_pipeline_runs_before_change": [],
+  "rendered_sha256": "8d167141f2f28bbcdd081c3726d7c157ec5682d60159e6eed0a8c5c377139c55",
+  "acceptance_boundary": "No real application build or autonomous delivery has been executed by this preparation."
+}
