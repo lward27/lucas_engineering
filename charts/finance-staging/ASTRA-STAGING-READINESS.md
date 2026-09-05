@@ -1,8 +1,9 @@
 # ASTRA Finance staging readiness
 
-Prepared 2026-09-04 against GitOps main
-`fa27225c4c33b710ce24708e17fd39ac05ab6aeb` for PHarness M02.
-Deployment acceptance remains pending live reconciliation and isolation checks.
+Updated 2026-09-05 from GitOps main
+`e70ac07b28904777a087dee6daabbc213faa8d51` for PHarness M02.
+Both staging applications are running their exact pinned images. The additional
+public-ingress exclusion below still requires post-merge isolation verification.
 
 ## Scope and ownership
 
@@ -42,7 +43,16 @@ This blocks compiled production URLs in the current image. Nginx proxies only
 GET/HEAD requests under `/api/yfinance/` to staging yfinance and returns 503 for
 unbound `/api/` routes. The frontend Pod can reach only cluster DNS and staging
 yfinance. Yfinance can reach DNS, the existing telemetry collector, and public
-HTTPS; private cluster and LAN address ranges are excluded from that HTTPS rule.
+HTTPS. Private cluster and LAN address ranges are excluded from that HTTPS rule.
+A live probe found that the general HTTPS rule still reached all three Finance
+production hostnames through Cloudflare. The yfinance policy now also excludes
+all 15 [published Cloudflare IPv4 ranges](https://www.cloudflare.com/ips-v4),
+verified on 2026-09-05. Production names currently resolve inside those ranges.
+There is no IPv6 egress allowance. Yahoo and the collector must remain reachable.
+Revalidate this finite hosting boundary if production ingress/DNS or upstream
+providers change. This deliberately limits staging access to other Cloudflare
+services too; it is not a general hostname firewall or protection against an
+arbitrary external relay.
 Neither staging Pod mounts a service-account token.
 
 Network policies select only these new staging applications. Their actual
@@ -54,13 +64,31 @@ production mutation path. Do not substitute a policy manifest for that test.
 - Production and both staging Kustomizations render successfully.
 - The root Helm chart renders and passes lint.
 - The production frontend manifest passes server-side dry-run in `apps-prod`.
-- Both staging manifests pass client-side API validation. Server-side validation
-  remains due once the new namespace exists.
+- Both staging manifests pass client-side API validation. The yfinance overlay
+  also passes server-side dry-run in the existing `apps-staging` namespace.
 - The exact frontend image was pulled using Rancher Desktop with
   `--platform linux/amd64`; `nginx -t` passes with this staging configuration.
 - Existing production frontend security settings produce a restricted-policy
   warning; its namespace enforces baseline. This change does not claim hardened
   container execution.
+
+## Observed platform checks
+
+The original yfinance image was absent from the registry. Its exact descriptor
+graph was recovered from the production node cache with every content hash
+verified and restored without rebuilding or restarting production. Staging
+pulled digest `f1cfc06f...` and became Ready at 2026-09-05 10:11 UTC.
+
+Staging HTTP checks returned 200 for the document, runtime configuration, backend
+health, and a five-day SPY history query. Unbound database requests returned 503
+and POST to the backend proxy returned 403. These port-forward checks prove HTTP
+behavior, not policy enforcement. Separate application-labelled init-container
+probes confirmed the frontend reaches only its staging backend and blocks the
+observed private/public production targets. The backend public path finding is
+the reason for this policy correction. Probe Pods never become Ready endpoints.
+
+The PHarness evidence directory owns the exact before/after results, image
+identities, timestamps, and remaining program gates.
 
 ## Deployment and recovery
 
