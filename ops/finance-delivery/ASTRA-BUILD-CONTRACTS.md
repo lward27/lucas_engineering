@@ -22,6 +22,13 @@ boundary. Builds target Linux AMD64. TLS verification stays enabled; credentials
 remain mounted only in the shared build Task's existing authentication boundary.
 No Finance Pipeline contains a deployment or rollout-restart task.
 
+Finance PipelineRuns must explicitly select `pharness-finance-build` in
+`spec.taskRunTemplate.serviceAccountName`. This account has no RBAC binding and
+does not mount a Kubernetes API token. Do not inherit the legacy `default` or
+`tekton-ci-pipeline-sa` identities: those still support other applications' rollout
+tasks. The finite Finance clone steps also disable shell tracing and require TLS
+verification.
+
 The old frontend push webhook is disabled. Argo removes only its obsolete
 `TriggerBinding/finance-frontend-binding` and
 `TriggerTemplate/finance-frontend-template`, and the EventListener no longer routes
@@ -36,7 +43,7 @@ helm lint charts/tekton-ci
 ```
 
 The checker needs the existing Helm, Ruby YAML reader, Bash and Python tools. It
-performs 32 checks without credentials, builds or cluster writes. It covers invalid
+performs 36 checks without credentials, builds or cluster writes. It covers invalid
 source revisions, mismatched checkouts, malformed digest results, fixed repository
 and image bindings, and retirement of the frontend webhook.
 

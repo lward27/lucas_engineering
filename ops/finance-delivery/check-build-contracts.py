@@ -36,6 +36,8 @@ for name, repo in [('pharness-yfinance-build', 'yfinance_wrapper'),
     check(name + ': three required results', {r['name'] for r in spec['results']} == {'SOURCE_COMMIT', 'IMAGE_URL', 'IMAGE_DIGEST'})
     check(name + ': fixed source repository', next(p['value'] for p in tasks['fetch-source']['params'] if p['name'] == 'url') == 'https://github.com/lward27/' + repo + '.git')
     check(name + ': no deployment task', set(tasks) == {'validate-revision', 'fetch-source', 'verify-checkout', 'build-push'})
+    clone = {p['name']: p['value'] for p in tasks['fetch-source']['params']}
+    check(name + ': quiet clone with verified TLS', clone['verbose'] == 'false' and clone['sslVerify'] == 'true')
     params = {p['name']: p['value'] for p in tasks['build-push']['params']}
     check(name + ': immutable image and source label input', params['IMAGE'] == 'registry.lucas.engineering/' + repo + ':git-$(params.revision)' and params['RESULT_IMAGE_URL'] == params['IMAGE'] and params['BUILD_ARGS'] == ['SOURCE_COMMIT=$(params.revision)'])
     script = tasks['validate-revision']['taskSpec']['steps'][0]['script']
@@ -58,6 +60,9 @@ with tempfile.TemporaryDirectory(prefix='astra-finance-contract-') as directory:
         if valid:
             check('BuildKit exact result preserved', (root / 'digest').read_text() == digest and (root / 'image').read_text() == 'registry.test/finance:git-' + 'a' * 40)
 listener = resources[('EventListener', 'github-webhook-listener')]
+account = resources[('ServiceAccount', 'pharness-finance-build')]
+check('Finance build has no mounted API token', account['automountServiceAccountToken'] is False)
+check('Finance build has no chart RBAC binding', not any(subject.get('name') == 'pharness-finance-build' for (kind, _), resource in resources.items() if kind in ['RoleBinding', 'ClusterRoleBinding'] for subject in resource.get('subjects', [])))
 check('frontend automatic production webhook absent', not any(t['name'] == 'finance-frontend-trigger' for t in listener['spec']['triggers']))
 check('frontend trigger resources absent', not any((kind, 'finance-frontend-' + suffix) in resources for kind, suffix in [('TriggerTemplate', 'template'), ('TriggerBinding', 'binding')]))
 print(json.dumps({'checks_passed': len(checks), 'checks': checks, 'scope': 'Rendered contracts and guard execution; no build, credentials or cluster mutations.'}, indent=2))
