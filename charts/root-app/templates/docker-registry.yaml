@@ -15,10 +15,27 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: registry
+  # The upstream chart generates a new upload-signing key on every render.
+  # Preserve this existing runtime credential and its generated rollout checksum;
+  # unrelated GitOps commits must not invalidate uploads or restart the registry.
+  ignoreDifferences:
+    - group: ""
+      kind: Secret
+      name: docker-registry-secret
+      namespace: registry
+      jsonPointers:
+        - /data/haSharedSecret
+    - group: apps
+      kind: Deployment
+      name: docker-registry
+      namespace: registry
+      jsonPointers:
+        - /spec/template/metadata/annotations/checksum~1secret
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
+    - RespectIgnoreDifferences=true
 {{- end }}
