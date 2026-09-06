@@ -1,0 +1,977 @@
+{
+  "recorded_at": "2026-09-06T21:02:51.589944+00:00",
+  "context": "lucas_engineering",
+  "server": "https://192.168.20.192:6443",
+  "retired_applications_absent": true,
+  "purge_allowlist": [
+    {
+      "namespace": "apps-prod",
+      "name": "openclaw-data",
+      "uid": "3c099e8a-bea8-4641-9a14-dcff30cdf8ff",
+      "phase": "Bound",
+      "owners": [],
+      "sync_options": null,
+      "volume": "pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff",
+      "volume_uid": "89ae3358-d8c4-4710-8ed2-b7ae7d581602",
+      "pv_reclaim_policy": "Delete",
+      "storage_class": "local-path",
+      "requested_storage": "10Gi",
+      "backing_path": "/var/lib/rancher/k3s/storage/pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff_apps-prod_openclaw-data",
+      "node_affinity": {
+        "required": {
+          "nodeSelectorTerms": [
+            {
+              "matchExpressions": [
+                {
+                  "key": "kubernetes.io/hostname",
+                  "operator": "In",
+                  "values": [
+                    "ubuntu-lucas-engineering-2"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "mounting_pods": []
+    },
+    {
+      "namespace": "code-server",
+      "name": "code-server-data",
+      "uid": "bff78087-5f5f-44a1-b705-a5e0c64d4480",
+      "phase": "Bound",
+      "owners": [],
+      "sync_options": "Prune=false,Delete=false",
+      "volume": "pvc-bff78087-5f5f-44a1-b705-a5e0c64d4480",
+      "volume_uid": "36959da0-3e50-47c9-be25-2f2053056f16",
+      "pv_reclaim_policy": "Delete",
+      "storage_class": "local-path",
+      "requested_storage": "30Gi",
+      "backing_path": "/var/lib/rancher/k3s/storage/pvc-bff78087-5f5f-44a1-b705-a5e0c64d4480_code-server_code-server-data",
+      "node_affinity": {
+        "required": {
+          "nodeSelectorTerms": [
+            {
+              "matchExpressions": [
+                {
+                  "key": "kubernetes.io/hostname",
+                  "operator": "In",
+                  "values": [
+                    "ubuntu-lucas-engineering"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "mounting_pods": []
+    },
+    {
+      "namespace": "monitoring",
+      "name": "uptime-kuma-pvc",
+      "uid": "f70da283-45c1-44db-9bc0-14cd23ede08e",
+      "phase": "Bound",
+      "owners": [],
+      "sync_options": "Prune=false,Delete=false",
+      "volume": "pvc-f70da283-45c1-44db-9bc0-14cd23ede08e",
+      "volume_uid": "ce76367e-5a20-40de-890e-5d2651f4fd33",
+      "pv_reclaim_policy": "Delete",
+      "storage_class": "local-path",
+      "requested_storage": "4Gi",
+      "backing_path": "/var/lib/rancher/k3s/storage/pvc-f70da283-45c1-44db-9bc0-14cd23ede08e_monitoring_uptime-kuma-pvc",
+      "node_affinity": {
+        "required": {
+          "nodeSelectorTerms": [
+            {
+              "matchExpressions": [
+                {
+                  "key": "kubernetes.io/hostname",
+                  "operator": "In",
+                  "values": [
+                    "ubuntu-lucas-engineering"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "mounting_pods": []
+    },
+    {
+      "namespace": "odoo",
+      "name": "data-odoo-postgresql-0",
+      "uid": "504241f0-6aa9-46e1-905a-298321eed19c",
+      "phase": "Bound",
+      "owners": [],
+      "sync_options": null,
+      "volume": "pvc-504241f0-6aa9-46e1-905a-298321eed19c",
+      "volume_uid": "3e76368d-2b76-47ea-a878-fa519d11d2b5",
+      "pv_reclaim_policy": "Delete",
+      "storage_class": "local-path",
+      "requested_storage": "8Gi",
+      "backing_path": "/var/lib/rancher/k3s/storage/pvc-504241f0-6aa9-46e1-905a-298321eed19c_odoo_data-odoo-postgresql-0",
+      "node_affinity": {
+        "required": {
+          "nodeSelectorTerms": [
+            {
+              "matchExpressions": [
+                {
+                  "key": "kubernetes.io/hostname",
+                  "operator": "In",
+                  "values": [
+                    "ubuntu-lucas-engineering-2"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "mounting_pods": []
+    },
+    {
+      "namespace": "odoo",
+      "name": "odoo",
+      "uid": "e858df73-763b-4984-b15e-c3b3fd2dd03d",
+      "phase": "Bound",
+      "owners": [],
+      "sync_options": "Prune=false,Delete=false",
+      "volume": "pvc-e858df73-763b-4984-b15e-c3b3fd2dd03d",
+      "volume_uid": "246ed215-5c24-408c-a264-ba83ced089a9",
+      "pv_reclaim_policy": "Delete",
+      "storage_class": "local-path",
+      "requested_storage": "10Gi",
+      "backing_path": "/var/lib/rancher/k3s/storage/pvc-e858df73-763b-4984-b15e-c3b3fd2dd03d_odoo_odoo",
+      "node_affinity": {
+        "required": {
+          "nodeSelectorTerms": [
+            {
+              "matchExpressions": [
+                {
+                  "key": "kubernetes.io/hostname",
+                  "operator": "In",
+                  "values": [
+                    "ubuntu-lucas-engineering"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "mounting_pods": []
+    }
+  ],
+  "unrelated_claims": [
+    {
+      "namespace": "apps-prod",
+      "name": "data-log-visual-uploads",
+      "uid": "ea30d859-ae89-4883-ae72-aec79c3be47b",
+      "volume": "pvc-ea30d859-ae89-4883-ae72-aec79c3be47b",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "apps-prod",
+      "name": "ollama-data-ollama-0",
+      "uid": "943ae710-ed0a-48fd-8f55-bdcfbc94ad18",
+      "volume": "pvc-943ae710-ed0a-48fd-8f55-bdcfbc94ad18",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "apps-prod",
+      "name": "pgdata-postgresql-0",
+      "uid": "3bf9a1ea-35cd-4ed5-b230-6eb908e79cef",
+      "volume": "pvc-3bf9a1ea-35cd-4ed5-b230-6eb908e79cef",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "apps-prod",
+      "name": "qdrant-data-qdrant-0",
+      "uid": "068871f1-c084-48f7-8042-f1fca392c352",
+      "volume": "pvc-068871f1-c084-48f7-8042-f1fca392c352",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "apps-prod",
+      "name": "rabbitmq-data",
+      "uid": "e8ee4e89-966a-4ea1-a33d-180de911bd57",
+      "volume": "pvc-e8ee4e89-966a-4ea1-a33d-180de911bd57",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "blog",
+      "name": "data-ghost-mysql-0",
+      "uid": "7ec45782-0d66-4bc3-b950-3db33feef675",
+      "volume": "pvc-7ec45782-0d66-4bc3-b950-3db33feef675",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "blog",
+      "name": "ghost-content",
+      "uid": "5591dc35-93bb-4dee-b5c5-bb4bbca0f283",
+      "volume": "pvc-5591dc35-93bb-4dee-b5c5-bb4bbca0f283",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "blog",
+      "name": "ghost-mysql-data",
+      "uid": "c6daae3c-9540-49f8-962d-b0972351178a",
+      "volume": "pvc-c6daae3c-9540-49f8-962d-b0972351178a",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "default",
+      "name": "pgdata-escape-postgresql-0",
+      "uid": "2756ae20-2bda-4254-b8a0-f8728c49acdb",
+      "volume": "pvc-2756ae20-2bda-4254-b8a0-f8728c49acdb",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "directus",
+      "name": "directus-extensions",
+      "uid": "7a473c9d-79fb-44c4-9955-127448fe7647",
+      "volume": "pvc-7a473c9d-79fb-44c4-9955-127448fe7647",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "directus",
+      "name": "directus-postgres-data",
+      "uid": "3c82672e-3cca-4111-bb94-de260c26d6ec",
+      "volume": "pvc-3c82672e-3cca-4111-bb94-de260c26d6ec",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "directus",
+      "name": "directus-uploads",
+      "uid": "84b9fd50-bbb2-4870-bab5-0d7986317b2d",
+      "volume": "pvc-84b9fd50-bbb2-4870-bab5-0d7986317b2d",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "escape",
+      "name": "pgdata-escape-postgresql-0",
+      "uid": "8e9e74a3-7455-4ada-a3f1-681d81f092cc",
+      "volume": "pvc-8e9e74a3-7455-4ada-a3f1-681d81f092cc",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "forge-platform",
+      "name": "pgdata-forge-postgresql-0",
+      "uid": "83842283-f9bb-49b6-b2fa-beecf496d8c9",
+      "volume": "pvc-83842283-f9bb-49b6-b2fa-beecf496d8c9",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "hermes-agent",
+      "name": "hermes-agent-data",
+      "uid": "9a290c35-8625-43a2-b921-d2f106097ccc",
+      "volume": "pvc-9a290c35-8625-43a2-b921-d2f106097ccc",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "monitoring",
+      "name": "grafana",
+      "uid": "c6e89097-b8d2-48da-b9df-a20abe1c1fa8",
+      "volume": "pvc-c6e89097-b8d2-48da-b9df-a20abe1c1fa8",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "monitoring",
+      "name": "prometheus-server",
+      "uid": "3fb78ed5-95a0-43a0-bc75-21ac9e73b862",
+      "volume": "pvc-3fb78ed5-95a0-43a0-bc75-21ac9e73b862",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "monitoring",
+      "name": "storage-loki-0",
+      "uid": "de62f65c-dfe9-4680-8fdf-c8dfaffc681e",
+      "volume": "pvc-de62f65c-dfe9-4680-8fdf-c8dfaffc681e",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "monitoring",
+      "name": "storage-mimir-alertmanager-0",
+      "uid": "2119c454-58f9-4859-ba9a-5cd635fad5c5",
+      "volume": "pvc-2119c454-58f9-4859-ba9a-5cd635fad5c5",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "monitoring",
+      "name": "storage-mimir-compactor-0",
+      "uid": "379a6e1c-38a5-47f6-a9c4-dd64987daf05",
+      "volume": "pvc-379a6e1c-38a5-47f6-a9c4-dd64987daf05",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "monitoring",
+      "name": "storage-mimir-ingester-0",
+      "uid": "02603be8-3518-4b4c-9efd-e1725e99782f",
+      "volume": "pvc-02603be8-3518-4b4c-9efd-e1725e99782f",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "monitoring",
+      "name": "storage-mimir-store-gateway-0",
+      "uid": "89027ae7-3ae0-40a7-84b7-6234bcdeb113",
+      "volume": "pvc-89027ae7-3ae0-40a7-84b7-6234bcdeb113",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "monitoring",
+      "name": "storage-prometheus-alertmanager-0",
+      "uid": "cbaa1750-14b0-4e94-8c5b-add76f3aee04",
+      "volume": "pvc-cbaa1750-14b0-4e94-8c5b-add76f3aee04",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-api-data",
+      "uid": "663e9f92-04b2-4e61-8244-280c52458e06",
+      "volume": "pvc-663e9f92-04b2-4e61-8244-280c52458e06",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-api-data-finance-20260827",
+      "uid": "32eed905-3d6c-4bbe-bac7-7e9a068ab303",
+      "volume": "pvc-32eed905-3d6c-4bbe-bac7-7e9a068ab303",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-archive-restore-check-20260827",
+      "uid": "51e213da-893a-47c5-b15f-82b73577d3fc",
+      "volume": "pvc-51e213da-893a-47c5-b15f-82b73577d3fc",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-archive-restore-post-drain-20260827",
+      "uid": "b84bec69-2ad3-452a-b6a8-29886a35794b",
+      "volume": "pvc-b84bec69-2ad3-452a-b6a8-29886a35794b",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-data-archive-legacy-20260826",
+      "uid": "c747ad42-5227-4775-981b-91f325954461",
+      "volume": "pvc-c747ad42-5227-4775-981b-91f325954461",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-repo-mode-eval-evidence",
+      "uid": "96c9bca6-e2e7-4ea4-a4f1-fca6b53dcf7d",
+      "volume": "pvc-96c9bca6-e2e7-4ea4-a4f1-fca6b53dcf7d",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a0436f26907f73aa34fbde2a2b2492-ws",
+      "uid": "4436fcdc-9ede-42f9-af23-fd0df7c5f0dc",
+      "volume": "pvc-4436fcdc-9ede-42f9-af23-fd0df7c5f0dc",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a043884dfd7e71840091caca1c2165-ws",
+      "uid": "38566981-dfda-4123-9034-29dd5df09084",
+      "volume": "pvc-38566981-dfda-4123-9034-29dd5df09084",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a044fa0b807ca382d5d0b18265ba8a-ws",
+      "uid": "a534a113-6651-45a6-bef9-eafd9867dadf",
+      "volume": "pvc-a534a113-6651-45a6-bef9-eafd9867dadf",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a044ff71ac79b0b732f5683ba63aaa-ws",
+      "uid": "75af6f57-7f1c-4640-9495-b2e3b0c99362",
+      "volume": "pvc-75af6f57-7f1c-4640-9495-b2e3b0c99362",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a045f0b59a7530acebf834a8666f6f-ws",
+      "uid": "6e14c6e4-7e31-4e29-8c04-b39b69864aa6",
+      "volume": "pvc-6e14c6e4-7e31-4e29-8c04-b39b69864aa6",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a045fb6da178628df00865363686cf-ws",
+      "uid": "f06fb4c5-44c3-42f0-af1e-b9e601860fba",
+      "volume": "pvc-f06fb4c5-44c3-42f0-af1e-b9e601860fba",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a04622845571d1b7d1449ef2f7cb1e-ws",
+      "uid": "3f8b74ea-6a77-43e0-980a-3f7b5e9c5428",
+      "volume": "pvc-3f8b74ea-6a77-43e0-980a-3f7b5e9c5428",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a0464e1d77705381486229268f389b-ws",
+      "uid": "36794d48-d758-46b2-a170-8629887b4dc7",
+      "volume": "pvc-36794d48-d758-46b2-a170-8629887b4dc7",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a0465196bf76c08d496b6e2db5be1b-ws",
+      "uid": "ce73022e-1afe-4485-800b-e977117466f8",
+      "volume": "pvc-ce73022e-1afe-4485-800b-e977117466f8",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a04654949577419159f83d58c0b807-ws",
+      "uid": "352574b5-8fef-4794-ac1d-613d8e2dac7f",
+      "volume": "pvc-352574b5-8fef-4794-ac1d-613d8e2dac7f",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a0465f18317270ba0020726206c8c7-ws",
+      "uid": "ff9e17ca-d22a-4d04-adf4-b39ab9427a49",
+      "volume": "pvc-ff9e17ca-d22a-4d04-adf4-b39ab9427a49",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a0468554587c91b9819081f5de2e91-ws",
+      "uid": "4bbdddf6-a1b9-4118-99d9-7f5ae204f483",
+      "volume": "pvc-4bbdddf6-a1b9-4118-99d9-7f5ae204f483",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a04698f34e7261bd88a2218a6f7584-ws",
+      "uid": "d9f1bee2-c76c-45ba-8729-176804853230",
+      "volume": "pvc-d9f1bee2-c76c-45ba-8729-176804853230",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a04879955a7a40bf4e3ef93937f5d7-ws",
+      "uid": "97380834-fb8a-4cc4-8c24-df76572ca88f",
+      "volume": "pvc-97380834-fb8a-4cc4-8c24-df76572ca88f",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a04a74b10d774391bee606478e976a-ws",
+      "uid": "a6886e0a-5621-41ba-b1a6-5145b642d809",
+      "volume": "pvc-a6886e0a-5621-41ba-b1a6-5145b642d809",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a04a896ad7732299142fa452bae434-ws",
+      "uid": "74d068dd-cb02-4c31-ad3a-7fd3365eef2f",
+      "volume": "pvc-74d068dd-cb02-4c31-ad3a-7fd3365eef2f",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a04a94931975c0ba36d989c5dd4c19-ws",
+      "uid": "4001ee0d-2e7f-4cbe-83a0-e12d6bdfb0a3",
+      "volume": "pvc-4001ee0d-2e7f-4cbe-83a0-e12d6bdfb0a3",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a04aeba7007e52aa088e0e8e1cffeb-ws",
+      "uid": "7c7a066a-f25a-4edb-bfbc-23a3d0944a8b",
+      "volume": "pvc-7c7a066a-f25a-4edb-bfbc-23a3d0944a8b",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a04d37a55b7b329064a3cefb42cfbb-ws",
+      "uid": "851686b5-85ad-404b-a9be-513402fe9eb5",
+      "volume": "pvc-851686b5-85ad-404b-a9be-513402fe9eb5",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a04d3a29f27e31aeb47c752f81092c-ws",
+      "uid": "b1807f08-d4e7-4e04-a0d2-c6c8812227d9",
+      "volume": "pvc-b1807f08-d4e7-4e04-a0d2-c6c8812227d9",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a04d69c00b7872bedb86c07d97dc15-ws",
+      "uid": "9d7c3411-e196-4abc-96cf-9ba2d3c84aa5",
+      "volume": "pvc-9d7c3411-e196-4abc-96cf-9ba2d3c84aa5",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a04d7337b67710a25faf552384379e-ws",
+      "uid": "c5c18517-112a-4a68-8456-0cebe85edbbe",
+      "volume": "pvc-c5c18517-112a-4a68-8456-0cebe85edbbe",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a04da50c787563836c5cbe17a4e936-ws",
+      "uid": "abda574f-903e-4348-a912-f51d5bb15a19",
+      "volume": "pvc-abda574f-903e-4348-a912-f51d5bb15a19",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a04ddd43ce7a73b2d40124b6df1cbe-ws",
+      "uid": "5f728516-dea7-4491-bb0c-ce70dcc6e7ab",
+      "volume": "pvc-5f728516-dea7-4491-bb0c-ce70dcc6e7ab",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a04de92f8777d0a5dea0dad0f626a4-ws",
+      "uid": "e03590a1-0ad6-4023-8bfa-228bf65ebeca",
+      "volume": "pvc-e03590a1-0ad6-4023-8bfa-228bf65ebeca",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a0530adf657a4099555df6695aa75b-ws",
+      "uid": "3646ab66-bad4-45e7-ab90-ec0ef89d42ca",
+      "volume": "pvc-3646ab66-bad4-45e7-ab90-ec0ef89d42ca",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a053189e0a7541a0ea265ddd491c68-ws",
+      "uid": "5ec5ada9-d2c2-4550-910d-bde24311a8ad",
+      "volume": "pvc-5ec5ada9-d2c2-4550-910d-bde24311a8ad",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a05337956c78d3b047c0e272ff52ad-ws",
+      "uid": "6cabd504-2c25-4333-a195-1fe916027628",
+      "volume": "pvc-6cabd504-2c25-4333-a195-1fe916027628",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-run-01a0533a0a1b74b0af3a94542fb35b54-ws",
+      "uid": "0740531a-07c4-4b6e-a76a-ce6899eaf05b",
+      "volume": "pvc-0740531a-07c4-4b6e-a76a-ce6899eaf05b",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a038863dee713099242a7abf93e23d-ws",
+      "uid": "6a1bc0b7-c01c-4da2-828e-3f5e2c83096b",
+      "volume": "pvc-6a1bc0b7-c01c-4da2-828e-3f5e2c83096b",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a038f5d9137c63b1d60d93f043bbb3-ws",
+      "uid": "a654e1dc-a852-4fe8-87b1-ae0d8d39f46e",
+      "volume": "pvc-a654e1dc-a852-4fe8-87b1-ae0d8d39f46e",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a0390aeeec7bc39fc2278941740c0e-ws",
+      "uid": "3348bcb9-2f5a-4fc5-8233-2b5353b46fe7",
+      "volume": "pvc-3348bcb9-2f5a-4fc5-8233-2b5353b46fe7",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a0392746f876c2ac812d9d746599b6-ws",
+      "uid": "bf962f91-1bd8-4b72-b6ef-e4507fa06b51",
+      "volume": "pvc-bf962f91-1bd8-4b72-b6ef-e4507fa06b51",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a0396b4dd970b09896d77cb687de38-ws",
+      "uid": "9da3bab3-abb5-472c-a4de-4c869ea0e65e",
+      "volume": "pvc-9da3bab3-abb5-472c-a4de-4c869ea0e65e",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a0398b67937ff2be3fc3161003572f-ws",
+      "uid": "f896d69a-124b-4ba7-a47d-0da649a5ce56",
+      "volume": "pvc-f896d69a-124b-4ba7-a47d-0da649a5ce56",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a03a1c0772749099753672a11c6a08-ws",
+      "uid": "7effbea5-41b1-494b-bee8-0f903fffd50a",
+      "volume": "pvc-7effbea5-41b1-494b-bee8-0f903fffd50a",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a03a9ad31e7d8388b87bf6374dfb75-ws",
+      "uid": "208ee2d0-da54-482a-b63b-871c3880dce5",
+      "volume": "pvc-208ee2d0-da54-482a-b63b-871c3880dce5",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a03abbd4f07301bb902be821ac98a5-ws",
+      "uid": "54d72660-e89f-4483-aeae-1b9b6099eed3",
+      "volume": "pvc-54d72660-e89f-4483-aeae-1b9b6099eed3",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a045f28bea7520b363d3d956def8fe-ws",
+      "uid": "12105cf9-86e8-44f0-94cc-9aa5bf162f55",
+      "volume": "pvc-12105cf9-86e8-44f0-94cc-9aa5bf162f55",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a045fd7d357c729add99fa4fef987c-ws",
+      "uid": "28406d77-b09d-41d7-b6b7-141ec11d09d5",
+      "volume": "pvc-28406d77-b09d-41d7-b6b7-141ec11d09d5",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a04624249573c28d9f29ed56f723df-ws",
+      "uid": "409f29b3-2d07-477d-8e17-d2de62d04a5b",
+      "volume": "pvc-409f29b3-2d07-477d-8e17-d2de62d04a5b",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a04656571f75309f79f0bbb88f3bc6-ws",
+      "uid": "23d6b4a1-6b4b-4366-a114-9bb3bd93b374",
+      "volume": "pvc-23d6b4a1-6b4b-4366-a114-9bb3bd93b374",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a0468847777eb182ffd46e95ec969e-ws",
+      "uid": "e6740f0d-fff6-4e74-a49c-9557e3531a2b",
+      "volume": "pvc-e6740f0d-fff6-4e74-a49c-9557e3531a2b",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a0469bcb1e7c71993533a6baf59afa-ws",
+      "uid": "585d6175-be6f-4694-af27-ad96002c1252",
+      "volume": "pvc-585d6175-be6f-4694-af27-ad96002c1252",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a04a95fd607c80b200c5ed50d5cd56-ws",
+      "uid": "0d89e65b-7fa5-4654-be69-e4906baec90c",
+      "volume": "pvc-0d89e65b-7fa5-4654-be69-e4906baec90c",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a04aed4b657850a373ada26a2d907a-ws",
+      "uid": "df485ce0-4910-4e5b-9ea0-bde3fe8fba99",
+      "volume": "pvc-df485ce0-4910-4e5b-9ea0-bde3fe8fba99",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a04d3b9f087b329d3e75494d08fdae-ws",
+      "uid": "8cbebb55-bee4-4d87-9e61-6928a913d3cb",
+      "volume": "pvc-8cbebb55-bee4-4d87-9e61-6928a913d3cb",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a04d74d4a279238179fed77dfe89aa-ws",
+      "uid": "0f281e32-56c2-49a9-829b-804a256daf0b",
+      "volume": "pvc-0f281e32-56c2-49a9-829b-804a256daf0b",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a04da6b79a7970ac6092b7b2da5c8a-ws",
+      "uid": "4be28184-0869-47ec-ada8-dcfb453c5ddf",
+      "volume": "pvc-4be28184-0869-47ec-ada8-dcfb453c5ddf",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a04ddef67d77219c6ea1e5b8ac763e-ws",
+      "uid": "c78ea6d3-3c63-4d6e-adec-2340f75affc6",
+      "volume": "pvc-c78ea6d3-3c63-4d6e-adec-2340f75affc6",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a04deb99bd7b808fa3ce93b2de7072-ws",
+      "uid": "bcffd111-4666-47bb-9092-8988e585a5de",
+      "volume": "pvc-bcffd111-4666-47bb-9092-8988e585a5de",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a0530d33f87ae0a7123631736c6618-ws",
+      "uid": "a27ac389-5070-4d26-8373-c3eb2357ac0d",
+      "volume": "pvc-a27ac389-5070-4d26-8373-c3eb2357ac0d",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "pharness",
+      "name": "pharness-ws-01a0533c0f727ae290f02cd6295b4569-ws",
+      "uid": "d830a584-efeb-46e0-b9f2-b6c0fb66182d",
+      "volume": "pvc-d830a584-efeb-46e0-b9f2-b6c0fb66182d",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "registry",
+      "name": "docker-registry",
+      "uid": "3870949d-53b1-4839-ab55-70bfa13a5e41",
+      "volume": "pvc-3870949d-53b1-4839-ab55-70bfa13a5e41",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "tekton-pipelines",
+      "name": "pvc-21efa42998",
+      "uid": "484ead4d-b2e5-4fb9-9304-83105d68dd63",
+      "volume": "pvc-484ead4d-b2e5-4fb9-9304-83105d68dd63",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "tekton-pipelines",
+      "name": "pvc-ec8723894b",
+      "uid": "6ec02e3f-866d-40ce-a696-5e028b27ed35",
+      "volume": "pvc-6ec02e3f-866d-40ce-a696-5e028b27ed35",
+      "phase": "Bound"
+    }
+  ],
+  "applications_before": [
+    {
+      "name": "agentic-platform",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "argo-cd",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "cert-manager",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "cloudflared",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "data-log-visual",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "directus",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "docker-registry",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "escape",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "excalidraw",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "finance-app-database-service",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "finance-frontend",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "finance-frontend-staging",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "forge-admin",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "forge-platform",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "forge-portal",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "forge-postgresql",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "ghost",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "grafana",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "hermes-agent",
+      "health": "Healthy",
+      "sync": "OutOfSync"
+    },
+    {
+      "name": "homepage",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "ingress-nginx",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "loki",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "mimir",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "ollama",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "opentelemetry-collector",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "pharness",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "postgresql",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "prometheus",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "promtail",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "qdrant",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "rabbitmq",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "rag-service",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "root-app",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "scraper-manager",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "sentinel-rbac",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "tekton-ci",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "tekton-dashboard",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "tekton-pipeline",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "tekton-triggers",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "tempo",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "yfinance-staging",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "yfinance-wrapper",
+      "health": "Healthy",
+      "sync": "Synced"
+    }
+  ]
+}

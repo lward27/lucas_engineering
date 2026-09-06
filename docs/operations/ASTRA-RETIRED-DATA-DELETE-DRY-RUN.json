@@ -1,0 +1,95 @@
+{
+  "observed_at": "2026-09-06T21:06:24.080937+00:00",
+  "status": "passed for four remaining claims",
+  "initial_openclaw_attempt": "ASTRA-PURGE-INITIAL-DELETE-OBSERVATION.json",
+  "checks": [
+    {
+      "namespace": "code-server",
+      "name": "code-server-data",
+      "uid": "bff78087-5f5f-44a1-b705-a5e0c64d4480",
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        "/Users/wardl/.kube/config",
+        "--context",
+        "lucas_engineering",
+        "--request-timeout=20s",
+        "delete",
+        "pvc",
+        "code-server-data",
+        "-n",
+        "code-server",
+        "--dry-run=server",
+        "--wait=false"
+      ],
+      "result": "persistentvolumeclaim \"code-server-data\" deleted from code-server namespace (server dry run)",
+      "still_present_after_dry_run": true
+    },
+    {
+      "namespace": "monitoring",
+      "name": "uptime-kuma-pvc",
+      "uid": "f70da283-45c1-44db-9bc0-14cd23ede08e",
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        "/Users/wardl/.kube/config",
+        "--context",
+        "lucas_engineering",
+        "--request-timeout=20s",
+        "delete",
+        "pvc",
+        "uptime-kuma-pvc",
+        "-n",
+        "monitoring",
+        "--dry-run=server",
+        "--wait=false"
+      ],
+      "result": "persistentvolumeclaim \"uptime-kuma-pvc\" deleted from monitoring namespace (server dry run)",
+      "still_present_after_dry_run": true
+    },
+    {
+      "namespace": "odoo",
+      "name": "data-odoo-postgresql-0",
+      "uid": "504241f0-6aa9-46e1-905a-298321eed19c",
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        "/Users/wardl/.kube/config",
+        "--context",
+        "lucas_engineering",
+        "--request-timeout=20s",
+        "delete",
+        "pvc",
+        "data-odoo-postgresql-0",
+        "-n",
+        "odoo",
+        "--dry-run=server",
+        "--wait=false"
+      ],
+      "result": "persistentvolumeclaim \"data-odoo-postgresql-0\" deleted from odoo namespace (server dry run)",
+      "still_present_after_dry_run": true
+    },
+    {
+      "namespace": "odoo",
+      "name": "odoo",
+      "uid": "e858df73-763b-4984-b15e-c3b3fd2dd03d",
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        "/Users/wardl/.kube/config",
+        "--context",
+        "lucas_engineering",
+        "--request-timeout=20s",
+        "delete",
+        "pvc",
+        "odoo",
+        "-n",
+        "odoo",
+        "--dry-run=server",
+        "--wait=false"
+      ],
+      "result": "persistentvolumeclaim \"odoo\" deleted from odoo namespace (server dry run)",
+      "still_present_after_dry_run": true
+    }
+  ]
+}
