@@ -1,6 +1,6 @@
 # ASTRA: Retire unused applications from lucas_engineering
 
-Status: retention preparation reviewed; application removal has not yet been merged.
+Status: retention preparation merged as `89c2a268270b428eecaa47dea6bf3ddce4948a34`; application removal prepared for merge after the live retention gate.
 
 ## Authorized scope
 

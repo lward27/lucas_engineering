@@ -1,0 +1,42 @@
+{
+  "observed_at": "2026-09-06T20:34:08.869279+00:00",
+  "status": "passed",
+  "removed_root_applications": [
+    "clawspace",
+    "code-server",
+    "epheros",
+    "odoo",
+    "openclaw",
+    "uptime-kuma"
+  ],
+  "other_root_resources_unchanged": true,
+  "namespace_deletions": [],
+  "persistent_volume_deletions": [],
+  "homepage_config_parses": true,
+  "homepage_config_sha256": "3b9e8a44ee2c197f023f643a69e58f6b7ff29475ee74c29700e6b1353175e096",
+  "homepage_rollout_annotation_matches": true,
+  "retired_scrape_jobs_removed": [
+    "openclaw",
+    "epheros-api",
+    "epheros-web"
+  ],
+  "other_prometheus_values_and_jobs_unchanged": true,
+  "helm_lint": [
+    "root-app",
+    "prometheus"
+  ],
+  "dry_runs": [
+    {
+      "mode": "client",
+      "status": "passed",
+      "resource_count": 58
+    },
+    {
+      "mode": "server",
+      "status": "passed",
+      "resource_count": 58
+    }
+  ],
+  "retention_gate": "ASTRA-APPLICATION-RETENTION-OBSERVED.json",
+  "prepared_resource_inventory_sha256": "5b408ddb1c9bb106cef809c0f1a37f03b2f07c027015f8e17e79a8a0f725408c"
+}

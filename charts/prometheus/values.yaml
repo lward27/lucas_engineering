@@ -72,18 +72,3 @@ prometheus:
         - targets:
           - gateway.openfaas.svc.cluster.local:8080
       metrics_path: /metrics
-    - job_name: openclaw
-      static_configs:
-        - targets:
-          - openclaw.apps-prod.svc.cluster.local:9090
-      metrics_path: /metrics
-    - job_name: epheros-web
-      static_configs:
-        - targets:
-          - epheros-web.epheros.svc.cluster.local:8001
-      metrics_path: /metrics
-    - job_name: epheros-api
-      static_configs:
-        - targets:
-          - epheros-api.epheros.svc.cluster.local:8000
-      metrics_path: /metrics
