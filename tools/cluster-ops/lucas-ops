@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+"""Finite Lucas Engineering operator commands. Outputs JSON; never switches context."""
+import argparse
+import json
+import sys
+from pathlib import Path
+
+# Resolve the installed launcher symlink before importing bundled modules.
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT))
+from lib.common import OpsError, Profile, save
+from lib.connections import Pharness
+from lib.operations import doctor, evaluation_status, evaluation_summary, start_evaluation, watch_evaluation
+from lib.releases import pin_release, verify_release
+from lib.builder import preflight as builder_preflight
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--profile", default=str(ROOT / "profiles/lucas_engineering.json"))
+    commands = parser.add_subparsers(dest="command", required=True)
+    readiness = commands.add_parser("doctor", help="Bounded readiness checks; no model calls or cluster writes")
+    readiness.add_argument("--credentials", action="store_true", help="Use the three named Secrets privately to check authentication")
+    readiness.add_argument("--builder", action="store_true", help="Verify BuildKit mTLS and advertised AMD64 support; no build")
+    readiness.add_argument("--output")
+    builder = commands.add_parser("builder", help="Exercise the existing builder through its reviewed SSH route")
+    sub = builder.add_subparsers(dest="action", required=True)
+    entry = sub.add_parser("preflight", help="Uncached AMD64 execution using PHarness's existing script; no image push")
+    entry.add_argument("--repo", required=True)
+    entry.add_argument("--source-revision", required=True)
+    entry.add_argument("--output", required=True)
+    evaluation = commands.add_parser("evaluation", help="Inspect or explicitly dispatch an existing PHarness evaluation API")
+    sub = evaluation.add_subparsers(dest="action", required=True)
+    for action in ["status", "watch"]:
+        entry = sub.add_parser(action)
+        entry.add_argument("id")
+        entry.add_argument("--output-dir", required=action == "watch")
+        if action == "watch":
+            entry.add_argument("--deadline", type=int, default=600)
+            entry.add_argument("--interval", type=int, default=25)
+    entry = sub.add_parser("start", help="One POST with an exclusive operation record; requires an authorized reviewed request")
+    for flag in ["request", "policy", "policy-revision", "source-revision", "registry-hash", "operation-id", "output-dir"]:
+        entry.add_argument("--" + flag, required=True)
+    release = commands.add_parser("release", help="Verify all seven artifacts or prepare the existing local pin procedure")
+    sub = release.add_subparsers(dest="action", required=True)
+    for action in ["verify", "pin"]:
+        entry = sub.add_parser(action)
+        entry.add_argument("--manifest", required=True)
+        entry.add_argument("--output", required=True)
+        if action == "pin":
+            entry.add_argument("--repo", required=True)
+    args = parser.parse_args()
+    if getattr(args, "output", None) and Path(args.output).exists():
+        raise OpsError("existing_record", "Output already exists; inspect it before starting another operation")
+    profile = Profile(args.profile)
+    if args.command == "doctor":
+        result = doctor(profile, args.credentials, args.builder)
+    elif args.command == "builder":
+        profile.verify()
+        result = builder_preflight(profile, args.repo, args.source_revision)
+    elif args.command == "evaluation":
+        with Pharness(profile) as api:
+            if args.action == "status":
+                result = evaluation_summary(evaluation_status(api, args.id, args.output_dir))
+            elif args.action == "watch":
+                result = watch_evaluation(api, args.id, args.output_dir, args.deadline, args.interval)
+            else:
+                record = start_evaluation(profile, api, json.loads(Path(args.request).read_text()),
+                                          args.policy, args.policy_revision, args.source_revision,
+                                          args.registry_hash, args.output_dir, args.operation_id)
+                result = {key: record[key] for key in ["operation_id", "state", "evaluation_id", "source_revision"]}
+    else:
+        manifest = json.loads(Path(args.manifest).read_text())
+        profile.verify()
+        result = pin_release(profile, manifest, args.repo) if args.action == "pin" else verify_release(profile, manifest)
+    if getattr(args, "output", None):
+        save(args.output, result, exclusive=True)
+    print(json.dumps(result, indent=2))
+    return 1 if result.get("status") == "blocked" else 0
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except (OpsError, OSError, ValueError, KeyError) as error:
+        print(json.dumps({"status": "failed", "category": getattr(error, "category", "input_or_configuration"),
+                          "detail": str(error) if isinstance(error, OpsError) else type(error).__name__}))
+        raise SystemExit(1)

@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_revision": "92f8f1b8e98dd45d0a01e030aeb99ef9bcf95267",
+  "images": {
+    "runtime": {
+      "repository": "pharness-runtime",
+      "digest": "sha256:270abac12bdf9505b042855b5a7abb1369562e8087382eaec537822332b0b2db"
+    },
+    "ui": {
+      "repository": "pharness-ui",
+      "digest": "sha256:60ea61d3eb41a09b6a9d6e155a1fa0f8b096cef8a32519b9480ecd5c3ecd3bc7"
+    },
+    "python-runner": {
+      "repository": "pharness-python-runner",
+      "digest": "sha256:e9fd4cfba4afa0f3dcfe079a0432e881c4016ffc78dc30104e7757a36dae6c02"
+    },
+    "node-runner": {
+      "repository": "pharness-node-runner",
+      "digest": "sha256:a02edc7aafe5a99c856fcfffb3f4812136d51232bf9bf621447b1a9be55e9689"
+    },
+    "model-gateway": {
+      "repository": "pharness-model-gateway",
+      "digest": "sha256:893e4a96c7afa22ae5e90ec1b1ae7a82874d4c7fc0a19df7e5009539445cad27"
+    },
+    "eval-runner": {
+      "repository": "pharness-eval-runner",
+      "digest": "sha256:a47625d4aa0632bf8f91616fedc14265ce2637698904c5eb0ebb9bae3bce3404"
+    },
+    "codex-host": {
+      "repository": "pharness-codex-host",
+      "digest": "sha256:48b544714850f7c00f25f1f87fdfc9e6dfe1870bf5fd37f0c35bef05bf6c4928"
+    }
+  },
+  "native_bundle": {
+    "path": "/Users/wardl/Personal/apps/pharness-release-artifacts/92f8f1b8e98dd45d0a01e030aeb99ef9bcf95267/pharness-codex-host-92f8f1b8e98dd45d0a01e030aeb99ef9bcf95267-linux-amd64.tar.gz",
+    "digest": "sha256:78fe85808d951d5e28e3b8680a6cc1a89fcdbfca22d147f577b91b73e0305d79"
+  },
+  "original_evidence": "https://github.com/lward27/pharness/blob/4bf9f0ae73a3ed2ef25e9bca53090e0edecf32f6/planning/evidence/autonomous-sdlc/ASTRA-M04-DIAGNOSTIC-RELEASE-BUILD.json"
+}

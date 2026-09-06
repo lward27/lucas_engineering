@@ -1,0 +1,28 @@
+name: Operator tools
+on:
+  pull_request:
+    paths: ['tools/cluster-ops/**', '.github/workflows/operator-tools.yaml']
+  push:
+    branches: [main]
+    paths: ['tools/cluster-ops/**', '.github/workflows/operator-tools.yaml']
+permissions:
+  contents: read
+jobs:
+  operator-tools:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Validate operator failure and recovery behavior
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python3 -m unittest discover -s tools/cluster-ops/tests -v
+      - name: Validate shell syntax
+        run: |
+          python3 - <<'PY'
+          import pathlib, subprocess
+          for path in pathlib.Path('tools/cluster-ops/skills').rglob('*.sh'):
+              subprocess.run(['bash', '-n', str(path)], check=True)
+          PY

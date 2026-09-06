@@ -1,0 +1,376 @@
+{
+  "api_server": "https://192.168.20.5:6443",
+  "applications": [
+    {
+      "health": "Healthy",
+      "name": "lea-admin-routes",
+      "path": "platform/admin-routes",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-alloy",
+      "path": "platform/alloy",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-baseline-policies",
+      "path": "policies/baseline",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-cloudflare",
+      "path": "platform/cloudflare",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-cnpg-operator",
+      "path": "platform/cnpg-operator",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-database",
+      "path": "platform/database",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-garage",
+      "path": "platform/garage",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-loki",
+      "path": "platform/loki",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-metrics-server",
+      "path": "platform/metrics-server",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-monitoring",
+      "path": "platform/monitoring",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-namespaces",
+      "path": "platform/namespaces",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-openebs",
+      "path": "platform/openebs",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-otel-collector",
+      "path": "platform/otel-collector",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-release-pipeline",
+      "path": "platform/tekton/release",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-storage",
+      "path": "platform/storage",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-tekton-dashboard",
+      "path": "platform/tekton/dashboard",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-tekton-pipelines",
+      "path": "platform/tekton/pipelines",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-tekton-triggers",
+      "path": "platform/tekton/triggers",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-tempo",
+      "path": "platform/tempo",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lea-traefik",
+      "path": "platform/traefik",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lucas-engineering-agent-homelab",
+      "path": "clusters/homelab",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-gitops.git",
+      "revision": "8ef0dd0b5d542e87d51786be0762df0979ec7def",
+      "sync": "Synced"
+    },
+    {
+      "health": "Healthy",
+      "name": "lucas-engineering-agent-platform",
+      "path": "deploy/helm/lucas-engineering-agent-platform",
+      "repository": "ssh://git@ssh.github.com:443/lward27/lucas-engineering-agent-platform.git",
+      "revision": "78d18a3177a9e736ba4eb1ce8ca04e740f5419ff",
+      "sync": "Synced"
+    }
+  ],
+  "collection_note": "Initial full-object query exceeded the 8 MiB client bound. Retried with metadata-only projections for Pods and PipelineRuns; the bound was preserved.",
+  "configured_capacity": {
+    "active_nodes": [
+      "lea-control-1",
+      "lea-worker-1",
+      "lea-worker-2",
+      "lea-worker-3",
+      "lea-sandbox-1",
+      "lea-sandbox-2"
+    ],
+    "host_free_capacity_verified": false,
+    "memory_mib": 40960,
+    "source_revision": "ac532d5f1ec7e9ff1a2a77230d14de451ef44d8b",
+    "vcpu": 26,
+    "virtual_disk_gb": 400,
+    "vm_ids": [
+      201,
+      204,
+      205,
+      206,
+      207,
+      208
+    ]
+  },
+  "context": "admin@lucas-engineering-agent-homelab",
+  "databases": [
+    {
+      "backup_configured": false,
+      "last_successful_backup": null,
+      "name": "lea-postgres",
+      "namespace": "lea-agent-platform",
+      "phase": "Cluster in healthy state"
+    }
+  ],
+  "nodes": [
+    {
+      "cpu": "2",
+      "memory": "3987652Ki",
+      "name": "lea-control-1",
+      "ready": true
+    },
+    {
+      "cpu": "6",
+      "memory": "6044556Ki",
+      "name": "lea-sandbox-1",
+      "ready": true
+    },
+    {
+      "cpu": "6",
+      "memory": "6044556Ki",
+      "name": "lea-sandbox-2",
+      "ready": true
+    },
+    {
+      "cpu": "4",
+      "memory": "8109612Ki",
+      "name": "lea-worker-1",
+      "ready": true
+    },
+    {
+      "cpu": "4",
+      "memory": "8109604Ki",
+      "name": "lea-worker-2",
+      "ready": true
+    },
+    {
+      "cpu": "4",
+      "memory": "8109612Ki",
+      "name": "lea-worker-3",
+      "ready": true
+    }
+  ],
+  "observed_at": "2026-09-06T20:20:53.129029+00:00",
+  "persistent_claims": [
+    {
+      "name": "lea-postgres-1",
+      "namespace": "lea-agent-platform",
+      "phase": "Bound",
+      "requested": "40Gi"
+    },
+    {
+      "name": "data-lea-garage-0",
+      "namespace": "object-storage",
+      "phase": "Bound",
+      "requested": "20Gi"
+    },
+    {
+      "name": "meta-lea-garage-0",
+      "namespace": "object-storage",
+      "phase": "Bound",
+      "requested": "1Gi"
+    },
+    {
+      "name": "data-lea-tempo-0",
+      "namespace": "observability",
+      "phase": "Bound",
+      "requested": "10Gi"
+    },
+    {
+      "name": "prometheus-lea-monitoring-prometheus-db-prometheus-lea-monitoring-prometheus-0",
+      "namespace": "observability",
+      "phase": "Bound",
+      "requested": "20Gi"
+    },
+    {
+      "name": "storage-lea-loki-0",
+      "namespace": "observability",
+      "phase": "Bound",
+      "requested": "20Gi"
+    },
+    {
+      "name": "storage-lea-monitoring-grafana-0",
+      "namespace": "observability",
+      "phase": "Bound",
+      "requested": "5Gi"
+    }
+  ],
+  "pipeline_runs": {
+    "active": [],
+    "total": 38
+  },
+  "pods_running_by_namespace": {
+    "argocd": 6,
+    "cloudflare": 2,
+    "cnpg-system": 2,
+    "kube-system": 28,
+    "lea-agent-platform": 14,
+    "lea-ci": 2,
+    "metrics-server": 2,
+    "object-storage": 1,
+    "observability": 21,
+    "openebs": 1,
+    "tekton-pipelines": 7,
+    "tekton-pipelines-resolvers": 1,
+    "traefik": 2
+  },
+  "scope": "Read-only retirement assessment; no host access, shutdown, data copy or deletion",
+  "volumes": [
+    {
+      "capacity": "64Mi",
+      "claim": "lea-storage-validation",
+      "name": "pvc-068ae726-428e-49a1-8ebe-b6a4b43a8499",
+      "phase": "Released",
+      "reclaim": "Retain"
+    },
+    {
+      "capacity": "20Gi",
+      "claim": "data-lea-garage-0",
+      "name": "pvc-10d31e5f-d399-4db0-9a4b-20bce3659577",
+      "phase": "Bound",
+      "reclaim": "Retain"
+    },
+    {
+      "capacity": "5Gi",
+      "claim": "storage-lea-monitoring-grafana-0",
+      "name": "pvc-4bd272e5-6dca-4b36-969d-08335eb11d30",
+      "phase": "Bound",
+      "reclaim": "Retain"
+    },
+    {
+      "capacity": "20Gi",
+      "claim": "prometheus-lea-monitoring-prometheus-db-prometheus-lea-monitoring-prometheus-0",
+      "name": "pvc-51f82e7a-ff1c-44a6-bb75-ee56f1810e48",
+      "phase": "Bound",
+      "reclaim": "Retain"
+    },
+    {
+      "capacity": "10Gi",
+      "claim": "data-lea-tempo-0",
+      "name": "pvc-a9d7fc91-2cc9-41f7-8445-b5f41618e47e",
+      "phase": "Bound",
+      "reclaim": "Retain"
+    },
+    {
+      "capacity": "1Gi",
+      "claim": "meta-lea-garage-0",
+      "name": "pvc-c741ab73-0119-457f-a078-f27a135aa788",
+      "phase": "Bound",
+      "reclaim": "Retain"
+    },
+    {
+      "capacity": "40Gi",
+      "claim": "lea-postgres-1",
+      "name": "pvc-cb579b4a-1e47-4869-bd6c-f1619d0fb753",
+      "phase": "Bound",
+      "reclaim": "Retain"
+    },
+    {
+      "capacity": "20Gi",
+      "claim": "storage-lea-loki-0",
+      "name": "pvc-eaa5d4d0-0c9b-46bc-9507-80b34957affb",
+      "phase": "Bound",
+      "reclaim": "Retain"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Immutable Build Release"
+  short_description: "Preflight and verify digest-pinned releases"
+  default_prompt: "Use $immutable-build-release to build and release this repository from one verified source SHA."

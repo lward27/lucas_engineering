@@ -1,0 +1,6 @@
+interface:
+  display_name: "Kubernetes Cluster Health"
+  short_description: "Assess Kubernetes cluster health safely"
+  default_prompt: "Use $k8s-cluster-health to assess a selected cluster over a bounded window."
+policy:
+  allow_implicit_invocation: true
