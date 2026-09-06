@@ -1,0 +1,30 @@
+{
+  "observed_at": "2026-09-06T21:05:49.427152+00:00",
+  "claim": "apps-prod/openclaw-data",
+  "provisioner_lines": [
+    "2026-09-06T21:04:46.998475902Z time=\"2026-09-06T21:04:46Z\" level=info msg=\"Deleting volume pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff at ubuntu-lucas-engineering-2:/var/lib/rancher/k3s/storage/pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff_apps-prod_openclaw-data\"",
+    "2026-09-06T21:04:46.998597460Z time=\"2026-09-06T21:04:46Z\" level=info msg=\"create the helper pod helper-pod-delete-pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff into kube-system\"",
+    "2026-09-06T21:05:14.301651159Z time=\"2026-09-06T21:05:14Z\" level=info msg=\"Volume pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff has been deleted on ubuntu-lucas-engineering-2:/var/lib/rancher/k3s/storage/pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff_apps-prod_openclaw-data\"",
+    "2026-09-06T21:05:14.338492608Z time=\"2026-09-06T21:05:14Z\" level=info msg=\"Start of helper-pod-delete-pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff logs\"",
+    "2026-09-06T21:05:14.338580337Z time=\"2026-09-06T21:05:14Z\" level=info msg=\"End of helper-pod-delete-pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff logs\"",
+    "2026-09-06T21:05:14.383428635Z time=\"2026-09-06T21:05:14Z\" level=info msg=\"Deleting volume pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff at ubuntu-lucas-engineering-2:/var/lib/rancher/k3s/storage/pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff_apps-prod_openclaw-data\"",
+    "2026-09-06T21:05:14.383588391Z time=\"2026-09-06T21:05:14Z\" level=info msg=\"create the helper pod helper-pod-delete-pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff into kube-system\"",
+    "2026-09-06T21:05:18.440625476Z time=\"2026-09-06T21:05:18Z\" level=info msg=\"Volume pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff has been deleted on ubuntu-lucas-engineering-2:/var/lib/rancher/k3s/storage/pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff_apps-prod_openclaw-data\"",
+    "2026-09-06T21:05:18.457385326Z time=\"2026-09-06T21:05:18Z\" level=info msg=\"Start of helper-pod-delete-pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff logs\"",
+    "2026-09-06T21:05:18.457455870Z time=\"2026-09-06T21:05:18Z\" level=info msg=\"End of helper-pod-delete-pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff logs\"",
+    "2026-09-06T21:05:18.490875300Z I0906 21:05:18.490448       1 controller.go:1580] \"Failed to delete persistentvolume\" PV=\"pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff\" err=\"persistentvolumes \\\"pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff\\\" not found\"",
+    "2026-09-06T21:05:18.490970431Z I0906 21:05:18.490613       1 controller.go:1024] \"Retrying syncing volume because failures < threshold\" key=\"pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff\" failures=0 threshold=15",
+    "2026-09-06T21:05:18.491019414Z E0906 21:05:18.490775       1 controller.go:1039] \"Unhandled Error\" err=\"error syncing volume \\\"pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff\\\": persistentvolumes \\\"pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff\\\" not found\" logger=\"UnhandledError\""
+  ],
+  "initial_note": "Claim absent after raw DELETE with URL dryRun query; investigating kubectl query handling before further volume requests.",
+  "investigation_conclusion": {
+    "recorded_at": "2026-09-06T21:11:12.390394+00:00",
+    "cause": "The raw DELETE request supplied dryRun=All in the URL while its nonempty DeleteOptions body omitted dryRun. The API server decodes options from the body when present, so this was an actual deletion. This was operator request construction error, not an out-of-scope deletion or a dropped URL query.",
+    "scope": "apps-prod/openclaw-data was in the owner-authorized five-claim purge allowlist. It was deleted earlier than the intended actual-deletion phase.",
+    "evidence_limit": "The initial DELETE response and exact resourceVersion were not saved before the subsequent presence assertion failed; they have not been reconstructed. Original UID, provisioning logs and final absence are recorded.",
+    "observed_server_version": "v1.34.4+k3s1",
+    "primary_source": "https://github.com/kubernetes/kubernetes/blob/v1.34.4/staging/src/k8s.io/apiserver/pkg/endpoints/handlers/delete.go#L78-L115",
+    "correction": "Paused further volume requests. Used normal kubectl resource deletion with --dry-run=server for the four remaining claims and verified that each still existed, then deliberately sent UID/resourceVersion-preconditioned actual DELETE requests.",
+    "initial_request_is_not_counted_as_successful_dry_run": true
+  }
+}

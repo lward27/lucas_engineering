@@ -1,0 +1,620 @@
+{
+  "started_at": "2026-09-06T21:06:53.379100+00:00",
+  "initial_openclaw_deletion": "ASTRA-PURGE-INITIAL-DELETE-OBSERVATION.json",
+  "requests": [
+    {
+      "namespace": "code-server",
+      "name": "code-server-data",
+      "uid": "bff78087-5f5f-44a1-b705-a5e0c64d4480",
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        "/Users/wardl/.kube/config",
+        "--context",
+        "lucas_engineering",
+        "--request-timeout=20s",
+        "delete",
+        "--raw",
+        "/api/v1/namespaces/code-server/persistentvolumeclaims/code-server-data",
+        "-f",
+        "-"
+      ],
+      "body": {
+        "apiVersion": "v1",
+        "kind": "DeleteOptions",
+        "preconditions": {
+          "uid": "bff78087-5f5f-44a1-b705-a5e0c64d4480",
+          "resourceVersion": "49058484"
+        }
+      },
+      "state": "accepted",
+      "exit_code": 0,
+      "response": {
+        "kind": "PersistentVolumeClaim",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "code-server-data",
+          "namespace": "code-server",
+          "uid": "bff78087-5f5f-44a1-b705-a5e0c64d4480",
+          "resourceVersion": "49066174",
+          "creationTimestamp": "2026-03-24T12:33:50Z",
+          "deletionTimestamp": "2026-09-06T21:06:53Z",
+          "deletionGracePeriodSeconds": 0,
+          "labels": {
+            "app.kubernetes.io/instance": "code-server",
+            "app.kubernetes.io/name": "code-server"
+          },
+          "annotations": {
+            "argocd.argoproj.io/sync-options": "Prune=false,Delete=false",
+            "argocd.argoproj.io/tracking-id": "code-server:/PersistentVolumeClaim:code-server/code-server-data",
+            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"PersistentVolumeClaim\",\"metadata\":{\"annotations\":{\"argocd.argoproj.io/sync-options\":\"Prune=false,Delete=false\",\"argocd.argoproj.io/tracking-id\":\"code-server:/PersistentVolumeClaim:code-server/code-server-data\"},\"labels\":{\"app.kubernetes.io/instance\":\"code-server\",\"app.kubernetes.io/name\":\"code-server\"},\"name\":\"code-server-data\",\"namespace\":\"code-server\"},\"spec\":{\"accessModes\":[\"ReadWriteOnce\"],\"resources\":{\"requests\":{\"storage\":\"30Gi\"}},\"storageClassName\":\"local-path\"}}\n",
+            "pv.kubernetes.io/bind-completed": "yes",
+            "pv.kubernetes.io/bound-by-controller": "yes",
+            "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+            "volume.kubernetes.io/selected-node": "ubuntu-lucas-engineering",
+            "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+          },
+          "finalizers": [
+            "kubernetes.io/pvc-protection"
+          ],
+          "managedFields": [
+            {
+              "manager": "k3s",
+              "operation": "Update",
+              "apiVersion": "v1",
+              "time": "2026-03-24T12:33:55Z",
+              "fieldsType": "FieldsV1",
+              "fieldsV1": {
+                "f:metadata": {
+                  "f:annotations": {
+                    "f:pv.kubernetes.io/bind-completed": {},
+                    "f:pv.kubernetes.io/bound-by-controller": {},
+                    "f:volume.beta.kubernetes.io/storage-provisioner": {},
+                    "f:volume.kubernetes.io/selected-node": {},
+                    "f:volume.kubernetes.io/storage-provisioner": {}
+                  }
+                },
+                "f:spec": {
+                  "f:volumeName": {}
+                }
+              }
+            },
+            {
+              "manager": "k3s",
+              "operation": "Update",
+              "apiVersion": "v1",
+              "time": "2026-03-24T12:33:55Z",
+              "fieldsType": "FieldsV1",
+              "fieldsV1": {
+                "f:status": {
+                  "f:accessModes": {},
+                  "f:capacity": {
+                    ".": {},
+                    "f:storage": {}
+                  },
+                  "f:phase": {}
+                }
+              },
+              "subresource": "status"
+            },
+            {
+              "manager": "argocd-controller",
+              "operation": "Update",
+              "apiVersion": "v1",
+              "time": "2026-09-06T20:32:27Z",
+              "fieldsType": "FieldsV1",
+              "fieldsV1": {
+                "f:metadata": {
+                  "f:annotations": {
+                    ".": {},
+                    "f:argocd.argoproj.io/sync-options": {},
+                    "f:argocd.argoproj.io/tracking-id": {},
+                    "f:kubectl.kubernetes.io/last-applied-configuration": {}
+                  },
+                  "f:labels": {
+                    ".": {},
+                    "f:app.kubernetes.io/instance": {},
+                    "f:app.kubernetes.io/name": {}
+                  }
+                },
+                "f:spec": {
+                  "f:accessModes": {},
+                  "f:resources": {
+                    "f:requests": {
+                      ".": {},
+                      "f:storage": {}
+                    }
+                  },
+                  "f:storageClassName": {},
+                  "f:volumeMode": {}
+                }
+              }
+            }
+          ]
+        },
+        "spec": {
+          "accessModes": [
+            "ReadWriteOnce"
+          ],
+          "resources": {
+            "requests": {
+              "storage": "30Gi"
+            }
+          },
+          "volumeName": "pvc-bff78087-5f5f-44a1-b705-a5e0c64d4480",
+          "storageClassName": "local-path",
+          "volumeMode": "Filesystem"
+        },
+        "status": {
+          "phase": "Bound",
+          "accessModes": [
+            "ReadWriteOnce"
+          ],
+          "capacity": {
+            "storage": "30Gi"
+          }
+        }
+      },
+      "accepted_at": "2026-09-06T21:06:53.748716+00:00"
+    },
+    {
+      "namespace": "monitoring",
+      "name": "uptime-kuma-pvc",
+      "uid": "f70da283-45c1-44db-9bc0-14cd23ede08e",
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        "/Users/wardl/.kube/config",
+        "--context",
+        "lucas_engineering",
+        "--request-timeout=20s",
+        "delete",
+        "--raw",
+        "/api/v1/namespaces/monitoring/persistentvolumeclaims/uptime-kuma-pvc",
+        "-f",
+        "-"
+      ],
+      "body": {
+        "apiVersion": "v1",
+        "kind": "DeleteOptions",
+        "preconditions": {
+          "uid": "f70da283-45c1-44db-9bc0-14cd23ede08e",
+          "resourceVersion": "49058481"
+        }
+      },
+      "state": "accepted",
+      "exit_code": 0,
+      "response": {
+        "kind": "PersistentVolumeClaim",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "uptime-kuma-pvc",
+          "namespace": "monitoring",
+          "uid": "f70da283-45c1-44db-9bc0-14cd23ede08e",
+          "resourceVersion": "49066179",
+          "creationTimestamp": "2026-02-25T19:38:07Z",
+          "deletionTimestamp": "2026-09-06T21:06:54Z",
+          "deletionGracePeriodSeconds": 0,
+          "labels": {
+            "app.kubernetes.io/instance": "uptime-kuma",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "uptime-kuma",
+            "app.kubernetes.io/version": "2.1.1",
+            "helm.sh/chart": "uptime-kuma-4.0.0"
+          },
+          "annotations": {
+            "argocd.argoproj.io/sync-options": "Prune=false,Delete=false",
+            "argocd.argoproj.io/tracking-id": "uptime-kuma:/PersistentVolumeClaim:monitoring/uptime-kuma-pvc",
+            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"PersistentVolumeClaim\",\"metadata\":{\"annotations\":{\"argocd.argoproj.io/sync-options\":\"Prune=false,Delete=false\",\"argocd.argoproj.io/tracking-id\":\"uptime-kuma:/PersistentVolumeClaim:monitoring/uptime-kuma-pvc\"},\"labels\":{\"app.kubernetes.io/instance\":\"uptime-kuma\",\"app.kubernetes.io/managed-by\":\"Helm\",\"app.kubernetes.io/name\":\"uptime-kuma\",\"app.kubernetes.io/version\":\"2.1.1\",\"helm.sh/chart\":\"uptime-kuma-4.0.0\"},\"name\":\"uptime-kuma-pvc\",\"namespace\":\"monitoring\"},\"spec\":{\"accessModes\":[\"ReadWriteOnce\"],\"resources\":{\"requests\":{\"storage\":\"4Gi\"}}}}\n",
+            "pv.kubernetes.io/bind-completed": "yes",
+            "pv.kubernetes.io/bound-by-controller": "yes",
+            "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+            "volume.kubernetes.io/selected-node": "ubuntu-lucas-engineering",
+            "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+          },
+          "finalizers": [
+            "kubernetes.io/pvc-protection"
+          ],
+          "managedFields": [
+            {
+              "manager": "k3s",
+              "operation": "Update",
+              "apiVersion": "v1",
+              "time": "2026-02-25T19:38:10Z",
+              "fieldsType": "FieldsV1",
+              "fieldsV1": {
+                "f:metadata": {
+                  "f:annotations": {
+                    "f:pv.kubernetes.io/bind-completed": {},
+                    "f:pv.kubernetes.io/bound-by-controller": {},
+                    "f:volume.beta.kubernetes.io/storage-provisioner": {},
+                    "f:volume.kubernetes.io/selected-node": {},
+                    "f:volume.kubernetes.io/storage-provisioner": {}
+                  }
+                },
+                "f:spec": {
+                  "f:volumeName": {}
+                }
+              }
+            },
+            {
+              "manager": "k3s",
+              "operation": "Update",
+              "apiVersion": "v1",
+              "time": "2026-02-25T19:38:10Z",
+              "fieldsType": "FieldsV1",
+              "fieldsV1": {
+                "f:status": {
+                  "f:accessModes": {},
+                  "f:capacity": {
+                    ".": {},
+                    "f:storage": {}
+                  },
+                  "f:phase": {}
+                }
+              },
+              "subresource": "status"
+            },
+            {
+              "manager": "argocd-controller",
+              "operation": "Update",
+              "apiVersion": "v1",
+              "time": "2026-09-06T20:32:27Z",
+              "fieldsType": "FieldsV1",
+              "fieldsV1": {
+                "f:metadata": {
+                  "f:annotations": {
+                    ".": {},
+                    "f:argocd.argoproj.io/sync-options": {},
+                    "f:argocd.argoproj.io/tracking-id": {},
+                    "f:kubectl.kubernetes.io/last-applied-configuration": {}
+                  },
+                  "f:labels": {
+                    ".": {},
+                    "f:app.kubernetes.io/instance": {},
+                    "f:app.kubernetes.io/managed-by": {},
+                    "f:app.kubernetes.io/name": {},
+                    "f:app.kubernetes.io/version": {},
+                    "f:helm.sh/chart": {}
+                  }
+                },
+                "f:spec": {
+                  "f:accessModes": {},
+                  "f:resources": {
+                    "f:requests": {
+                      ".": {},
+                      "f:storage": {}
+                    }
+                  },
+                  "f:volumeMode": {}
+                }
+              }
+            }
+          ]
+        },
+        "spec": {
+          "accessModes": [
+            "ReadWriteOnce"
+          ],
+          "resources": {
+            "requests": {
+              "storage": "4Gi"
+            }
+          },
+          "volumeName": "pvc-f70da283-45c1-44db-9bc0-14cd23ede08e",
+          "storageClassName": "local-path",
+          "volumeMode": "Filesystem"
+        },
+        "status": {
+          "phase": "Bound",
+          "accessModes": [
+            "ReadWriteOnce"
+          ],
+          "capacity": {
+            "storage": "4Gi"
+          }
+        }
+      },
+      "accepted_at": "2026-09-06T21:06:54.013892+00:00"
+    },
+    {
+      "namespace": "odoo",
+      "name": "data-odoo-postgresql-0",
+      "uid": "504241f0-6aa9-46e1-905a-298321eed19c",
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        "/Users/wardl/.kube/config",
+        "--context",
+        "lucas_engineering",
+        "--request-timeout=20s",
+        "delete",
+        "--raw",
+        "/api/v1/namespaces/odoo/persistentvolumeclaims/data-odoo-postgresql-0",
+        "-f",
+        "-"
+      ],
+      "body": {
+        "apiVersion": "v1",
+        "kind": "DeleteOptions",
+        "preconditions": {
+          "uid": "504241f0-6aa9-46e1-905a-298321eed19c",
+          "resourceVersion": "16068626"
+        }
+      },
+      "state": "accepted",
+      "exit_code": 0,
+      "response": {
+        "kind": "PersistentVolumeClaim",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "data-odoo-postgresql-0",
+          "namespace": "odoo",
+          "uid": "504241f0-6aa9-46e1-905a-298321eed19c",
+          "resourceVersion": "49066189",
+          "creationTimestamp": "2026-05-02T10:40:35Z",
+          "deletionTimestamp": "2026-09-06T21:06:54Z",
+          "deletionGracePeriodSeconds": 0,
+          "labels": {
+            "app.kubernetes.io/component": "primary",
+            "app.kubernetes.io/instance": "odoo",
+            "app.kubernetes.io/name": "postgresql"
+          },
+          "annotations": {
+            "pv.kubernetes.io/bind-completed": "yes",
+            "pv.kubernetes.io/bound-by-controller": "yes",
+            "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+            "volume.kubernetes.io/selected-node": "ubuntu-lucas-engineering-2",
+            "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+          },
+          "finalizers": [
+            "kubernetes.io/pvc-protection"
+          ],
+          "managedFields": [
+            {
+              "manager": "k3s",
+              "operation": "Update",
+              "apiVersion": "v1",
+              "time": "2026-05-02T10:40:40Z",
+              "fieldsType": "FieldsV1",
+              "fieldsV1": {
+                "f:metadata": {
+                  "f:annotations": {
+                    ".": {},
+                    "f:pv.kubernetes.io/bind-completed": {},
+                    "f:pv.kubernetes.io/bound-by-controller": {},
+                    "f:volume.beta.kubernetes.io/storage-provisioner": {},
+                    "f:volume.kubernetes.io/selected-node": {},
+                    "f:volume.kubernetes.io/storage-provisioner": {}
+                  },
+                  "f:labels": {
+                    ".": {},
+                    "f:app.kubernetes.io/component": {},
+                    "f:app.kubernetes.io/instance": {},
+                    "f:app.kubernetes.io/name": {}
+                  }
+                },
+                "f:spec": {
+                  "f:accessModes": {},
+                  "f:resources": {
+                    "f:requests": {
+                      ".": {},
+                      "f:storage": {}
+                    }
+                  },
+                  "f:storageClassName": {},
+                  "f:volumeMode": {},
+                  "f:volumeName": {}
+                }
+              }
+            },
+            {
+              "manager": "k3s",
+              "operation": "Update",
+              "apiVersion": "v1",
+              "time": "2026-05-02T10:40:40Z",
+              "fieldsType": "FieldsV1",
+              "fieldsV1": {
+                "f:status": {
+                  "f:accessModes": {},
+                  "f:capacity": {
+                    ".": {},
+                    "f:storage": {}
+                  },
+                  "f:phase": {}
+                }
+              },
+              "subresource": "status"
+            }
+          ]
+        },
+        "spec": {
+          "accessModes": [
+            "ReadWriteOnce"
+          ],
+          "resources": {
+            "requests": {
+              "storage": "8Gi"
+            }
+          },
+          "volumeName": "pvc-504241f0-6aa9-46e1-905a-298321eed19c",
+          "storageClassName": "local-path",
+          "volumeMode": "Filesystem"
+        },
+        "status": {
+          "phase": "Bound",
+          "accessModes": [
+            "ReadWriteOnce"
+          ],
+          "capacity": {
+            "storage": "8Gi"
+          }
+        }
+      },
+      "accepted_at": "2026-09-06T21:06:54.320660+00:00"
+    },
+    {
+      "namespace": "odoo",
+      "name": "odoo",
+      "uid": "e858df73-763b-4984-b15e-c3b3fd2dd03d",
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        "/Users/wardl/.kube/config",
+        "--context",
+        "lucas_engineering",
+        "--request-timeout=20s",
+        "delete",
+        "--raw",
+        "/api/v1/namespaces/odoo/persistentvolumeclaims/odoo",
+        "-f",
+        "-"
+      ],
+      "body": {
+        "apiVersion": "v1",
+        "kind": "DeleteOptions",
+        "preconditions": {
+          "uid": "e858df73-763b-4984-b15e-c3b3fd2dd03d",
+          "resourceVersion": "49058495"
+        }
+      },
+      "state": "accepted",
+      "exit_code": 0,
+      "response": {
+        "kind": "PersistentVolumeClaim",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "odoo",
+          "namespace": "odoo",
+          "uid": "e858df73-763b-4984-b15e-c3b3fd2dd03d",
+          "resourceVersion": "49066196",
+          "creationTimestamp": "2026-05-02T10:40:34Z",
+          "deletionTimestamp": "2026-09-06T21:06:54Z",
+          "deletionGracePeriodSeconds": 0,
+          "labels": {
+            "app.kubernetes.io/instance": "odoo",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "odoo",
+            "app.kubernetes.io/version": "18.0.20250805",
+            "helm.sh/chart": "odoo-28.2.10"
+          },
+          "annotations": {
+            "argocd.argoproj.io/sync-options": "Prune=false,Delete=false",
+            "argocd.argoproj.io/tracking-id": "odoo:/PersistentVolumeClaim:odoo/odoo",
+            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"PersistentVolumeClaim\",\"metadata\":{\"annotations\":{\"argocd.argoproj.io/sync-options\":\"Prune=false,Delete=false\",\"argocd.argoproj.io/tracking-id\":\"odoo:/PersistentVolumeClaim:odoo/odoo\"},\"labels\":{\"app.kubernetes.io/instance\":\"odoo\",\"app.kubernetes.io/managed-by\":\"Helm\",\"app.kubernetes.io/name\":\"odoo\",\"app.kubernetes.io/version\":\"18.0.20250805\",\"helm.sh/chart\":\"odoo-28.2.10\"},\"name\":\"odoo\",\"namespace\":\"odoo\"},\"spec\":{\"accessModes\":[\"ReadWriteOnce\"],\"resources\":{\"requests\":{\"storage\":\"10Gi\"}},\"storageClassName\":\"local-path\"}}\n",
+            "pv.kubernetes.io/bind-completed": "yes",
+            "pv.kubernetes.io/bound-by-controller": "yes",
+            "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+            "volume.kubernetes.io/selected-node": "ubuntu-lucas-engineering",
+            "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+          },
+          "finalizers": [
+            "kubernetes.io/pvc-protection"
+          ],
+          "managedFields": [
+            {
+              "manager": "k3s",
+              "operation": "Update",
+              "apiVersion": "v1",
+              "time": "2026-05-02T10:40:40Z",
+              "fieldsType": "FieldsV1",
+              "fieldsV1": {
+                "f:metadata": {
+                  "f:annotations": {
+                    "f:pv.kubernetes.io/bind-completed": {},
+                    "f:pv.kubernetes.io/bound-by-controller": {},
+                    "f:volume.beta.kubernetes.io/storage-provisioner": {},
+                    "f:volume.kubernetes.io/selected-node": {},
+                    "f:volume.kubernetes.io/storage-provisioner": {}
+                  }
+                },
+                "f:spec": {
+                  "f:volumeName": {}
+                }
+              }
+            },
+            {
+              "manager": "k3s",
+              "operation": "Update",
+              "apiVersion": "v1",
+              "time": "2026-05-02T10:40:40Z",
+              "fieldsType": "FieldsV1",
+              "fieldsV1": {
+                "f:status": {
+                  "f:accessModes": {},
+                  "f:capacity": {
+                    ".": {},
+                    "f:storage": {}
+                  },
+                  "f:phase": {}
+                }
+              },
+              "subresource": "status"
+            },
+            {
+              "manager": "argocd-controller",
+              "operation": "Update",
+              "apiVersion": "v1",
+              "time": "2026-09-06T20:32:28Z",
+              "fieldsType": "FieldsV1",
+              "fieldsV1": {
+                "f:metadata": {
+                  "f:annotations": {
+                    ".": {},
+                    "f:argocd.argoproj.io/sync-options": {},
+                    "f:argocd.argoproj.io/tracking-id": {},
+                    "f:kubectl.kubernetes.io/last-applied-configuration": {}
+                  },
+                  "f:labels": {
+                    ".": {},
+                    "f:app.kubernetes.io/instance": {},
+                    "f:app.kubernetes.io/managed-by": {},
+                    "f:app.kubernetes.io/name": {},
+                    "f:app.kubernetes.io/version": {},
+                    "f:helm.sh/chart": {}
+                  }
+                },
+                "f:spec": {
+                  "f:accessModes": {},
+                  "f:resources": {
+                    "f:requests": {
+                      ".": {},
+                      "f:storage": {}
+                    }
+                  },
+                  "f:storageClassName": {},
+                  "f:volumeMode": {}
+                }
+              }
+            }
+          ]
+        },
+        "spec": {
+          "accessModes": [
+            "ReadWriteOnce"
+          ],
+          "resources": {
+            "requests": {
+              "storage": "10Gi"
+            }
+          },
+          "volumeName": "pvc-e858df73-763b-4984-b15e-c3b3fd2dd03d",
+          "storageClassName": "local-path",
+          "volumeMode": "Filesystem"
+        },
+        "status": {
+          "phase": "Bound",
+          "accessModes": [
+            "ReadWriteOnce"
+          ],
+          "capacity": {
+            "storage": "10Gi"
+          }
+        }
+      },
+      "accepted_at": "2026-09-06T21:06:54.586765+00:00"
+    }
+  ],
+  "automatic_retries": 0,
+  "completed_at": "2026-09-06T21:06:54.587316+00:00"
+}

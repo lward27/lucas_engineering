@@ -1,0 +1,648 @@
+{
+  "recorded_at": "2026-09-06T21:09:43.517954+00:00",
+  "context": "lucas_engineering",
+  "server": "https://192.168.20.192:6443",
+  "server_version": "v1.34.4+k3s1",
+  "client_version": "v1.35.3",
+  "purged_volumes": [
+    {
+      "namespace": "apps-prod",
+      "name": "openclaw-data",
+      "original_uid": "3c099e8a-bea8-4641-9a14-dcff30cdf8ff",
+      "volume": "pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff",
+      "claim_absent": true,
+      "volume_absent": true,
+      "provisioner_teardown_confirmed": true,
+      "provisioner_lines": [
+        "2026-09-06T21:04:46.998475902Z time=\"2026-09-06T21:04:46Z\" level=info msg=\"Deleting volume pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff at ubuntu-lucas-engineering-2:/var/lib/rancher/k3s/storage/pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff_apps-prod_openclaw-data\"",
+        "2026-09-06T21:04:46.998597460Z time=\"2026-09-06T21:04:46Z\" level=info msg=\"create the helper pod helper-pod-delete-pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff into kube-system\"",
+        "2026-09-06T21:05:14.301651159Z time=\"2026-09-06T21:05:14Z\" level=info msg=\"Volume pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff has been deleted on ubuntu-lucas-engineering-2:/var/lib/rancher/k3s/storage/pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff_apps-prod_openclaw-data\"",
+        "2026-09-06T21:05:14.338492608Z time=\"2026-09-06T21:05:14Z\" level=info msg=\"Start of helper-pod-delete-pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff logs\"",
+        "2026-09-06T21:05:14.338580337Z time=\"2026-09-06T21:05:14Z\" level=info msg=\"End of helper-pod-delete-pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff logs\"",
+        "2026-09-06T21:05:14.383428635Z time=\"2026-09-06T21:05:14Z\" level=info msg=\"Deleting volume pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff at ubuntu-lucas-engineering-2:/var/lib/rancher/k3s/storage/pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff_apps-prod_openclaw-data\"",
+        "2026-09-06T21:05:14.383588391Z time=\"2026-09-06T21:05:14Z\" level=info msg=\"create the helper pod helper-pod-delete-pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff into kube-system\"",
+        "2026-09-06T21:05:18.440625476Z time=\"2026-09-06T21:05:18Z\" level=info msg=\"Volume pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff has been deleted on ubuntu-lucas-engineering-2:/var/lib/rancher/k3s/storage/pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff_apps-prod_openclaw-data\"",
+        "2026-09-06T21:05:18.457385326Z time=\"2026-09-06T21:05:18Z\" level=info msg=\"Start of helper-pod-delete-pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff logs\"",
+        "2026-09-06T21:05:18.457455870Z time=\"2026-09-06T21:05:18Z\" level=info msg=\"End of helper-pod-delete-pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff logs\"",
+        "2026-09-06T21:05:18.490875300Z I0906 21:05:18.490448       1 controller.go:1580] \"Failed to delete persistentvolume\" PV=\"pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff\" err=\"persistentvolumes \\\"pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff\\\" not found\"",
+        "2026-09-06T21:05:18.490970431Z I0906 21:05:18.490613       1 controller.go:1024] \"Retrying syncing volume because failures < threshold\" key=\"pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff\" failures=0 threshold=15",
+        "2026-09-06T21:05:18.491019414Z E0906 21:05:18.490775       1 controller.go:1039] \"Unhandled Error\" err=\"error syncing volume \\\"pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff\\\": persistentvolumes \\\"pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff\\\" not found\" logger=\"UnhandledError\""
+      ]
+    },
+    {
+      "namespace": "code-server",
+      "name": "code-server-data",
+      "original_uid": "bff78087-5f5f-44a1-b705-a5e0c64d4480",
+      "volume": "pvc-bff78087-5f5f-44a1-b705-a5e0c64d4480",
+      "claim_absent": true,
+      "volume_absent": true,
+      "provisioner_teardown_confirmed": true,
+      "provisioner_lines": [
+        "2026-09-06T21:06:54.000601805Z time=\"2026-09-06T21:06:54Z\" level=info msg=\"Deleting volume pvc-bff78087-5f5f-44a1-b705-a5e0c64d4480 at ubuntu-lucas-engineering:/var/lib/rancher/k3s/storage/pvc-bff78087-5f5f-44a1-b705-a5e0c64d4480_code-server_code-server-data\"",
+        "2026-09-06T21:06:54.000704475Z time=\"2026-09-06T21:06:54Z\" level=info msg=\"create the helper pod helper-pod-delete-pvc-bff78087-5f5f-44a1-b705-a5e0c64d4480 into kube-system\"",
+        "2026-09-06T21:07:01.118145152Z time=\"2026-09-06T21:07:01Z\" level=info msg=\"Volume pvc-bff78087-5f5f-44a1-b705-a5e0c64d4480 has been deleted on ubuntu-lucas-engineering:/var/lib/rancher/k3s/storage/pvc-bff78087-5f5f-44a1-b705-a5e0c64d4480_code-server_code-server-data\"",
+        "2026-09-06T21:07:01.206822483Z time=\"2026-09-06T21:07:01Z\" level=info msg=\"Start of helper-pod-delete-pvc-bff78087-5f5f-44a1-b705-a5e0c64d4480 logs\"",
+        "2026-09-06T21:07:01.206921678Z time=\"2026-09-06T21:07:01Z\" level=info msg=\"End of helper-pod-delete-pvc-bff78087-5f5f-44a1-b705-a5e0c64d4480 logs\""
+      ]
+    },
+    {
+      "namespace": "monitoring",
+      "name": "uptime-kuma-pvc",
+      "original_uid": "f70da283-45c1-44db-9bc0-14cd23ede08e",
+      "volume": "pvc-f70da283-45c1-44db-9bc0-14cd23ede08e",
+      "claim_absent": true,
+      "volume_absent": true,
+      "provisioner_teardown_confirmed": true,
+      "provisioner_lines": [
+        "2026-09-06T21:06:54.315591705Z time=\"2026-09-06T21:06:54Z\" level=info msg=\"Deleting volume pvc-f70da283-45c1-44db-9bc0-14cd23ede08e at ubuntu-lucas-engineering:/var/lib/rancher/k3s/storage/pvc-f70da283-45c1-44db-9bc0-14cd23ede08e_monitoring_uptime-kuma-pvc\"",
+        "2026-09-06T21:06:54.315712850Z time=\"2026-09-06T21:06:54Z\" level=info msg=\"create the helper pod helper-pod-delete-pvc-f70da283-45c1-44db-9bc0-14cd23ede08e into kube-system\"",
+        "2026-09-06T21:07:00.407307704Z time=\"2026-09-06T21:07:00Z\" level=info msg=\"Volume pvc-f70da283-45c1-44db-9bc0-14cd23ede08e has been deleted on ubuntu-lucas-engineering:/var/lib/rancher/k3s/storage/pvc-f70da283-45c1-44db-9bc0-14cd23ede08e_monitoring_uptime-kuma-pvc\"",
+        "2026-09-06T21:07:00.439961662Z time=\"2026-09-06T21:07:00Z\" level=info msg=\"Start of helper-pod-delete-pvc-f70da283-45c1-44db-9bc0-14cd23ede08e logs\"",
+        "2026-09-06T21:07:00.440029823Z time=\"2026-09-06T21:07:00Z\" level=info msg=\"End of helper-pod-delete-pvc-f70da283-45c1-44db-9bc0-14cd23ede08e logs\""
+      ]
+    },
+    {
+      "namespace": "odoo",
+      "name": "data-odoo-postgresql-0",
+      "original_uid": "504241f0-6aa9-46e1-905a-298321eed19c",
+      "volume": "pvc-504241f0-6aa9-46e1-905a-298321eed19c",
+      "claim_absent": true,
+      "volume_absent": true,
+      "provisioner_teardown_confirmed": true,
+      "provisioner_lines": [
+        "2026-09-06T21:06:54.596324202Z time=\"2026-09-06T21:06:54Z\" level=info msg=\"Deleting volume pvc-504241f0-6aa9-46e1-905a-298321eed19c at ubuntu-lucas-engineering-2:/var/lib/rancher/k3s/storage/pvc-504241f0-6aa9-46e1-905a-298321eed19c_odoo_data-odoo-postgresql-0\"",
+        "2026-09-06T21:06:54.596430023Z time=\"2026-09-06T21:06:54Z\" level=info msg=\"create the helper pod helper-pod-delete-pvc-504241f0-6aa9-46e1-905a-298321eed19c into kube-system\"",
+        "2026-09-06T21:06:59.663366414Z time=\"2026-09-06T21:06:59Z\" level=info msg=\"Volume pvc-504241f0-6aa9-46e1-905a-298321eed19c has been deleted on ubuntu-lucas-engineering-2:/var/lib/rancher/k3s/storage/pvc-504241f0-6aa9-46e1-905a-298321eed19c_odoo_data-odoo-postgresql-0\"",
+        "2026-09-06T21:06:59.680284166Z time=\"2026-09-06T21:06:59Z\" level=info msg=\"Start of helper-pod-delete-pvc-504241f0-6aa9-46e1-905a-298321eed19c logs\"",
+        "2026-09-06T21:06:59.680363754Z time=\"2026-09-06T21:06:59Z\" level=info msg=\"End of helper-pod-delete-pvc-504241f0-6aa9-46e1-905a-298321eed19c logs\""
+      ]
+    },
+    {
+      "namespace": "odoo",
+      "name": "odoo",
+      "original_uid": "e858df73-763b-4984-b15e-c3b3fd2dd03d",
+      "volume": "pvc-e858df73-763b-4984-b15e-c3b3fd2dd03d",
+      "claim_absent": true,
+      "volume_absent": true,
+      "provisioner_teardown_confirmed": true,
+      "provisioner_lines": [
+        "2026-09-06T21:06:54.877272367Z time=\"2026-09-06T21:06:54Z\" level=info msg=\"Deleting volume pvc-e858df73-763b-4984-b15e-c3b3fd2dd03d at ubuntu-lucas-engineering:/var/lib/rancher/k3s/storage/pvc-e858df73-763b-4984-b15e-c3b3fd2dd03d_odoo_odoo\"",
+        "2026-09-06T21:06:54.877414003Z time=\"2026-09-06T21:06:54Z\" level=info msg=\"create the helper pod helper-pod-delete-pvc-e858df73-763b-4984-b15e-c3b3fd2dd03d into kube-system\"",
+        "2026-09-06T21:07:00.956347872Z time=\"2026-09-06T21:07:00Z\" level=info msg=\"Volume pvc-e858df73-763b-4984-b15e-c3b3fd2dd03d has been deleted on ubuntu-lucas-engineering:/var/lib/rancher/k3s/storage/pvc-e858df73-763b-4984-b15e-c3b3fd2dd03d_odoo_odoo\"",
+        "2026-09-06T21:07:00.976100144Z time=\"2026-09-06T21:07:00Z\" level=info msg=\"Start of helper-pod-delete-pvc-e858df73-763b-4984-b15e-c3b3fd2dd03d logs\"",
+        "2026-09-06T21:07:00.976231666Z time=\"2026-09-06T21:07:00Z\" level=info msg=\"End of helper-pod-delete-pvc-e858df73-763b-4984-b15e-c3b3fd2dd03d logs\""
+      ]
+    }
+  ],
+  "unrelated_claims_preserved_count": 85,
+  "unrelated_claim_identity_changes": [],
+  "current_claim_count": 85,
+  "retired_applications_absent": true,
+  "applications_after": [
+    {
+      "name": "agentic-platform",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "argo-cd",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "cert-manager",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "cloudflared",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "data-log-visual",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "8a4f8705b35fdc4363b4cbd61669fc64bce1903e"
+    },
+    {
+      "name": "directus",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "docker-registry",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "escape",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "excalidraw",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "finance-app-database-service",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "finance-frontend",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "finance-frontend-staging",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "forge-admin",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "7674cc89e24887c075dd8462e353805541528f0c"
+    },
+    {
+      "name": "forge-platform",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "7674cc89e24887c075dd8462e353805541528f0c"
+    },
+    {
+      "name": "forge-portal",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "7674cc89e24887c075dd8462e353805541528f0c"
+    },
+    {
+      "name": "forge-postgresql",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "7674cc89e24887c075dd8462e353805541528f0c"
+    },
+    {
+      "name": "ghost",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "grafana",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "hermes-agent",
+      "health": "Healthy",
+      "sync": "OutOfSync",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "homepage",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "ingress-nginx",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "loki",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "mimir",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "ollama",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "opentelemetry-collector",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "pharness",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "4206a1447744a08e3a2bf6712e0a028479a0fb23"
+    },
+    {
+      "name": "postgresql",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "prometheus",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "promtail",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "qdrant",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "rabbitmq",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "rag-service",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "root-app",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "scraper-manager",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "sentinel-rbac",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "tekton-ci",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "tekton-dashboard",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "tekton-pipeline",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "tekton-triggers",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "tempo",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "yfinance-staging",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    },
+    {
+      "name": "yfinance-wrapper",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "cb53787ec62443e76738ef6418d4314bc3efefe0"
+    }
+  ],
+  "applications_before": [
+    {
+      "name": "agentic-platform",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "argo-cd",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "cert-manager",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "cloudflared",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "data-log-visual",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "directus",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "docker-registry",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "escape",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "excalidraw",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "finance-app-database-service",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "finance-frontend",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "finance-frontend-staging",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "forge-admin",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "forge-platform",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "forge-portal",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "forge-postgresql",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "ghost",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "grafana",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "hermes-agent",
+      "health": "Healthy",
+      "sync": "OutOfSync"
+    },
+    {
+      "name": "homepage",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "ingress-nginx",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "loki",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "mimir",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "ollama",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "opentelemetry-collector",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "pharness",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "postgresql",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "prometheus",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "promtail",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "qdrant",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "rabbitmq",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "rag-service",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "root-app",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "scraper-manager",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "sentinel-rbac",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "tekton-ci",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "tekton-dashboard",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "tekton-pipeline",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "tekton-triggers",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "tempo",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "yfinance-staging",
+      "health": "Healthy",
+      "sync": "Synced"
+    },
+    {
+      "name": "yfinance-wrapper",
+      "health": "Healthy",
+      "sync": "Synced"
+    }
+  ],
+  "shared_postgresql": {
+    "namespace": "apps-prod",
+    "name": "postgresql-0",
+    "uid": "b06d5c50-b96c-489d-87db-ac7070e12b43",
+    "phase": "Running",
+    "ready": true,
+    "container_statuses": [
+      {
+        "name": "postgresql",
+        "ready": true,
+        "restart_count": 0
+      }
+    ]
+  },
+  "verification_limits": "Provisioner completion logs and PVC/PV absence verify local-path teardown; no direct host filesystem inspection or physical media secure erasure was performed.",
+  "application_health_and_sync_unchanged": true,
+  "database_verification": {
+    "observed_at": "2026-09-06T21:09:41.508967+00:00",
+    "sql": "SELECT json_build_object('epheros_absent',NOT EXISTS (SELECT 1 FROM pg_database WHERE datname='epheros'),'original_data_directory_absent',NOT EXISTS (SELECT 1 FROM pg_ls_dir('base') AS entry WHERE entry='406059'),'databases',(SELECT json_agg(row_to_json(x)) FROM (SELECT oid,datname,pg_get_userbyid(datdba) AS owner,datallowconn AS allow_connections FROM pg_database ORDER BY datname) x));\n",
+    "result": {
+      "epheros_absent": true,
+      "original_data_directory_absent": true,
+      "databases": [
+        {
+          "oid": "378690",
+          "datname": "datalog_visual",
+          "owner": "datalog_visual_user",
+          "allow_connections": true
+        },
+        {
+          "oid": "377458",
+          "datname": "finance_app",
+          "owner": "finance_app_user",
+          "allow_connections": true
+        },
+        {
+          "oid": "5",
+          "datname": "postgres",
+          "owner": "postgres",
+          "allow_connections": true
+        },
+        {
+          "oid": "4",
+          "datname": "template0",
+          "owner": "postgres",
+          "allow_connections": false
+        },
+        {
+          "oid": "1",
+          "datname": "template1",
+          "owner": "postgres",
+          "allow_connections": true
+        },
+        {
+          "oid": "16384",
+          "datname": "testdb",
+          "owner": "postgres",
+          "allow_connections": true
+        }
+      ]
+    },
+    "unrelated_database_identities_preserved": true
+  },
+  "source_baseline": "cb53787ec62443e76738ef6418d4314bc3efefe0",
+  "repository_validation": {
+    "recorded_at": "2026-09-06T21:11:33.185257+00:00",
+    "source_baseline": "cb53787ec62443e76738ef6418d4314bc3efefe0",
+    "root_app_render_unchanged": true,
+    "render_sha256": "27ba3505cdd2ec8dbdcb7ea112af46f81c69325ddbbd14bd567e7e89a5139958",
+    "helm_command": [
+      "helm",
+      "template",
+      "root-app",
+      "charts/root-app",
+      "--namespace",
+      "argocd"
+    ],
+    "local_markdown_links_checked": 20,
+    "new_json_files_validated": 7,
+    "credential_marker_scan": "No GitHub token or private-key markers in new artifacts."
+  }
+}

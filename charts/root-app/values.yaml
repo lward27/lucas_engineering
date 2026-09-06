@@ -16,7 +16,7 @@ apps:
   cloudflared:
     enabled: true
   code-server:
-    # Retired 2026-09-06; retained data and recovery: docs/operations/ASTRA-APPLICATION-RETIREMENT.md
+    # Retired and data purged 2026-09-06: docs/operations/ASTRA-RETIRED-DATA-PURGE.md
     enabled: false
   ghost:
     enabled: true
@@ -41,7 +41,7 @@ apps:
   hermes-agent:
     enabled: true
   openclaw:
-    # Retired 2026-09-06; retained data and recovery: docs/operations/ASTRA-APPLICATION-RETIREMENT.md
+    # Retired and data purged 2026-09-06: docs/operations/ASTRA-RETIRED-DATA-PURGE.md
     enabled: false
   openfaas:
     enabled: false
@@ -70,7 +70,7 @@ apps:
   tempo:
     enabled: true
   uptime-kuma:
-    # Retired 2026-09-06; retained data and recovery: docs/operations/ASTRA-APPLICATION-RETIREMENT.md
+    # Retired and data purged 2026-09-06: docs/operations/ASTRA-RETIRED-DATA-PURGE.md
     enabled: false
   yfinance-wrapper:
     enabled: true
@@ -89,19 +89,19 @@ apps:
   ollama:
     enabled: true
   odoo:
-    # Retired 2026-09-06; retained data and recovery: docs/operations/ASTRA-APPLICATION-RETIREMENT.md
+    # Retired and data purged 2026-09-06: docs/operations/ASTRA-RETIRED-DATA-PURGE.md
     enabled: false
   rag-mcp-server:
     enabled: false
   clawspace:
-    # Retired 2026-09-06; retained data and recovery: docs/operations/ASTRA-APPLICATION-RETIREMENT.md
+    # Retired and data purged 2026-09-06: docs/operations/ASTRA-RETIRED-DATA-PURGE.md
     enabled: false
   excalidraw:
     enabled: true
   escape:
     enabled: true
   epheros:
-    # Retired 2026-09-06; retained data and recovery: docs/operations/ASTRA-APPLICATION-RETIREMENT.md
+    # Retired and data purged 2026-09-06: docs/operations/ASTRA-RETIRED-DATA-PURGE.md
     enabled: false
   epheros-ci:
     enabled: false

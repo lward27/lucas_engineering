@@ -1,16 +1,16 @@
 # ASTRA: Retire unused applications from lucas_engineering
 
-Status: complete. Retention protections and application removal were merged and observed on 2026-09-06. Stored data remains retained.
+Status: application retirement complete, 2026-09-06. **The initially retained data was subsequently purged with explicit owner authorization.** See the [completed data-purge record](ASTRA-RETIRED-DATA-PURGE.md) for the current state. The preparation, inventory and acceptance evidence below describe the earlier retention stage and remain historical evidence.
 
 ## Authorized scope
 
-The owner requested decommissioning Odoo, Clawspace/OpenClaw, Epheros, Uptime Kuma and Code Server through this GitOps repository. This authorizes retirement of the six named Argo applications and their application-owned compute, services, ingress and permissions. Stored data is retained. LEA cluster retirement is a separate decision.
+The owner requested decommissioning Odoo, Clawspace/OpenClaw, Epheros, Uptime Kuma and Code Server through this GitOps repository. The initial scope retired the six named Argo applications and their application-owned compute, services, ingress and permissions while retaining data. The later purge superseded that retention decision. LEA cluster retirement remains a separate decision.
 
 Baseline source: `04a98931af43b6ea1d189369442f6a1b76dda589`. Target: context `lucas_engineering`, API `https://192.168.20.192:6443`, kubeconfig `/Users/wardl/.kube/config`. The original checkouts and unrelated workloads are preserved.
 
-## Exact application resource scope
+## Historical application resource scope
 
-The following direct resources come from the live Argo inventory. Deleting their owning workloads also removes dependent ReplicaSets and Pods. Ingress-owned certificates may be removed by garbage collection; externally managed credentials are retained with their namespaces.
+The following direct resources came from the pre-retirement live Argo inventory. Actions in this table describe the original removal stage; its retained PVCs were deleted in the subsequent purge. Dependent ReplicaSets and Pods were removed with their owning workloads. Externally managed credentials remain with their namespaces.
 
 | Argo application | Namespace | Resource | Action |
 | --- | --- | --- | --- |
@@ -72,7 +72,7 @@ The following direct resources come from the live Argo inventory. Deleting their
 | uptime-kuma | monitoring | Deployment `uptime-kuma` | Remove |
 | uptime-kuma | monitoring | Ingress `uptime-kuma` | Remove |
 
-## Retained data and shared services
+## Data retained at the original retirement gate
 
 | Namespace | Claim | Requested storage |
 | --- | --- | --- |
@@ -82,26 +82,26 @@ The following direct resources come from the live Argo inventory. Deleting their
 | odoo | `data-odoo-postgresql-0` | 8Gi |
 | odoo | `odoo` | 10Gi |
 
-These five bound claims request 62 GiB. This is allocation, not a measured backup or recoverable disk saving. Their recorded UIDs and PV bindings must remain unchanged after retirement. The OpenClaw claim is shared with Clawspace and has no workload owner reference. The Odoo PostgreSQL claim also has no owner reference; its StatefulSet has `Retain` deletion/scaling policy. No claim, PV, namespace, database, registry image, or external secret is approved for erasure.
+These five claims requested 62 GiB and passed the original retention gate with unchanged UIDs/PV bindings. This was allocation, not a measured backup or disk saving. The OpenClaw claim was shared with Clawspace and had no workload owner reference. The Odoo PostgreSQL claim also had no owner reference; its StatefulSet used `Retain` deletion/scaling policy. All five claims and backing volumes were subsequently deleted under the separate purge authorization.
 
-Epheros uses `postgresql.apps-prod.svc.cluster.local`, database `epheros`; the shared PostgreSQL application and the database are retained. Finance, PHarness, LGTM, Tekton, the registry, and other Argo applications remain enabled. Epheros CI is already disabled and no live Epheros Pipeline/trigger was found.
+Epheros used `postgresql.apps-prod.svc.cluster.local`, database `epheros`. The shared PostgreSQL application remains; the `epheros` database was subsequently dropped. Finance, PHarness, LGTM, Tekton, the registry, and other Argo applications remain enabled. Epheros CI was already disabled and no live Epheros Pipeline/trigger was found.
 
-## Two GitOps stages
+## Historical GitOps sequence
 
 1. Merge retention preparation: apply `Prune=false,Delete=false` to Odoo, Code Server and Uptime Kuma claims, and to the Epheros namespace. Disable the Epheros migration hook so retention sync cannot run `alembic upgrade head`. Wait for the exact annotations and unchanged claim identities live. The Uptime Kuma wrapper adopts the same claim name because its pinned upstream chart cannot annotate its PVC; rendered workload and storage specifications must remain identical.
 2. Only after those checks pass, disable exactly six root-app entries. Preserve namespace declarations and the chart sources for restoration. Remove their Homepage bookmarks/widget and the three dedicated OpenClaw/Epheros Prometheus targets. Let the existing root-app prune and application finalizers remove the reviewed resources. Verify deletion and retained data identities.
 
 Argo documents `Delete=false` for retaining resources during Application deletion and `Prune=false` for sync pruning: [Argo sync options](https://argo-cd.readthedocs.io/en/stable/user-guide/sync-options/#no-resource-deletion). No finalizer bypass or direct workload deletion is required.
 
-## Validation and recovery
+## Historical validation and current recovery boundary
 
 [Baseline inventory](ASTRA-APPLICATION-RETIREMENT-BASELINE.json) and [retention validation](ASTRA-APPLICATION-RETENTION-VALIDATION.json) retain exact observations. Local rendering and Helm lint must pass; only retention annotations and removal of the migration hook may differ in the preparation stage. Client and server dry-runs cover the four retained resources. Live annotations and claim UIDs are the gate to removal.
 
-Rollback means a reviewed GitOps change re-enabling the selected app with the retained chart and the same claim names. Keep the data protections. Epheros migrations remain disabled until explicitly reviewed against the retained database. Re-enabling an application restores its network exposure; do not do so as an automatic response to successful retirement. No restore has been tested.
+The original recovery path depended on re-enabling the retained charts against the same data. **That recovery path no longer restores the data after purge.** Any later deployment needs fresh storage/database initialization or an independently held backup. Epheros migrations remain disabled. Re-enabling an application restores its network exposure; it is a separate reviewed change. No restore has been tested.
 
-Cloudflared is remotely managed by token; this repository contains no per-host tunnel or DNS configuration. Its shared deployment and external Cloudflare entries remain. Removing the Kubernetes ingresses removes these application origins. External DNS/Access entry deletion, database erasure and storage deletion are outside this change.
+Cloudflared is remotely managed by token; this repository contains no per-host tunnel or DNS configuration. Its shared deployment and external Cloudflare entries remain. Removing the Kubernetes ingresses removed these application origins. Database and storage erasure occurred in the subsequent purge; external DNS/Access entry deletion remains outside this scope.
 
-## Completion evidence
+## Historical retirement completion evidence
 
 - [Retention PR 57](https://github.com/lward27/lucas_engineering/pull/57), merge `89c2a268270b428eecaa47dea6bf3ddce4948a34`: [live annotation and original claim-identity gate](ASTRA-APPLICATION-RETENTION-OBSERVED.json) passed before removal.
 - [Removal PR 59](https://github.com/lward27/lucas_engineering/pull/59), merge `507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5`: [local rendering, exact scope comparison and dry-runs](ASTRA-APPLICATION-REMOVAL-VALIDATION.json) passed. Only the six named Applications disappear from the root render.
@@ -112,4 +112,4 @@ Cloudflared is remotely managed by token; this repository contains no per-host t
 
 The first inventory collector stopped when `kubectl --ignore-not-found` successfully returned an empty response for absent resources. It was corrected to represent that result as an empty list and the full inventory was repeated. This was an observation-script defect, not a failed application removal.
 
-Data retention is not a backup or restore test. Deleting the retained namespaces, claims, local-path backing disks or shared database later is a separate irreversible action. External Cloudflare DNS/Access/tunnel entries remain outside this GitOps repository; no end-user application remains behind the retired Kubernetes origins.
+The [subsequent authorized purge](ASTRA-RETIRED-DATA-PURGE.md) removed these five claims/backing volumes and the Epheros database. It preserved namespaces, shared PostgreSQL, unrelated data and external Cloudflare entries. The historical retention checks above do not describe current storage availability.

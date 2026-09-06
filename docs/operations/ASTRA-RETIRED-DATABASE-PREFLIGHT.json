@@ -1,0 +1,60 @@
+{
+  "server_version": "17.11",
+  "current_database": "postgres",
+  "databases": [
+    {
+      "oid": "378690",
+      "datname": "datalog_visual",
+      "owner": "datalog_visual_user",
+      "allow_connections": true
+    },
+    {
+      "oid": "406059",
+      "datname": "epheros",
+      "owner": "epheros_owner",
+      "allow_connections": true
+    },
+    {
+      "oid": "377458",
+      "datname": "finance_app",
+      "owner": "finance_app_user",
+      "allow_connections": true
+    },
+    {
+      "oid": "5",
+      "datname": "postgres",
+      "owner": "postgres",
+      "allow_connections": true
+    },
+    {
+      "oid": "4",
+      "datname": "template0",
+      "owner": "postgres",
+      "allow_connections": false
+    },
+    {
+      "oid": "1",
+      "datname": "template1",
+      "owner": "postgres",
+      "allow_connections": true
+    },
+    {
+      "oid": "16384",
+      "datname": "testdb",
+      "owner": "postgres",
+      "allow_connections": true
+    }
+  ],
+  "target": {
+    "oid": "406059",
+    "datname": "epheros",
+    "owner": "epheros_owner",
+    "bytes": 8926899
+  },
+  "target_sessions": 0,
+  "prepared_transactions": 0,
+  "logical_replication_slots": 0,
+  "observed_at": "2026-09-06T21:03:36.140201+00:00",
+  "pod": "apps-prod/postgresql-0",
+  "pod_uid": "b06d5c50-b96c-489d-87db-ac7070e12b43"
+}
