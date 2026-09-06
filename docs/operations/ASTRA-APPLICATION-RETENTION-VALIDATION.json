@@ -1,0 +1,96 @@
+{
+  "status": "passed",
+  "phase": "retention-preparation",
+  "source_base": "04a98931af43b6ea1d189369442f6a1b76dda589",
+  "checks": [
+    {
+      "chart": "odoo",
+      "namespace": "odoo",
+      "render_sha256": "1b31fa197f82f0e3d9a25c59cecf32a82da6d2ef61794a8b0ba18ded80e8f402",
+      "resources": 13,
+      "protected_resource": "odoo",
+      "helm_lint": "passed",
+      "migration_jobs": 0
+    },
+    {
+      "chart": "code-server",
+      "namespace": "code-server",
+      "render_sha256": "5086518df85bba79488c7d70f3ae7b520e0389f1d7a8791c6b171587e2f86a16",
+      "resources": 9,
+      "protected_resource": "code-server-data",
+      "helm_lint": "passed",
+      "migration_jobs": 0
+    },
+    {
+      "chart": "uptime-kuma",
+      "namespace": "monitoring",
+      "render_sha256": "214d0f0967ec2a380f8ed8b5ee3147bbc05f2fa80c2dde88342246896c3730bd",
+      "resources": 5,
+      "protected_resource": "uptime-kuma-pvc",
+      "helm_lint": "passed",
+      "migration_jobs": 0
+    },
+    {
+      "chart": "epheros",
+      "namespace": "epheros",
+      "render_sha256": "931962fca663ca3e65aa94776e27c6f839a8baaf8209aefd12632ee6819281e3",
+      "resources": 17,
+      "protected_resource": "epheros",
+      "helm_lint": "passed",
+      "migration_jobs": 0
+    },
+    {
+      "dry_run": "client",
+      "status": "passed",
+      "resources": 4,
+      "result": [
+        "persistentvolumeclaim/odoo configured (dry run)",
+        "persistentvolumeclaim/code-server-data configured (dry run)",
+        "persistentvolumeclaim/uptime-kuma-pvc configured (dry run)",
+        "namespace/epheros configured (dry run)"
+      ]
+    },
+    {
+      "dry_run": "server",
+      "status": "passed",
+      "resources": 4,
+      "result": [
+        "persistentvolumeclaim/odoo configured (server dry run)",
+        "persistentvolumeclaim/code-server-data configured (server dry run)",
+        "persistentvolumeclaim/uptime-kuma-pvc configured (server dry run)",
+        "namespace/epheros configured (server dry run)"
+      ]
+    }
+  ],
+  "render_comparison_to_base": [
+    {
+      "chart": "odoo",
+      "only_expected_changes": true,
+      "changed": [
+        "PersistentVolumeClaim/odoo/odoo"
+      ]
+    },
+    {
+      "chart": "code-server",
+      "only_expected_changes": true,
+      "changed": [
+        "PersistentVolumeClaim/code-server/code-server-data"
+      ]
+    },
+    {
+      "chart": "uptime-kuma",
+      "only_expected_changes": true,
+      "changed": [
+        "PersistentVolumeClaim/monitoring/uptime-kuma-pvc"
+      ]
+    },
+    {
+      "chart": "epheros",
+      "only_expected_changes": true,
+      "changed": [
+        "Job/epheros/epheros-migrate",
+        "Namespace/epheros/epheros"
+      ]
+    }
+  ]
+}

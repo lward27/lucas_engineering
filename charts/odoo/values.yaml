@@ -42,6 +42,8 @@ odoo:
 
   persistence:
     enabled: true
+    annotations:
+      argocd.argoproj.io/sync-options: Prune=false,Delete=false
     storageClass: local-path
     accessModes:
       - ReadWriteOnce
