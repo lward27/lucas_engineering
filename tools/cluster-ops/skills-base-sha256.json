@@ -1,0 +1,23 @@
+{
+  "_shared/references/cluster-profile.yaml": "sha256:2b6d79bbc311082f11425ccbfeae5a27fcb6692e2aeedd7a1c14f890edd23c14",
+  "_shared/references/discovery-summary.md": "sha256:7109acb851a0608f7399c5315807763a7f5e49c600e9355e4cae7ff4633c4219",
+  "_shared/references/observability-conventions.md": "sha256:8d026284fe91096f142365918d1bf972c114f27678d6f3db79e69ec88bd16ad0",
+  "_shared/references/operating-model.md": "sha256:873180f7b1f19dc075340110828c92a64f08812b33ed857f730c50b97dc854bc",
+  "_shared/references/output-contracts.md": "sha256:72c52a416ec173c112befbf441a41ed6f3bf68dee61e7f7b5bd534884447858b",
+  "_shared/references/repository-discovery.md": "sha256:04fba51a3bbb6b624e95f5f71e91650e77123993680a91661ba5cb157767bd62",
+  "_shared/references/safety-policy.md": "sha256:a1e48bd7d01645f2eeb9d74b7665bb1c9a9b7ad61ad028b26c074de72fa134cd",
+  "_shared/scripts/artifact-path.sh": "sha256:2efb70ad9b86741af174b54b470d213d71feec342e665f46b23704f12f78fe86",
+  "_shared/scripts/command-check.sh": "sha256:c4bd40d4bb0faa0c07e4d70ef408aa06f09fdb107020f3b534fac54d2d0565cf",
+  "_shared/scripts/context-guard.sh": "sha256:dd30cad0a0b47a942aa44765d25487c2b67620550658bce8ac8cf32c8719c2a7",
+  "_shared/scripts/mutation-preflight.sh": "sha256:515073b7dffef182db6c2df08a5b32a2281837b4025eb814d4d735789c0ab1d2",
+  "_shared/scripts/operation-classifier.sh": "sha256:f62934fa92dfb69a6793675b6c7123a4c6f1ee48f721b3cbf619bc4f9c6d0529",
+  "_shared/scripts/redact-output.sh": "sha256:987a5fff0984047c82029163db4b448de3d927269d84b9dff1274084c7c5a197",
+  "immutable-build-release/SKILL.md": "sha256:070fa5d2c4123ff47cea718882fc8e8d93cb26275e85d3f6261af5d3fb0e4f4b",
+  "immutable-build-release/agents/openai.yaml": "sha256:282fe0215df9c70dd2ae33a7f840034ffc3eb7587e008bdea8a041f0503e7896",
+  "immutable-build-release/scripts/verify_remote_revision.sh": "sha256:9f759a42d16201884225105e7f85c8f63f4ee35111233bb99f3ae821016fe539",
+  "k8s-cluster-health/SKILL.md": "sha256:cdeda5c214f4a56cd8fa3796ba1d72902c2f6b778588168870525970c7463ca8",
+  "k8s-cluster-health/agents/openai.yaml": "sha256:8e67b296db50510f36b57109cedc3d99539be6ff8493882220396f3a2bbd6eee",
+  "k8s-cluster-health/scripts/collect-health.sh": "sha256:c90a555896e1a6905d6217993d765d5a74616db4ea000a23f68c744958d543ea",
+  "k8s-rollout-observe/SKILL.md": "sha256:b3a05eb2a39c4198d9728b0fb5426539f97ed330bd7c037f85058d078b167fe8",
+  "k8s-rollout-observe/agents/openai.yaml": "sha256:a60659e1caf5aaec0c8a6e67c8f6faaf2c46609e41b7c7b79ef5bc1b1219a8fe"
+}

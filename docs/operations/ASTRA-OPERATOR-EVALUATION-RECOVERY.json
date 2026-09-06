@@ -1,0 +1,10 @@
+{
+  "recorded_at": "2026-09-06T20:30:07.974384+00:00",
+  "evaluation_id": "infeval_01a07730b1e275e096ba85c8afb04d4c",
+  "retrieved_from": "durable PHarness API after Kubernetes Job expiration",
+  "result_file_sha256": "7c25db206366564f161602c2cdb81e6cbf43964587b4096d17c8ace943b5c03c",
+  "new_evaluations": 0,
+  "new_model_calls": 0,
+  "qualification_claimed": false,
+  "status": "retrieved existing failed diagnostic"
+}

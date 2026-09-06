@@ -1,0 +1,554 @@
+{
+  "recorded_at": "20260906T203053Z",
+  "archive": "/Users/wardl/.local/state/lucas-ops/legacy/20260906T203053Z",
+  "active_helper_processes": 0,
+  "files": [
+    {
+      "name": "astra-assemble-corrected-runtime-release.py",
+      "original": "/private/tmp/astra-assemble-corrected-runtime-release.py",
+      "sha256": "8b58b81b08f85842f0992f5c32f25751669ab74c765247b189e60522511eb7f1",
+      "bytes": 6630
+    },
+    {
+      "name": "astra-assemble-m04-diagnostic-release.py",
+      "original": "/private/tmp/astra-assemble-m04-diagnostic-release.py",
+      "sha256": "e4094daeb88d071a723e4686c521a81e2369bc3f2882d914df99afcd0e696310",
+      "bytes": 6871
+    },
+    {
+      "name": "astra-build-corrected-runtime-desktop.py",
+      "original": "/private/tmp/astra-build-corrected-runtime-desktop.py",
+      "sha256": "846974d99a7298433b0f30934f02267afae0f38112d47203aa93659e8f33efb6",
+      "bytes": 6801
+    },
+    {
+      "name": "astra-build-m04-diagnostic-release.py",
+      "original": "/private/tmp/astra-build-m04-diagnostic-release.py",
+      "sha256": "96d14369b8659a078bfa0f9018fe58b320a04d1b56188c77b037b11676045a0b",
+      "bytes": 7305
+    },
+    {
+      "name": "astra-cache-export.py",
+      "original": "/private/tmp/astra-cache-export.py",
+      "sha256": "76ac83a1868325c80130be513f517e08a1ada2730beacf533637c177e75569d6",
+      "bytes": 3166
+    },
+    {
+      "name": "astra-check-corrected-runtime-clone.py",
+      "original": "/private/tmp/astra-check-corrected-runtime-clone.py",
+      "sha256": "198a36698806423b6115f7b2eb2e90cee77791d558f4b0e3e00f1c7d1b73acab",
+      "bytes": 3013
+    },
+    {
+      "name": "astra-check-m04-diagnostic-clone.py",
+      "original": "/private/tmp/astra-check-m04-diagnostic-clone.py",
+      "sha256": "db576a71158977e45d354e5f31c06728d7a5c050aa78010058e818de91d23ffb",
+      "bytes": 3813
+    },
+    {
+      "name": "astra-check-m04-diagnostic-live-preservation.py",
+      "original": "/private/tmp/astra-check-m04-diagnostic-live-preservation.py",
+      "sha256": "7a4a8fbb2e9d2fa4331c0fb395537d063c937fbd1efc1153c50293f7b6332032",
+      "bytes": 4070
+    },
+    {
+      "name": "astra-collect-source19-live-database.py",
+      "original": "/private/tmp/astra-collect-source19-live-database.py",
+      "sha256": "562b40b1118d23a7ee230dc756d9195655cd16581ab033550a537a67f64b19bb",
+      "bytes": 1879
+    },
+    {
+      "name": "astra-document-approved-protection.py",
+      "original": "/private/tmp/astra-document-approved-protection.py",
+      "sha256": "ec70e1d99997e4c117a9ba8ba2c7440a4697e2c6ffcd7b4c3fe2e6ed6230308d",
+      "bytes": 10419
+    },
+    {
+      "name": "astra-document-corrected-runtime-release.py",
+      "original": "/private/tmp/astra-document-corrected-runtime-release.py",
+      "sha256": "74b6a63804aa0aceaf05565c0b1c2358fb6e07d57b31912aa3a20394f28c5521",
+      "bytes": 8673
+    },
+    {
+      "name": "astra-document-finance-observer.py",
+      "original": "/private/tmp/astra-document-finance-observer.py",
+      "sha256": "b4a8c156bde65c829bee7b81f9a3a3db4f32945631955f9311c1df732d28be0a",
+      "bytes": 8901
+    },
+    {
+      "name": "astra-document-health-trace.py",
+      "original": "/private/tmp/astra-document-health-trace.py",
+      "sha256": "3bc6230096ce2338c26976b2b0816013b3959dc437c86894bd2032a7597730d6",
+      "bytes": 9128
+    },
+    {
+      "name": "astra-document-m04-diagnostic-release.py",
+      "original": "/private/tmp/astra-document-m04-diagnostic-release.py",
+      "sha256": "d896627097c1b2cfc43bce5ada2c790d4a0c2659b1ef709e16583d89ab121783",
+      "bytes": 7865
+    },
+    {
+      "name": "astra-document-m04-live-release.py",
+      "original": "/private/tmp/astra-document-m04-live-release.py",
+      "sha256": "1b782bc713b9ef0d4d68e2215dddccaa19dd65a2dba985548ad49559d34723e6",
+      "bytes": 8813
+    },
+    {
+      "name": "astra-document-m08-window-signals.py",
+      "original": "/private/tmp/astra-document-m08-window-signals.py",
+      "sha256": "0ee93d7e751614729f5e3898732c99206c1e51e51650e659f1cf83a0ad2a1f9c",
+      "bytes": 9737
+    },
+    {
+      "name": "astra-document-source19-observed.py",
+      "original": "/private/tmp/astra-document-source19-observed.py",
+      "sha256": "b5165c4bf1042acac6b1a447781a8a01a221fd22d364e7dad7087d73d27f36dd",
+      "bytes": 10112
+    },
+    {
+      "name": "astra-document-source19-onboarding.py",
+      "original": "/private/tmp/astra-document-source19-onboarding.py",
+      "sha256": "d569651ba4f4e9045866238a6a60c5763f174c3dce613709dcc9b72a17f85e39",
+      "bytes": 6610
+    },
+    {
+      "name": "astra-document-staging-candidate.py",
+      "original": "/private/tmp/astra-document-staging-candidate.py",
+      "sha256": "64ac027573bde8ccc0bd2c0c0575d4019c160c70404c887ab74427ea291593fc",
+      "bytes": 11336
+    },
+    {
+      "name": "astra-document-system-context-fix.py",
+      "original": "/private/tmp/astra-document-system-context-fix.py",
+      "sha256": "59e212c3652769fdb77de36429ecdc522ea8a805cfc2b9684c1a664ea58dbbc8",
+      "bytes": 13450
+    },
+    {
+      "name": "astra-document-yfinance-baseline.py",
+      "original": "/private/tmp/astra-document-yfinance-baseline.py",
+      "sha256": "be5bed2c7a63f9d382e852de82b27ab1fce1e62ebd387bb718435ed6532e31cb",
+      "bytes": 7952
+    },
+    {
+      "name": "astra-m04-diagnostic-canary.py",
+      "original": "/private/tmp/astra-m04-diagnostic-canary.py",
+      "sha256": "b2e68b1ff5b1e2b77bcc55fe90ae58b5448f012b90a2f50ba125fb8fe77d0941",
+      "bytes": 8872
+    },
+    {
+      "name": "astra-m04-diagnostic-observation-baseline.py",
+      "original": "/private/tmp/astra-m04-diagnostic-observation-baseline.py",
+      "sha256": "8536ec39d9d79f3d692a661092214cabcba0d6111cf90a80016e116e75015089",
+      "bytes": 2097
+    },
+    {
+      "name": "astra-m04-diagnostic-service-window-r2.py",
+      "original": "/private/tmp/astra-m04-diagnostic-service-window-r2.py",
+      "sha256": "a3407050bf85a7d77f12f800f3035e501611269f5a8738e43a09222012ad122d",
+      "bytes": 7498
+    },
+    {
+      "name": "astra-m04-diagnostic-service-window.py",
+      "original": "/private/tmp/astra-m04-diagnostic-service-window.py",
+      "sha256": "ad7b539a6d0b06861b88da3bef7a75379dd7feda2a4665ae77d90a584dde78d2",
+      "bytes": 7425
+    },
+    {
+      "name": "astra-m04-generate-measurements.py",
+      "original": "/private/tmp/astra-m04-generate-measurements.py",
+      "sha256": "a17e956d86e7ffdd0e7758d2e01ca634369ddb74d254490a6dae5906bcda8ff4",
+      "bytes": 14592
+    },
+    {
+      "name": "astra-m04-minimax-diagnostic.py",
+      "original": "/private/tmp/astra-m04-minimax-diagnostic.py",
+      "sha256": "2a731b647c2cba350fa0ea390900243fede477cbc40138d7c8f6da2b6e2e404e",
+      "bytes": 2901
+    },
+    {
+      "name": "astra-m04-minimax-envelope-diagnostic.py",
+      "original": "/private/tmp/astra-m04-minimax-envelope-diagnostic.py",
+      "sha256": "4fd57d1a102a05ff7a10b57b1e419329bd846c49422943ad3c4905ca7565b9ec",
+      "bytes": 5337
+    },
+    {
+      "name": "astra-m04-minimax-history-diagnostic.py",
+      "original": "/private/tmp/astra-m04-minimax-history-diagnostic.py",
+      "sha256": "1ed66e3bb63787bc5506a8fab0cc53d532142354e6bbfed41f2ef14da6ae2239",
+      "bytes": 5435
+    },
+    {
+      "name": "astra-m04-observe-release.py",
+      "original": "/private/tmp/astra-m04-observe-release.py",
+      "sha256": "5a2f63d552b73ad7dc9176dabbe12d4524b054b1a6e0c60383a5590209e12c9e",
+      "bytes": 4524
+    },
+    {
+      "name": "astra-m04-qualify-48c77b7.py",
+      "original": "/private/tmp/astra-m04-qualify-48c77b7.py",
+      "sha256": "2901c574f7d4ad753acac41897a6dffdcee7757525f2cf3088aa5a4dfda19dee",
+      "bytes": 3422
+    },
+    {
+      "name": "astra-m04-qualify-corrected-runtime.py",
+      "original": "/private/tmp/astra-m04-qualify-corrected-runtime.py",
+      "sha256": "b70f57ada15ff49bc7f267eb35ee624c4e44b1c55a99d2bbcee20c01b51707ba",
+      "bytes": 5812
+    },
+    {
+      "name": "astra-m04-qualify-fd740.py",
+      "original": "/private/tmp/astra-m04-qualify-fd740.py",
+      "sha256": "7e516cf01b092bece65cd67eced9227c8a6774d1f9c00eafad65fcc4f01d9c04",
+      "bytes": 3126
+    },
+    {
+      "name": "astra-m04-qualify-repair-48c77b7.py",
+      "original": "/private/tmp/astra-m04-qualify-repair-48c77b7.py",
+      "sha256": "9928e75e5f2e69baa5d97ed4da23c7f6ae3d22a73c028c2adc5926891e3cd58b",
+      "bytes": 5058
+    },
+    {
+      "name": "astra-m04-qualify-stages-48c77b7.py",
+      "original": "/private/tmp/astra-m04-qualify-stages-48c77b7.py",
+      "sha256": "ebfb29fce94ad5be747f5e16a8b02f09f30ac6e4ac01dcf7348054ce040acd88",
+      "bytes": 4399
+    },
+    {
+      "name": "astra-m04-qualify-stages-fd740.py",
+      "original": "/private/tmp/astra-m04-qualify-stages-fd740.py",
+      "sha256": "54a8ca15f15f77ecb0b1655347027c685d7c7910ff94d1c72a64361be132b36b",
+      "bytes": 4136
+    },
+    {
+      "name": "astra-m04-replay-fd740.py",
+      "original": "/private/tmp/astra-m04-replay-fd740.py",
+      "sha256": "a5320a7ffa1ea6196ca86b45a2ddb1145d8ea05c3a282358dbbb092c879b2274",
+      "bytes": 3992
+    },
+    {
+      "name": "astra-m04-system-envelope-diagnostic.py",
+      "original": "/private/tmp/astra-m04-system-envelope-diagnostic.py",
+      "sha256": "c420bbd8403dbfc5a2b7f49257a5365d80feaf4bc27b18292348c5956f6700c2",
+      "bytes": 4203
+    },
+    {
+      "name": "astra-m05-finish-frontend-contracts.py",
+      "original": "/private/tmp/astra-m05-finish-frontend-contracts.py",
+      "sha256": "c0724929aec677a361c9df1807805920c6d5f66c7e5c870f6a808ba972af9941",
+      "bytes": 3914
+    },
+    {
+      "name": "astra-m05-observe-reader-release.py",
+      "original": "/private/tmp/astra-m05-observe-reader-release.py",
+      "sha256": "564d3cad5b87a43e46a9977352235f9b88d2bc2b5bf9cceefe9c92c682d6d68c",
+      "bytes": 4616
+    },
+    {
+      "name": "astra-m05-prepare-archive.py",
+      "original": "/private/tmp/astra-m05-prepare-archive.py",
+      "sha256": "a81d735cf8ede7bb09a0dc90bac9cb41644a7a8af48608f302ca3cda9bf4707f",
+      "bytes": 4129
+    },
+    {
+      "name": "astra-m05-prepare-live-check.py",
+      "original": "/private/tmp/astra-m05-prepare-live-check.py",
+      "sha256": "083bd562dc54dc2cab62f27307c6ae18b3907184b9617ba47b2522490604c519",
+      "bytes": 2541
+    },
+    {
+      "name": "astra-m06-assemble-release.py",
+      "original": "/private/tmp/astra-m06-assemble-release.py",
+      "sha256": "e2cefe487882afa375d6f45747a77f64fc2e7615e24007642fb78732b57f91bf",
+      "bytes": 6916
+    },
+    {
+      "name": "astra-m06-observe-controller-release.py",
+      "original": "/private/tmp/astra-m06-observe-controller-release.py",
+      "sha256": "b0c5ecf6162eb22828e93a08c0f4a25f39b70d7c91a68fa28b6b8bcfdfc06689",
+      "bytes": 4624
+    },
+    {
+      "name": "astra-m06-prepare-archive.py",
+      "original": "/private/tmp/astra-m06-prepare-archive.py",
+      "sha256": "64809b7540aa7f54240d4ce256a46468ee35ab2eee3a8193d2a1dc93520ab31c",
+      "bytes": 4129
+    },
+    {
+      "name": "astra-m06-prepare-live-check.py",
+      "original": "/private/tmp/astra-m06-prepare-live-check.py",
+      "sha256": "4c9ee404bcfb7c672c15944a60b72645ecbcfddb87efdb30fae9d4180ae7ae24",
+      "bytes": 2568
+    },
+    {
+      "name": "astra-m07-apply-approved-source-protection.py",
+      "original": "/private/tmp/astra-m07-apply-approved-source-protection.py",
+      "sha256": "c72d873293688a70aaed2f9f26a761e91931e89cef0eaf086c33d9665684f389",
+      "bytes": 5750
+    },
+    {
+      "name": "astra-m07-build-preflight.py",
+      "original": "/private/tmp/astra-m07-build-preflight.py",
+      "sha256": "01549bd501ecb81638f69cea7979c541aaa016c79b35c21ce275dc8e60e24de3",
+      "bytes": 4187
+    },
+    {
+      "name": "astra-m07-frontend-runtime-smoke.py",
+      "original": "/private/tmp/astra-m07-frontend-runtime-smoke.py",
+      "sha256": "4b151ff0f56b6e03f5466a73ca0078d7fec884d952366f9b72d57622901ad37e",
+      "bytes": 1258
+    },
+    {
+      "name": "astra-m07-resume-approved-source-protection.py",
+      "original": "/private/tmp/astra-m07-resume-approved-source-protection.py",
+      "sha256": "d1aee455bd359599487c5513870428f4ad23de5edfab4136e7a07cb6db9d6fc8",
+      "bytes": 5024
+    },
+    {
+      "name": "astra-m07-verify-build.py",
+      "original": "/private/tmp/astra-m07-verify-build.py",
+      "sha256": "0becfcd414842b00a054e7c5abb7ef0911182a251dc3ac51cfa8c99c0fcddbff",
+      "bytes": 6863
+    },
+    {
+      "name": "astra-m07-yfinance-runtime-smoke.py",
+      "original": "/private/tmp/astra-m07-yfinance-runtime-smoke.py",
+      "sha256": "dccde292de193bb7e73bedb9e92b5d37f2f5bba6fc2e510094655cc614ebc38a",
+      "bytes": 1443
+    },
+    {
+      "name": "astra-m08-live-probe-trace.py",
+      "original": "/private/tmp/astra-m08-live-probe-trace.py",
+      "sha256": "5c135e8c2771e7c1038ef9b73ac07b675dd8abfc6d7591e3fd8736ffa60f49fc",
+      "bytes": 3646
+    },
+    {
+      "name": "astra-m08-live-window-signals-r2.py",
+      "original": "/private/tmp/astra-m08-live-window-signals-r2.py",
+      "sha256": "51cd4c5ae20af6ff8f0a8a7c0642f034922be12168c5df9f7e8eb6cb244c8f20",
+      "bytes": 3813
+    },
+    {
+      "name": "astra-m08-live-window-signals-r3.py",
+      "original": "/private/tmp/astra-m08-live-window-signals-r3.py",
+      "sha256": "8ddf44e234ade96b61841bf781efc2d7024fdc16dc0ba83c3921034bf70e7fb2",
+      "bytes": 3920
+    },
+    {
+      "name": "astra-m08-live-window-signals.py",
+      "original": "/private/tmp/astra-m08-live-window-signals.py",
+      "sha256": "0fa123ee64a072a07c1feffee03e9600c5f2980da6183d33ee59cf393bccaea6",
+      "bytes": 3807
+    },
+    {
+      "name": "astra-m09-prepare-production-baseline.py",
+      "original": "/private/tmp/astra-m09-prepare-production-baseline.py",
+      "sha256": "4dbd075dcf94ca467223d5adcaf1ee32f816c1c9753840193edbbdd7ebffd2fc",
+      "bytes": 8980
+    },
+    {
+      "name": "astra-m09-production-baseline-staging-window.py",
+      "original": "/private/tmp/astra-m09-production-baseline-staging-window.py",
+      "sha256": "3927213b140e0fd4927c6053edddb562fa325666145df616bb07f0847b3c822b",
+      "bytes": 3699
+    },
+    {
+      "name": "astra-observe-corrected-runtime-release.py",
+      "original": "/private/tmp/astra-observe-corrected-runtime-release.py",
+      "sha256": "4401a1dd14e4bb753aa00d78d462e6b68baa0e3d82b02ef219fa476a01d9fd7c",
+      "bytes": 7351
+    },
+    {
+      "name": "astra-observe-m04-diagnostic-release.py",
+      "original": "/private/tmp/astra-observe-m04-diagnostic-release.py",
+      "sha256": "3fac42b0bce51dbd325d5c8b392e644b7770f430797be5a478aa458828bfb02e",
+      "bytes": 7707
+    },
+    {
+      "name": "astra-observe-yfinance-baseline.py",
+      "original": "/private/tmp/astra-observe-yfinance-baseline.py",
+      "sha256": "69d2b00ccd9d9076dec54329ee97b0fcb4f7494b753a3cf65f64b2a0b4ec568c",
+      "bytes": 3536
+    },
+    {
+      "name": "astra-prepare-corrected-runtime-clone.py",
+      "original": "/private/tmp/astra-prepare-corrected-runtime-clone.py",
+      "sha256": "fda4d97a66a6fb493894514eaea57757aea2f4dea234feb49e27d11aca0eb378",
+      "bytes": 5322
+    },
+    {
+      "name": "astra-prepare-corrected-runtime-live-check.py",
+      "original": "/private/tmp/astra-prepare-corrected-runtime-live-check.py",
+      "sha256": "1093dfa55cdd95c9f1ebe7616a6372ba9240782f8c1a57e10df133828b19f469",
+      "bytes": 2835
+    },
+    {
+      "name": "astra-prepare-finance-routing-job.py",
+      "original": "/private/tmp/astra-prepare-finance-routing-job.py",
+      "sha256": "b4d3b0ab8c790d1b5dc8c95c6d3ed15f23888851a964c3fdd4f5cb46f4ed7e73",
+      "bytes": 4457
+    },
+    {
+      "name": "astra-prepare-live-db-comparison.py",
+      "original": "/private/tmp/astra-prepare-live-db-comparison.py",
+      "sha256": "ba3aa28c8b95e83b189f2203d3420b2a1460f2c7fe7891e863991a8b2aa0b089",
+      "bytes": 3475
+    },
+    {
+      "name": "astra-prepare-live-db-preservation-r3.py",
+      "original": "/private/tmp/astra-prepare-live-db-preservation-r3.py",
+      "sha256": "76e91a3c18fc44e4d4da6c91d1d1c30bdd0514504a5005a61a36c8d19a226465",
+      "bytes": 4258
+    },
+    {
+      "name": "astra-prepare-m04-diagnostic-clone.py",
+      "original": "/private/tmp/astra-prepare-m04-diagnostic-clone.py",
+      "sha256": "18c338a830585a4bd0c5fde27b88ccb39b806cc9c3d52126cd1ee179d88bd785",
+      "bytes": 5537
+    },
+    {
+      "name": "astra-prepare-m04-diagnostic-live-preservation.py",
+      "original": "/private/tmp/astra-prepare-m04-diagnostic-live-preservation.py",
+      "sha256": "eaf9b69c1752535acc0426ed7f865b2c0e97b15404f70b50d7ef3cf98c4f2437",
+      "bytes": 2855
+    },
+    {
+      "name": "astra-prepare-yfinance-baseline.py",
+      "original": "/private/tmp/astra-prepare-yfinance-baseline.py",
+      "sha256": "89102f1865be5f8dace322e4c411d1649594275c7578bbd5467c1bb2034c7561",
+      "bytes": 7354
+    },
+    {
+      "name": "astra-publish-controller-oci.py",
+      "original": "/private/tmp/astra-publish-controller-oci.py",
+      "sha256": "cf84dcbffc502936e2bc6ec558e5961ec892ab2dd46fc25dd7d237b180657852",
+      "bytes": 6980
+    },
+    {
+      "name": "astra-publish-corrected-runtime-oci.py",
+      "original": "/private/tmp/astra-publish-corrected-runtime-oci.py",
+      "sha256": "04613cece7d3d651ea914c3eda5ecb5939c651b772df9b43631a5ab091576768",
+      "bytes": 6973
+    },
+    {
+      "name": "astra-publish-pharness-oci.py",
+      "original": "/private/tmp/astra-publish-pharness-oci.py",
+      "sha256": "29a1cf4691cb39643b2780b96adc9081606ce3671c97daa7ed979522479c4ab8",
+      "bytes": 6958
+    },
+    {
+      "name": "astra-publish-reader-oci.py",
+      "original": "/private/tmp/astra-publish-reader-oci.py",
+      "sha256": "800ff5d0783d21417c8214940565d3e018741b4a022c4348f46637d81e1faef0",
+      "bytes": 6976
+    },
+    {
+      "name": "astra-record-m08-after-m04.py",
+      "original": "/private/tmp/astra-record-m08-after-m04.py",
+      "sha256": "221470a7d0e29615fe971ac54e229dad6144ea517ffd74e91faa3d9789af03a3",
+      "bytes": 6348
+    },
+    {
+      "name": "astra-record-m09-after-m04.py",
+      "original": "/private/tmp/astra-record-m09-after-m04.py",
+      "sha256": "174a2a2f75019ba57f7ddb0d34a3509b2d03bb29845236d8b6876d0f093b29a0",
+      "bytes": 4115
+    },
+    {
+      "name": "astra-release-pin-from-record.py",
+      "original": "/private/tmp/astra-release-pin-from-record.py",
+      "sha256": "2d17d50f599a38cfc1d45ac2f6fcad792220fd32027d7cb7ce13db8273865134",
+      "bytes": 870
+    },
+    {
+      "name": "astra-relocate-m04-diagnostic-bundle.py",
+      "original": "/private/tmp/astra-relocate-m04-diagnostic-bundle.py",
+      "sha256": "63b21e94710f7c52cd92753f03c5a7e43dd2efdd42b143639e9fc3590cc15649",
+      "bytes": 2171
+    },
+    {
+      "name": "astra-restore-image.py",
+      "original": "/private/tmp/astra-restore-image.py",
+      "sha256": "ac55d587697f29faa1180b13162a5baf8d903f30751335cf7de7f6b2753f304d",
+      "bytes": 6039
+    },
+    {
+      "name": "astra-resume-corrected-runtime-desktop.py",
+      "original": "/private/tmp/astra-resume-corrected-runtime-desktop.py",
+      "sha256": "cf8cff0f988b98c3dea93d8c64f3e9d8c915de504a44af8f5aab3fc2d992e5e6",
+      "bytes": 7030
+    },
+    {
+      "name": "astra-resume-m04-diagnostic-release.py",
+      "original": "/private/tmp/astra-resume-m04-diagnostic-release.py",
+      "sha256": "03db5a3dc5648f8062016cf7cdd32416e8882466d80c057c36785431902369fc",
+      "bytes": 7564
+    },
+    {
+      "name": "astra-run-runtime-assessment-live.py",
+      "original": "/private/tmp/astra-run-runtime-assessment-live.py",
+      "sha256": "89c94d86c9952a142269a31a8a805c9a09b4491eb0fff907a2f9deec42242cc7",
+      "bytes": 3689
+    },
+    {
+      "name": "astra-validate-corrected-release-pin.py",
+      "original": "/private/tmp/astra-validate-corrected-release-pin.py",
+      "sha256": "c9aac785505f3e465f3fac65ae933c047bae992c15a2f8508a9dc682b6aebb7a",
+      "bytes": 4232
+    },
+    {
+      "name": "astra-validate-finance-observer-chart.py",
+      "original": "/private/tmp/astra-validate-finance-observer-chart.py",
+      "sha256": "28c1fe50de3724b8057611ec9021844fd51ab105a0655126224e8efa269c66c4",
+      "bytes": 4515
+    },
+    {
+      "name": "astra-validate-m04-diagnostic-release-pin.py",
+      "original": "/private/tmp/astra-validate-m04-diagnostic-release-pin.py",
+      "sha256": "cf0cd17c92229a783cea79d48534570b2343980ecf97d31f482079debbf887e9",
+      "bytes": 4869
+    },
+    {
+      "name": "astra-wait-promtail-memory.py",
+      "original": "/private/tmp/astra-wait-promtail-memory.py",
+      "sha256": "6fdd2a2595b0639cd7417cbf68421ee269fd3a0df86473be4b0760993f816287",
+      "bytes": 2838
+    },
+    {
+      "name": "astra-yfinance-baseline-native-window.py",
+      "original": "/private/tmp/astra-yfinance-baseline-native-window.py",
+      "sha256": "c385eeb711e33c0d24f776e80e129aa58af6f62da660a1a7d24dfa913e3b0dcc",
+      "bytes": 5077
+    },
+    {
+      "name": "astra_api.py",
+      "original": "/private/tmp/astra_api.py",
+      "sha256": "7ec77476f3469e6e69b97c5ac1534487a78aed0c850c9e1aabc9b052a53d77c3",
+      "bytes": 1229
+    },
+    {
+      "name": "astra_cert_gate.py",
+      "original": "/private/tmp/astra_cert_gate.py",
+      "sha256": "2d069b43153d52cf9a9bbb8e2fd2706a64008c17cc94f700ab337e4d3cfae08a",
+      "bytes": 2895
+    },
+    {
+      "name": "astra_cert_validate.py",
+      "original": "/private/tmp/astra_cert_validate.py",
+      "sha256": "81168bc32f547664356c2d6168693d3a3933bb98473a60c9aa38f25b8fdb8fd4",
+      "bytes": 944
+    },
+    {
+      "name": "astra_desktop_registry.py",
+      "original": "/private/tmp/astra_desktop_registry.py",
+      "sha256": "b14ba77ecf7228f579c51410d74d672e07f2366f3b0d7a735ac9042fdef2ad1c",
+      "bytes": 952
+    },
+    {
+      "name": "astra_split_modules.py",
+      "original": "/private/tmp/astra_split_modules.py",
+      "sha256": "65716235ed9e1f2fcce1b1e79a7eb7df7947d0e17934ea2acda9626a25023511",
+      "bytes": 10948
+    }
+  ],
+  "status": "archived privately; former temporary entry points removed"
+}

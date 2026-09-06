@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "context": "lucas_engineering",
+  "kubeconfig": "~/.kube/config",
+  "api_server": "https://192.168.20.192:6443",
+  "environment": "homelab-with-production-applications",
+  "namespaces": {"pharness": "platform", "apps-staging": "staging", "apps-prod": "production", "monitoring": "platform", "tekton-pipelines": "platform"},
+  "authority": {
+    "profile_is_not_authorization": true,
+    "finance_production_merge_requires_human_approval": true,
+    "gitops_ownership_required": true,
+    "other_clusters": "No writes; LEA assessment is separate from this profile"
+  },
+  "sources": {
+    "infrastructure": {"repository": "https://github.com/lward27/lucas_engineering.git", "root": "charts/root-app", "pipelines": "charts/tekton-ci", "staging": "charts/finance-staging"},
+    "pharness": {"repository": "https://github.com/lward27/pharness.git", "chart": "deploy/helm/pharness", "values": ["values-yfinance-production.yaml"], "delivery_bindings": "deploy/helm/pharness/files"}
+  },
+  "pharness": {"namespace": "pharness", "resource": "service/pharness-api", "port": 4777, "argo_application": "pharness"},
+  "registry": {"hostname": "registry.lucas.engineering", "address": "192.168.20.210", "port": 32443, "ca_file": "~/.config/lucas-engineering/pki/buildkit/registry/ca.pem"},
+  "builder": {
+    "docker_context": "rancher-desktop", "name": "lucas-desktop", "platform": "linux/amd64",
+    "client_endpoint": "tcp://127.0.0.1:12342",
+    "ssh_host": "lucas-desktop", "remote_address": "192.168.50.145", "remote_port": 12340,
+    "tls_servername": "buildkit-k3s.lucas.internal", "tls_directory": "~/.config/lucas-engineering/pki/buildkit/k3s",
+    "service_namespace": "tekton-pipelines", "endpoint_slice": "k3s-buildkit-ipv4"
+  },
+  "telemetry": {
+    "metrics": {"namespace": "monitoring", "resource": "service/mimir-gateway", "port": 80},
+    "logs": {"namespace": "monitoring", "resource": "service/loki", "port": 3100},
+    "queries_source": "PHarness hosted delivery binding and milestone evidence; verify application labels before querying"
+  },
+  "credentials": {
+    "pharness": {"namespace": "pharness", "name": "pharness-operator-token", "key": "tokens", "actor": "lucas"},
+    "source_writer": {"namespace": "pharness", "name": "pharness-git-writer-token", "key": "token"},
+    "gitops_writer": {"namespace": "pharness", "name": "pharness-gitops-writer-token", "key": "token"}
+  },
+  "source_repositories": ["lward27/yfinance_wrapper", "lward27/finance-frontend"],
+  "gitops_repository": "lward27/lucas_engineering",
+  "pipelines": ["pharness-yfinance-build", "pharness-finance-frontend-build"],
+  "verified_at": "2026-09-06",
+  "notes": "Expected identities, not cached health. Every command revalidates the kubeconfig API server. Credential values are never part of this profile."
+}

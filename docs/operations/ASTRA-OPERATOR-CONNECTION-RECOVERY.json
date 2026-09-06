@@ -1,0 +1,12 @@
+{
+  "cluster_mutations": [],
+  "connections": 2,
+  "disruption": "Stopped only this test client's own local port-forward process",
+  "evaluation_submissions": 0,
+  "first_owned_tunnel_pid": 61800,
+  "model_requests": 0,
+  "observed_at": "2026-09-06T20:19:15.359628+00:00",
+  "second_owned_tunnel_pid": 61801,
+  "source_revision": "92f8f1b8e98dd45d0a01e030aeb99ef9bcf95267",
+  "status": "passed"
+}

@@ -1,0 +1,23 @@
+{
+  "cluster_mutations": [],
+  "image_pushes": 0,
+  "observed_at": "2026-09-06T20:18:40.848085+00:00",
+  "receipt": {
+    "builder": "lucas-desktop",
+    "components": [
+      "runtime",
+      "ui",
+      "python-runner",
+      "node-runner",
+      "model-gateway",
+      "eval-runner",
+      "codex-host"
+    ],
+    "external_mutations": [],
+    "platform": "linux/amd64",
+    "platform_execution": "passed",
+    "preflight": "passed",
+    "revision": "4bf9f0ae73a3ed2ef25e9bca53090e0edecf32f6"
+  },
+  "status": "passed_uncached_amd64_execution"
+}

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Kubernetes Rollout Observe"
+  short_description: "Observe Kubernetes rollouts with telemetry"
+  default_prompt: "Use $k8s-rollout-observe to monitor a rollout with bounded evidence."
+policy:
+  allow_implicit_invocation: true

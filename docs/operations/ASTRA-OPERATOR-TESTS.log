@@ -1,0 +1,30 @@
+test_builder_does_not_replace_an_occupied_unverified_port (test_operator_tools.ConnectionTests.test_builder_does_not_replace_an_occupied_unverified_port) ... ok
+test_builder_refuses_unexpected_endpoint_before_tls (test_operator_tools.ConnectionTests.test_builder_refuses_unexpected_endpoint_before_tls) ... ok
+test_cli_existing_receipt_stops_before_operations (test_operator_tools.ConnectionTests.test_cli_existing_receipt_stops_before_operations) ... ok
+test_private_command_does_not_capture_to_disk_or_echo_error (test_operator_tools.ConnectionTests.test_private_command_does_not_capture_to_disk_or_echo_error) ... ok
+test_read_reconnects_but_write_never_repeats (test_operator_tools.ConnectionTests.test_read_reconnects_but_write_never_repeats) ... ok
+test_remote_response_cannot_echo_token (test_operator_tools.ConnectionTests.test_remote_response_cannot_echo_token) ... ok
+test_diagnostic_never_claims_qualification (test_operator_tools.EvaluationTests.test_diagnostic_never_claims_qualification) ... ok
+test_interrupted_dispatch_retained_and_cannot_repeat (test_operator_tools.EvaluationTests.test_interrupted_dispatch_retained_and_cannot_repeat) ... ok
+test_stale_source_sends_no_post (test_operator_tools.EvaluationTests.test_stale_source_sends_no_post) ... ok
+test_terminal_result_is_immutable (test_operator_tools.EvaluationTests.test_terminal_result_is_immutable) ... ok
+test_ambiguous_alias_rejected_before_kubectl (test_operator_tools.GuardTests.test_ambiguous_alias_rejected_before_kubectl) ... ok
+test_classifications_preserve_effects (test_operator_tools.GuardTests.test_classifications_preserve_effects) ... ok
+test_compound_or_substitution_never_read (test_operator_tools.GuardTests.test_compound_or_substitution_never_read) ... ok
+test_failed_client_stops_before_server (test_operator_tools.GuardTests.test_failed_client_stops_before_server) ... ok
+test_failed_server_is_not_success (test_operator_tools.GuardTests.test_failed_server_is_not_success) ... ok
+test_preflight_succeeds_without_actual_apply (test_operator_tools.GuardTests.test_preflight_succeeds_without_actual_apply) ... ok
+test_scoped_read_classifies (test_operator_tools.GuardTests.test_scoped_read_classifies) ... ok
+test_unknown_ownership_stops (test_operator_tools.GuardTests.test_unknown_ownership_stops) ... ok
+test_wrong_server_is_rejected (test_operator_tools.GuardTests.test_wrong_server_is_rejected) ... ok
+test_install_preserves_unrelated_files_and_restores (test_operator_tools.InstallTests.test_install_preserves_unrelated_files_and_restores) ... ok
+test_installer_refuses_unreviewed_skill_edit (test_operator_tools.InstallTests.test_installer_refuses_unreviewed_skill_edit) ... ok
+test_all_components_verified_without_claiming_provenance (test_operator_tools.ReleaseTests.test_all_components_verified_without_claiming_provenance) ... ok
+test_corrupt_registry_data_fails (test_operator_tools.ReleaseTests.test_corrupt_registry_data_fails) ... ok
+test_missing_component_and_mutable_tag_fail (test_operator_tools.ReleaseTests.test_missing_component_and_mutable_tag_fail) ... ok
+test_wrong_platform_or_revision_fails (test_operator_tools.ReleaseTests.test_wrong_platform_or_revision_fails) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 3.656s
+
+OK

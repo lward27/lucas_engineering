@@ -1,0 +1,122 @@
+schema_version: 1
+
+approved_contexts:
+  - name: lucas_engineering
+    aliases: ["lucas-engineering"]
+    kubeconfig: "~/.kube/config"
+    api_server: "https://192.168.20.192:6443"
+    environment: homelab-with-production-applications
+    production: true
+    writes_allowed: true
+    destructive_operations_require_confirmation: true
+    provider: k3s
+    default_namespaces: ["pharness", "apps-staging", "apps-prod", "monitoring", "tekton-pipelines"]
+    notes: "apps-prod carries production authority. Use the installed lucas-ops profile for source, builder, TLS and credential references; a profile is not permission."
+
+  - name: admin@lucas-engineering-agent-homelab
+    aliases: ["lea-homelab", "lucas-engineering-agents-cluster"]
+    kubeconfig: "~/.kube/lucas-engineering-agent-config"
+    api_server: "https://192.168.20.5:6443"
+    environment: dedicated-agent-platform
+    production: false
+    writes_allowed: false
+    destructive_operations_require_confirmation: true
+    provider: talos
+    default_namespaces: ["lea-agent-platform", "lea-ci", "observability"]
+    notes: "Read-only discovery mapping. Retirement requires a separate approved resource and data disposition; this is not lucas_engineering or lucas-engineering-v2."
+
+  - name: lucas-engineering-v2
+    aliases: ["lucas-engineering-2"]
+    kubeconfig: "~/.kube/config-lucas-engineering-v2"
+    environment: homelab
+    production: false
+    writes_allowed: true
+    destructive_operations_require_confirmation: true
+    provider: k3s
+    default_namespaces: ["apps-prod", "monitoring", "flux-system"]
+    notes: "Actual context differs from the intended cluster alias. Flux and Cilium were discovered."
+
+  - name: default
+    aliases: ["mlselscls-k3s"]
+    kubeconfig: "~/.kube/mlselscls-k3s.yaml"
+    environment: development
+    production: false
+    writes_allowed: true
+    destructive_operations_require_confirmation: true
+    provider: k3s
+    default_namespaces: []
+    notes: "The dedicated kubeconfig uses context default. The API was unreachable during the 2026-07-10 discovery pass."
+
+unknown_context_policy:
+  writes_allowed: false
+  destructive_operations_allowed: false
+  require_profile_update_for_writes: true
+
+components:
+  gitops:
+    type: "cluster-specific: Argo CD and Flux"
+    namespaces: ["argocd", "flux-system"]
+    repository_locations: []
+  pipelines:
+    type: "cluster-specific: Tekton"
+    namespaces: ["tekton-pipelines", "tekton-pipelines-resolvers"]
+    repository_locations: []
+  metrics:
+    type: "Prometheus and Mimir where discovered"
+    namespaces: ["monitoring"]
+  logs:
+    type: "Loki where discovered"
+    namespaces: ["monitoring"]
+  traces:
+    type: "Tempo and OpenTelemetry Collector where discovered"
+    namespaces: ["monitoring"]
+  networking:
+    cni: "Cilium on lucas-engineering-v2; unknown on other contexts"
+    hubble: "Available on lucas-engineering-v2; unknown elsewhere"
+  storage:
+    storage_classes: ["local-path"]
+    artifact_storage: []
+  registries: ["in-cluster docker-registry where discovered"]
+  ingress:
+    controllers: ["ingress-nginx and Traefik on lucas_engineering", "Cilium Envoy on lucas-engineering-v2"]
+    gateway_api: "CRDs installed on both reachable clusters"
+
+conventions:
+  application_label: "app.kubernetes.io/name"
+  application_instance_label: "app.kubernetes.io/instance"
+  environment_label: "unknown; inspect the selected repository"
+  ownership_label: "app.kubernetes.io/managed-by or GitOps ownership metadata"
+  version_label: "app.kubernetes.io/version"
+  gitops_roots: []
+  helm_roots: []
+  kustomize_roots: []
+  tekton_roots: []
+
+discovery:
+  completed_at: "2026-07-10"
+  lucas_engineering:
+    kubernetes_version: "v1.34.4+k3s1"
+    node_readiness: "2/2 Ready"
+    cni: "unknown; Cilium and Hubble were not discovered"
+    gitops: "Argo CD"
+    pipelines: "Tekton Pipelines, Triggers, Dashboard, and Resolvers"
+    observability: "Grafana, Loki, Mimir, Tempo, Prometheus, and OpenTelemetry Collector"
+    storage: "local-path"
+    ingress: "ingress-nginx and Traefik"
+    registry: "docker-registry"
+    minio: "not discovered"
+  lucas_engineering_v2:
+    kubernetes_version: "v1.35.5+k3s1"
+    node_readiness: "1/1 Ready"
+    cni: "Cilium with Hubble Relay and Hubble UI"
+    gitops: "Flux"
+    pipelines: "not discovered"
+    observability: "Grafana, Loki, Mimir, Tempo, Prometheus, and OpenTelemetry Collector"
+    storage: "local-path"
+    ingress: "Cilium Envoy; Gateway API CRDs installed"
+    registry: "docker-registry"
+    minio: "not discovered"
+  mlselscls_k3s:
+    kubernetes_version: "unknown; API unreachable"
+    node_readiness: "unknown; API unreachable"
+    components: "unknown; API unreachable"
