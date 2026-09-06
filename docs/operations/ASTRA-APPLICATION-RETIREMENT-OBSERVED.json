@@ -1,0 +1,340 @@
+{
+  "observed_at": "2026-09-06T20:37:50.916451+00:00",
+  "removal_merge": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5",
+  "remaining_retired_applications": [],
+  "remaining_target_resources": [],
+  "retained_claims": [
+    {
+      "namespace": "apps-prod",
+      "name": "openclaw-data",
+      "uid": "3c099e8a-bea8-4641-9a14-dcff30cdf8ff",
+      "volume": "pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff",
+      "phase": "Bound",
+      "identity_preserved": true,
+      "deletionTimestamp": null
+    },
+    {
+      "namespace": "code-server",
+      "name": "code-server-data",
+      "uid": "bff78087-5f5f-44a1-b705-a5e0c64d4480",
+      "volume": "pvc-bff78087-5f5f-44a1-b705-a5e0c64d4480",
+      "phase": "Bound",
+      "identity_preserved": true,
+      "deletionTimestamp": null
+    },
+    {
+      "namespace": "monitoring",
+      "name": "uptime-kuma-pvc",
+      "uid": "f70da283-45c1-44db-9bc0-14cd23ede08e",
+      "volume": "pvc-f70da283-45c1-44db-9bc0-14cd23ede08e",
+      "phase": "Bound",
+      "identity_preserved": true,
+      "deletionTimestamp": null
+    },
+    {
+      "namespace": "odoo",
+      "name": "data-odoo-postgresql-0",
+      "uid": "504241f0-6aa9-46e1-905a-298321eed19c",
+      "volume": "pvc-504241f0-6aa9-46e1-905a-298321eed19c",
+      "phase": "Bound",
+      "identity_preserved": true,
+      "deletionTimestamp": null
+    },
+    {
+      "namespace": "odoo",
+      "name": "odoo",
+      "uid": "e858df73-763b-4984-b15e-c3b3fd2dd03d",
+      "volume": "pvc-e858df73-763b-4984-b15e-c3b3fd2dd03d",
+      "phase": "Bound",
+      "identity_preserved": true,
+      "deletionTimestamp": null
+    }
+  ],
+  "unrelated_regressions": [],
+  "argocd": [
+    {
+      "name": "agentic-platform",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34"
+    },
+    {
+      "name": "argo-cd",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34"
+    },
+    {
+      "name": "cert-manager",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "cloudflared",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "data-log-visual",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "8a4f8705b35fdc4363b4cbd61669fc64bce1903e"
+    },
+    {
+      "name": "directus",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34"
+    },
+    {
+      "name": "docker-registry",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34"
+    },
+    {
+      "name": "escape",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "excalidraw",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34"
+    },
+    {
+      "name": "finance-app-database-service",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34"
+    },
+    {
+      "name": "finance-frontend",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "finance-frontend-staging",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "forge-admin",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "7674cc89e24887c075dd8462e353805541528f0c"
+    },
+    {
+      "name": "forge-platform",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "7674cc89e24887c075dd8462e353805541528f0c"
+    },
+    {
+      "name": "forge-portal",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "7674cc89e24887c075dd8462e353805541528f0c"
+    },
+    {
+      "name": "forge-postgresql",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "7674cc89e24887c075dd8462e353805541528f0c"
+    },
+    {
+      "name": "ghost",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "grafana",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34"
+    },
+    {
+      "name": "hermes-agent",
+      "health": "Healthy",
+      "sync": "OutOfSync",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "homepage",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "ingress-nginx",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "loki",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34"
+    },
+    {
+      "name": "mimir",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34"
+    },
+    {
+      "name": "ollama",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "opentelemetry-collector",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "pharness",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "4bf9f0ae73a3ed2ef25e9bca53090e0edecf32f6"
+    },
+    {
+      "name": "postgresql",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "prometheus",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "promtail",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34"
+    },
+    {
+      "name": "qdrant",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34"
+    },
+    {
+      "name": "rabbitmq",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "rag-service",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "root-app",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "scraper-manager",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34"
+    },
+    {
+      "name": "sentinel-rbac",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34"
+    },
+    {
+      "name": "tekton-ci",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "tekton-dashboard",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34"
+    },
+    {
+      "name": "tekton-pipeline",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "tekton-triggers",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "tempo",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    },
+    {
+      "name": "yfinance-staging",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34"
+    },
+    {
+      "name": "yfinance-wrapper",
+      "health": "Healthy",
+      "sync": "Synced",
+      "revision": "507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5"
+    }
+  ],
+  "collection_note": "Initial collector stopped on empty successful kubectl output for absent resources; repeated with explicit empty-list handling.",
+  "retained_namespaces": [
+    {
+      "name": "epheros",
+      "uid": "0895db35-0dfe-4e10-baa9-f2eb5a802eb2",
+      "phase": "Active",
+      "deleting": false
+    },
+    {
+      "name": "odoo",
+      "uid": "67d2a36b-7402-411a-8d5c-219041fcab9c",
+      "phase": "Active",
+      "deleting": false
+    },
+    {
+      "name": "code-server",
+      "uid": "7e33aa69-2017-4bfd-bbf8-0f50593c2b08",
+      "phase": "Active",
+      "deleting": false
+    }
+  ],
+  "homepage_retired_entries_absent": true,
+  "homepage": {
+    "generation": 15,
+    "observed_generation": 15,
+    "ready": 1,
+    "updated": 1,
+    "config_sha256": "3b9e8a44ee2c197f023f643a69e58f6b7ff29475ee74c29700e6b1353175e096"
+  },
+  "prometheus_retired_jobs_absent": true,
+  "remaining_retired_pods": [],
+  "status": "passed"
+}
