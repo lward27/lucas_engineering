@@ -10,6 +10,9 @@ spec:
       app: homepage
   template:
     metadata:
+      annotations:
+        # setup-config copies the ConfigMap once at Pod initialization.
+        lucas.engineering/config-sha256: "3b9e8a44ee2c197f023f643a69e58f6b7ff29475ee74c29700e6b1353175e096"
       labels:
         app: homepage
     spec:

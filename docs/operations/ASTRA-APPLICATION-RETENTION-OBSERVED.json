@@ -1,0 +1,78 @@
+{
+  "observed_at": "2026-09-06T20:32:44.280307+00:00",
+  "preparation_merge": "89c2a268270b428eecaa47dea6bf3ddce4948a34",
+  "claims": [
+    {
+      "namespace": "apps-prod",
+      "name": "openclaw-data",
+      "uid": "3c099e8a-bea8-4641-9a14-dcff30cdf8ff",
+      "volume": "pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff",
+      "sync_options": "",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "code-server",
+      "name": "code-server-data",
+      "uid": "bff78087-5f5f-44a1-b705-a5e0c64d4480",
+      "volume": "pvc-bff78087-5f5f-44a1-b705-a5e0c64d4480",
+      "sync_options": "Prune=false,Delete=false",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "monitoring",
+      "name": "uptime-kuma-pvc",
+      "uid": "f70da283-45c1-44db-9bc0-14cd23ede08e",
+      "volume": "pvc-f70da283-45c1-44db-9bc0-14cd23ede08e",
+      "sync_options": "Prune=false,Delete=false",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "odoo",
+      "name": "data-odoo-postgresql-0",
+      "uid": "504241f0-6aa9-46e1-905a-298321eed19c",
+      "volume": "pvc-504241f0-6aa9-46e1-905a-298321eed19c",
+      "sync_options": "",
+      "phase": "Bound"
+    },
+    {
+      "namespace": "odoo",
+      "name": "odoo",
+      "uid": "e858df73-763b-4984-b15e-c3b3fd2dd03d",
+      "volume": "pvc-e858df73-763b-4984-b15e-c3b3fd2dd03d",
+      "sync_options": "Prune=false,Delete=false",
+      "phase": "Bound"
+    }
+  ],
+  "applications": [
+    {
+      "name": "odoo",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34",
+      "sync": "Synced",
+      "health": "Healthy"
+    },
+    {
+      "name": "code-server",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34",
+      "sync": "Synced",
+      "health": "Healthy"
+    },
+    {
+      "name": "uptime-kuma",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34",
+      "sync": "Synced",
+      "health": "Healthy"
+    },
+    {
+      "name": "epheros",
+      "revision": "89c2a268270b428eecaa47dea6bf3ddce4948a34",
+      "sync": "Synced",
+      "health": "Healthy"
+    }
+  ],
+  "namespace": {
+    "name": "epheros",
+    "uid": "0895db35-0dfe-4e10-baa9-f2eb5a802eb2",
+    "sync_options": "Prune=false,Delete=false"
+  },
+  "status": "passed"
+}

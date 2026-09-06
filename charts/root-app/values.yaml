@@ -16,7 +16,8 @@ apps:
   cloudflared:
     enabled: true
   code-server:
-    enabled: true
+    # Retired 2026-09-06; retained data and recovery: docs/operations/ASTRA-APPLICATION-RETIREMENT.md
+    enabled: false
   ghost:
     enabled: true
   finance-app-database-service:
@@ -40,7 +41,8 @@ apps:
   hermes-agent:
     enabled: true
   openclaw:
-    enabled: true
+    # Retired 2026-09-06; retained data and recovery: docs/operations/ASTRA-APPLICATION-RETIREMENT.md
+    enabled: false
   openfaas:
     enabled: false
   opentelemetry-collector:
@@ -68,7 +70,8 @@ apps:
   tempo:
     enabled: true
   uptime-kuma:
-    enabled: true
+    # Retired 2026-09-06; retained data and recovery: docs/operations/ASTRA-APPLICATION-RETIREMENT.md
+    enabled: false
   yfinance-wrapper:
     enabled: true
   forge-postgresql:
@@ -86,16 +89,19 @@ apps:
   ollama:
     enabled: true
   odoo:
-    enabled: true
+    # Retired 2026-09-06; retained data and recovery: docs/operations/ASTRA-APPLICATION-RETIREMENT.md
+    enabled: false
   rag-mcp-server:
     enabled: false
   clawspace:
-    enabled: true
+    # Retired 2026-09-06; retained data and recovery: docs/operations/ASTRA-APPLICATION-RETIREMENT.md
+    enabled: false
   excalidraw:
     enabled: true
   escape:
     enabled: true
   epheros:
-    enabled: true
+    # Retired 2026-09-06; retained data and recovery: docs/operations/ASTRA-APPLICATION-RETIREMENT.md
+    enabled: false
   epheros-ci:
     enabled: false
