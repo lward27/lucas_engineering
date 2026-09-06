@@ -6,6 +6,9 @@ images:
     repository: registry.lucas.engineering/epheros-api
     digest: "sha256:800d9b62ff8f7d503168a0bb8db1acb10d3152fe213d76cf94c8a558718a2997"
 replicaCount: { web: 2, api: 2 }
+# Retirement preparation must not run the database migration hook.
+# Review the retained database before enabling migrations during any restoration.
+migration: { enabled: false }
 secrets:
   app: epheros-app-config
   database: epheros-db-app

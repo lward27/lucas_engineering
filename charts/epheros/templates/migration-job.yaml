@@ -1,3 +1,4 @@
+{{- if .Values.migration.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -24,3 +25,4 @@ spec:
           env:
             - { name: EPHEROS_DATABASE_URL, valueFrom: { secretKeyRef: { name: {{ .Values.secrets.migrationDatabase }}, key: database-url } } }
           securityContext: { allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: { drop: [ALL] } }
+{{- end }}

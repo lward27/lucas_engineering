@@ -1,4 +1,7 @@
 uptime-kuma:
+  # The wrapper retains the existing PVC when the application is retired.
+  volume:
+    existingClaim: uptime-kuma-pvc
   service:
     type: ClusterIP
   ingress:

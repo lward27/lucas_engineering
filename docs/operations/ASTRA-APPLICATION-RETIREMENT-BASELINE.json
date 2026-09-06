@@ -1,0 +1,1374 @@
+{
+  "recorded_at": "2026-09-06T20:26:39.475068+00:00",
+  "context": "lucas_engineering",
+  "server": "https://192.168.20.192:6443",
+  "source_revision": "04a98931af43b6ea1d189369442f6a1b76dda589",
+  "applications": [
+    {
+      "name": "clawspace",
+      "uid": "f4a19ec9-49e2-4e12-b147-693415038916",
+      "finalizers": [
+        "resources-finalizer.argocd.argoproj.io"
+      ],
+      "spec": {
+        "destination": {
+          "namespace": "apps-prod",
+          "server": "https://kubernetes.default.svc"
+        },
+        "project": "default",
+        "source": {
+          "path": "charts/clawspace",
+          "repoURL": "https://github.com/lward27/lucas_engineering.git",
+          "targetRevision": "HEAD"
+        },
+        "syncPolicy": {
+          "automated": {
+            "prune": true,
+            "selfHeal": true
+          }
+        }
+      },
+      "sync": {
+        "comparedTo": {
+          "destination": {
+            "namespace": "apps-prod",
+            "server": "https://kubernetes.default.svc"
+          },
+          "source": {
+            "path": "charts/clawspace",
+            "repoURL": "https://github.com/lward27/lucas_engineering.git",
+            "targetRevision": "HEAD"
+          }
+        },
+        "revision": "04a98931af43b6ea1d189369442f6a1b76dda589",
+        "status": "Synced"
+      },
+      "health": {
+        "lastTransitionTime": "2026-09-04T12:32:03Z",
+        "status": "Healthy"
+      },
+      "resources": [
+        {
+          "kind": "Service",
+          "name": "clawspace",
+          "namespace": "apps-prod",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "apps",
+          "kind": "Deployment",
+          "name": "clawspace",
+          "namespace": "apps-prod",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "networking.k8s.io",
+          "kind": "Ingress",
+          "name": "clawspace",
+          "namespace": "apps-prod",
+          "status": "Synced",
+          "version": "v1"
+        }
+      ]
+    },
+    {
+      "name": "code-server",
+      "uid": "14ee3a77-a08d-4358-93e3-85fbfde33f4d",
+      "finalizers": [
+        "resources-finalizer.argocd.argoproj.io"
+      ],
+      "spec": {
+        "destination": {
+          "namespace": "code-server",
+          "server": "https://kubernetes.default.svc"
+        },
+        "project": "default",
+        "source": {
+          "path": "charts/code-server",
+          "repoURL": "https://github.com/lward27/lucas_engineering.git",
+          "targetRevision": "HEAD"
+        },
+        "syncPolicy": {
+          "automated": {
+            "selfHeal": true
+          },
+          "syncOptions": [
+            "CreateNamespace=true"
+          ]
+        }
+      },
+      "sync": {
+        "comparedTo": {
+          "destination": {
+            "namespace": "code-server",
+            "server": "https://kubernetes.default.svc"
+          },
+          "source": {
+            "path": "charts/code-server",
+            "repoURL": "https://github.com/lward27/lucas_engineering.git",
+            "targetRevision": "HEAD"
+          }
+        },
+        "revision": "04a98931af43b6ea1d189369442f6a1b76dda589",
+        "status": "Synced"
+      },
+      "health": {
+        "lastTransitionTime": "2026-09-04T15:40:56Z",
+        "status": "Healthy"
+      },
+      "resources": [
+        {
+          "kind": "ConfigMap",
+          "name": "code-server-config",
+          "namespace": "code-server",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "PersistentVolumeClaim",
+          "name": "code-server-data",
+          "namespace": "code-server",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "Service",
+          "name": "code-server",
+          "namespace": "code-server",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "ServiceAccount",
+          "name": "code-server",
+          "namespace": "code-server",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "apps",
+          "kind": "Deployment",
+          "name": "code-server",
+          "namespace": "code-server",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "networking.k8s.io",
+          "kind": "Ingress",
+          "name": "code-server",
+          "namespace": "code-server",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "networking.k8s.io",
+          "kind": "NetworkPolicy",
+          "name": "code-server",
+          "namespace": "code-server",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "rbac.authorization.k8s.io",
+          "kind": "ClusterRole",
+          "name": "code-server-cluster-access",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "rbac.authorization.k8s.io",
+          "kind": "ClusterRoleBinding",
+          "name": "code-server-cluster-access",
+          "status": "Synced",
+          "version": "v1"
+        }
+      ]
+    },
+    {
+      "name": "epheros",
+      "uid": "03766983-b20d-4bba-ad77-1709a015cde4",
+      "finalizers": [
+        "resources-finalizer.argocd.argoproj.io"
+      ],
+      "spec": {
+        "destination": {
+          "namespace": "epheros",
+          "server": "https://kubernetes.default.svc"
+        },
+        "project": "default",
+        "source": {
+          "path": "charts/epheros",
+          "repoURL": "https://github.com/lward27/lucas_engineering.git",
+          "targetRevision": "HEAD"
+        },
+        "syncPolicy": {
+          "automated": {
+            "prune": true,
+            "selfHeal": true
+          },
+          "syncOptions": [
+            "CreateNamespace=true"
+          ]
+        }
+      },
+      "sync": {
+        "comparedTo": {
+          "destination": {
+            "namespace": "epheros",
+            "server": "https://kubernetes.default.svc"
+          },
+          "source": {
+            "path": "charts/epheros",
+            "repoURL": "https://github.com/lward27/lucas_engineering.git",
+            "targetRevision": "HEAD"
+          }
+        },
+        "revision": "04a98931af43b6ea1d189369442f6a1b76dda589",
+        "status": "Synced"
+      },
+      "health": {
+        "lastTransitionTime": "2026-09-04T15:42:36Z",
+        "status": "Healthy"
+      },
+      "resources": [
+        {
+          "kind": "Namespace",
+          "name": "epheros",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "Service",
+          "name": "epheros-api",
+          "namespace": "epheros",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "Service",
+          "name": "epheros-web",
+          "namespace": "epheros",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "ServiceAccount",
+          "name": "epheros-api",
+          "namespace": "epheros",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "ServiceAccount",
+          "name": "epheros-backup",
+          "namespace": "epheros",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "hook": true,
+          "kind": "ServiceAccount",
+          "name": "epheros-migrate",
+          "namespace": "epheros",
+          "requiresPruning": true,
+          "version": "v1"
+        },
+        {
+          "kind": "ServiceAccount",
+          "name": "epheros-web",
+          "namespace": "epheros",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "apps",
+          "kind": "Deployment",
+          "name": "epheros-api",
+          "namespace": "epheros",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "apps",
+          "kind": "Deployment",
+          "name": "epheros-web",
+          "namespace": "epheros",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "networking.k8s.io",
+          "kind": "Ingress",
+          "name": "epheros",
+          "namespace": "epheros",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "networking.k8s.io",
+          "kind": "NetworkPolicy",
+          "name": "api-ingress-egress",
+          "namespace": "epheros",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "networking.k8s.io",
+          "kind": "NetworkPolicy",
+          "name": "backup-egress",
+          "namespace": "epheros",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "networking.k8s.io",
+          "kind": "NetworkPolicy",
+          "name": "default-deny",
+          "namespace": "epheros",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "networking.k8s.io",
+          "kind": "NetworkPolicy",
+          "name": "migration-egress",
+          "namespace": "epheros",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "networking.k8s.io",
+          "kind": "NetworkPolicy",
+          "name": "web-ingress",
+          "namespace": "epheros",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "policy",
+          "kind": "PodDisruptionBudget",
+          "name": "epheros-api",
+          "namespace": "epheros",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "policy",
+          "kind": "PodDisruptionBudget",
+          "name": "epheros-web",
+          "namespace": "epheros",
+          "status": "Synced",
+          "version": "v1"
+        }
+      ]
+    },
+    {
+      "name": "odoo",
+      "uid": "33a94843-4355-4a6d-bef1-9cf5956c15df",
+      "finalizers": [
+        "resources-finalizer.argocd.argoproj.io"
+      ],
+      "spec": {
+        "destination": {
+          "namespace": "odoo",
+          "server": "https://kubernetes.default.svc"
+        },
+        "project": "default",
+        "source": {
+          "path": "charts/odoo",
+          "repoURL": "https://github.com/lward27/lucas_engineering.git",
+          "targetRevision": "HEAD"
+        },
+        "syncPolicy": {
+          "automated": {
+            "prune": true,
+            "selfHeal": true
+          },
+          "syncOptions": [
+            "CreateNamespace=true"
+          ]
+        }
+      },
+      "sync": {
+        "comparedTo": {
+          "destination": {
+            "namespace": "odoo",
+            "server": "https://kubernetes.default.svc"
+          },
+          "source": {
+            "path": "charts/odoo",
+            "repoURL": "https://github.com/lward27/lucas_engineering.git",
+            "targetRevision": "HEAD"
+          }
+        },
+        "revision": "04a98931af43b6ea1d189369442f6a1b76dda589",
+        "status": "Synced"
+      },
+      "health": {
+        "lastTransitionTime": "2026-09-04T15:43:30Z",
+        "status": "Healthy"
+      },
+      "resources": [
+        {
+          "kind": "PersistentVolumeClaim",
+          "name": "odoo",
+          "namespace": "odoo",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "Service",
+          "name": "odoo",
+          "namespace": "odoo",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "Service",
+          "name": "odoo-postgresql",
+          "namespace": "odoo",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "Service",
+          "name": "odoo-postgresql-hl",
+          "namespace": "odoo",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "ServiceAccount",
+          "name": "odoo",
+          "namespace": "odoo",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "ServiceAccount",
+          "name": "odoo-postgresql",
+          "namespace": "odoo",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "apps",
+          "kind": "Deployment",
+          "name": "odoo",
+          "namespace": "odoo",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "apps",
+          "kind": "StatefulSet",
+          "name": "odoo-postgresql",
+          "namespace": "odoo",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "networking.k8s.io",
+          "kind": "Ingress",
+          "name": "odoo",
+          "namespace": "odoo",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "networking.k8s.io",
+          "kind": "NetworkPolicy",
+          "name": "odoo",
+          "namespace": "odoo",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "networking.k8s.io",
+          "kind": "NetworkPolicy",
+          "name": "odoo-postgresql",
+          "namespace": "odoo",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "policy",
+          "kind": "PodDisruptionBudget",
+          "name": "odoo",
+          "namespace": "odoo",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "policy",
+          "kind": "PodDisruptionBudget",
+          "name": "odoo-postgresql",
+          "namespace": "odoo",
+          "status": "Synced",
+          "version": "v1"
+        }
+      ]
+    },
+    {
+      "name": "openclaw",
+      "uid": "75dc2ae1-ba91-43d7-9023-24c6e83879ff",
+      "finalizers": [
+        "resources-finalizer.argocd.argoproj.io"
+      ],
+      "spec": {
+        "destination": {
+          "namespace": "apps-prod",
+          "server": "https://kubernetes.default.svc"
+        },
+        "project": "default",
+        "source": {
+          "path": "charts/openclaw",
+          "repoURL": "https://github.com/lward27/lucas_engineering.git",
+          "targetRevision": "HEAD"
+        },
+        "syncPolicy": {
+          "automated": {
+            "prune": true,
+            "selfHeal": true
+          },
+          "syncOptions": [
+            "CreateNamespace=true"
+          ]
+        }
+      },
+      "sync": {
+        "comparedTo": {
+          "destination": {
+            "namespace": "apps-prod",
+            "server": "https://kubernetes.default.svc"
+          },
+          "source": {
+            "path": "charts/openclaw",
+            "repoURL": "https://github.com/lward27/lucas_engineering.git",
+            "targetRevision": "HEAD"
+          }
+        },
+        "revision": "04a98931af43b6ea1d189369442f6a1b76dda589",
+        "status": "Synced"
+      },
+      "health": {
+        "lastTransitionTime": "2026-09-04T12:32:03Z",
+        "status": "Healthy"
+      },
+      "resources": [
+        {
+          "kind": "ConfigMap",
+          "name": "openclaw-agent-workspace-init",
+          "namespace": "apps-prod",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "ConfigMap",
+          "name": "openclaw-config",
+          "namespace": "apps-prod",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "ConfigMap",
+          "name": "openclaw-dashboard-custom",
+          "namespace": "apps-prod",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "ConfigMap",
+          "name": "openclaw-dashboard-instance",
+          "namespace": "apps-prod",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "ConfigMap",
+          "name": "openclaw-workspace",
+          "namespace": "apps-prod",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "Service",
+          "name": "openclaw",
+          "namespace": "apps-prod",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "ServiceAccount",
+          "name": "openclaw",
+          "namespace": "apps-prod",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "apps",
+          "kind": "StatefulSet",
+          "name": "openclaw",
+          "namespace": "apps-prod",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "networking.k8s.io",
+          "kind": "Ingress",
+          "name": "openclaw",
+          "namespace": "apps-prod",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "networking.k8s.io",
+          "kind": "NetworkPolicy",
+          "name": "openclaw-custom",
+          "namespace": "apps-prod",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "rbac.authorization.k8s.io",
+          "kind": "ClusterRoleBinding",
+          "name": "openclaw-cluster-admin",
+          "status": "Synced",
+          "version": "v1"
+        }
+      ]
+    },
+    {
+      "name": "uptime-kuma",
+      "uid": "64605dc1-7345-4da6-9647-ffd6b4282d7d",
+      "finalizers": [
+        "resources-finalizer.argocd.argoproj.io"
+      ],
+      "spec": {
+        "destination": {
+          "namespace": "monitoring",
+          "server": "https://kubernetes.default.svc"
+        },
+        "project": "default",
+        "source": {
+          "path": "charts/uptime-kuma",
+          "repoURL": "https://github.com/lward27/lucas_engineering.git",
+          "targetRevision": "HEAD"
+        },
+        "syncPolicy": {
+          "automated": {
+            "prune": true,
+            "selfHeal": true
+          }
+        }
+      },
+      "sync": {
+        "comparedTo": {
+          "destination": {
+            "namespace": "monitoring",
+            "server": "https://kubernetes.default.svc"
+          },
+          "source": {
+            "path": "charts/uptime-kuma",
+            "repoURL": "https://github.com/lward27/lucas_engineering.git",
+            "targetRevision": "HEAD"
+          }
+        },
+        "revision": "04a98931af43b6ea1d189369442f6a1b76dda589",
+        "status": "Synced"
+      },
+      "health": {
+        "lastTransitionTime": "2026-09-04T15:40:42Z",
+        "status": "Healthy"
+      },
+      "resources": [
+        {
+          "kind": "PersistentVolumeClaim",
+          "name": "uptime-kuma-pvc",
+          "namespace": "monitoring",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "kind": "Service",
+          "name": "uptime-kuma",
+          "namespace": "monitoring",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "apps",
+          "kind": "Deployment",
+          "name": "uptime-kuma",
+          "namespace": "monitoring",
+          "status": "Synced",
+          "version": "v1"
+        },
+        {
+          "group": "networking.k8s.io",
+          "kind": "Ingress",
+          "name": "uptime-kuma",
+          "namespace": "monitoring",
+          "status": "Synced",
+          "version": "v1"
+        }
+      ]
+    }
+  ],
+  "unrelated_applications": [
+    {
+      "name": "agentic-platform",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "argo-cd",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "cert-manager",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "cloudflared",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "data-log-visual",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "8a4f8705b35fdc4363b4cbd61669fc64bce1903e"
+    },
+    {
+      "name": "directus",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "docker-registry",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "escape",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "excalidraw",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "finance-app-database-service",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "finance-frontend",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "finance-frontend-staging",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "forge-admin",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "7674cc89e24887c075dd8462e353805541528f0c"
+    },
+    {
+      "name": "forge-platform",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "7674cc89e24887c075dd8462e353805541528f0c"
+    },
+    {
+      "name": "forge-portal",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "7674cc89e24887c075dd8462e353805541528f0c"
+    },
+    {
+      "name": "forge-postgresql",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "7674cc89e24887c075dd8462e353805541528f0c"
+    },
+    {
+      "name": "ghost",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "grafana",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "hermes-agent",
+      "sync": "OutOfSync",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "homepage",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "ingress-nginx",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "loki",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "mimir",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "ollama",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "opentelemetry-collector",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "pharness",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "4bf9f0ae73a3ed2ef25e9bca53090e0edecf32f6"
+    },
+    {
+      "name": "postgresql",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "prometheus",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "promtail",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "qdrant",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "rabbitmq",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "rag-service",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "root-app",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "scraper-manager",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "sentinel-rbac",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "tekton-ci",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "tekton-dashboard",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "tekton-pipeline",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "tekton-triggers",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "tempo",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "yfinance-staging",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    },
+    {
+      "name": "yfinance-wrapper",
+      "sync": "Synced",
+      "health": "Healthy",
+      "revision": "04a98931af43b6ea1d189369442f6a1b76dda589"
+    }
+  ],
+  "persistent_volume_claims": [
+    {
+      "namespace": "apps-prod",
+      "name": "openclaw-data",
+      "uid": "3c099e8a-bea8-4641-9a14-dcff30cdf8ff",
+      "annotations": {
+        "openclaw.rocks/backup-enabled": "true",
+        "pv.kubernetes.io/bind-completed": "yes",
+        "pv.kubernetes.io/bound-by-controller": "yes",
+        "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+        "volume.kubernetes.io/selected-node": "ubuntu-lucas-engineering-2",
+        "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+      },
+      "ownerReferences": [],
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "10Gi"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "10Gi"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "namespace": "code-server",
+      "name": "code-server-data",
+      "uid": "bff78087-5f5f-44a1-b705-a5e0c64d4480",
+      "annotations": {
+        "argocd.argoproj.io/tracking-id": "code-server:/PersistentVolumeClaim:code-server/code-server-data",
+        "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"PersistentVolumeClaim\",\"metadata\":{\"annotations\":{\"argocd.argoproj.io/tracking-id\":\"code-server:/PersistentVolumeClaim:code-server/code-server-data\"},\"labels\":{\"app.kubernetes.io/instance\":\"code-server\",\"app.kubernetes.io/name\":\"code-server\"},\"name\":\"code-server-data\",\"namespace\":\"code-server\"},\"spec\":{\"accessModes\":[\"ReadWriteOnce\"],\"resources\":{\"requests\":{\"storage\":\"30Gi\"}},\"storageClassName\":\"local-path\"}}\n",
+        "pv.kubernetes.io/bind-completed": "yes",
+        "pv.kubernetes.io/bound-by-controller": "yes",
+        "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+        "volume.kubernetes.io/selected-node": "ubuntu-lucas-engineering",
+        "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+      },
+      "ownerReferences": [],
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "30Gi"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-bff78087-5f5f-44a1-b705-a5e0c64d4480"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "30Gi"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "namespace": "monitoring",
+      "name": "uptime-kuma-pvc",
+      "uid": "f70da283-45c1-44db-9bc0-14cd23ede08e",
+      "annotations": {
+        "argocd.argoproj.io/tracking-id": "uptime-kuma:/PersistentVolumeClaim:monitoring/uptime-kuma-pvc",
+        "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"PersistentVolumeClaim\",\"metadata\":{\"annotations\":{\"argocd.argoproj.io/tracking-id\":\"uptime-kuma:/PersistentVolumeClaim:monitoring/uptime-kuma-pvc\"},\"labels\":{\"app.kubernetes.io/instance\":\"uptime-kuma\",\"app.kubernetes.io/managed-by\":\"Helm\",\"app.kubernetes.io/name\":\"uptime-kuma\",\"app.kubernetes.io/version\":\"2.1.1\",\"helm.sh/chart\":\"uptime-kuma-4.0.0\"},\"name\":\"uptime-kuma-pvc\",\"namespace\":\"monitoring\"},\"spec\":{\"accessModes\":[\"ReadWriteOnce\"],\"resources\":{\"requests\":{\"storage\":\"4Gi\"}}}}\n",
+        "pv.kubernetes.io/bind-completed": "yes",
+        "pv.kubernetes.io/bound-by-controller": "yes",
+        "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+        "volume.kubernetes.io/selected-node": "ubuntu-lucas-engineering",
+        "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+      },
+      "ownerReferences": [],
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "4Gi"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-f70da283-45c1-44db-9bc0-14cd23ede08e"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "4Gi"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "namespace": "odoo",
+      "name": "data-odoo-postgresql-0",
+      "uid": "504241f0-6aa9-46e1-905a-298321eed19c",
+      "annotations": {
+        "pv.kubernetes.io/bind-completed": "yes",
+        "pv.kubernetes.io/bound-by-controller": "yes",
+        "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+        "volume.kubernetes.io/selected-node": "ubuntu-lucas-engineering-2",
+        "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+      },
+      "ownerReferences": [],
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "8Gi"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-504241f0-6aa9-46e1-905a-298321eed19c"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "8Gi"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "namespace": "odoo",
+      "name": "odoo",
+      "uid": "e858df73-763b-4984-b15e-c3b3fd2dd03d",
+      "annotations": {
+        "argocd.argoproj.io/tracking-id": "odoo:/PersistentVolumeClaim:odoo/odoo",
+        "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"PersistentVolumeClaim\",\"metadata\":{\"annotations\":{\"argocd.argoproj.io/tracking-id\":\"odoo:/PersistentVolumeClaim:odoo/odoo\"},\"labels\":{\"app.kubernetes.io/instance\":\"odoo\",\"app.kubernetes.io/managed-by\":\"Helm\",\"app.kubernetes.io/name\":\"odoo\",\"app.kubernetes.io/version\":\"18.0.20250805\",\"helm.sh/chart\":\"odoo-28.2.10\"},\"name\":\"odoo\",\"namespace\":\"odoo\"},\"spec\":{\"accessModes\":[\"ReadWriteOnce\"],\"resources\":{\"requests\":{\"storage\":\"10Gi\"}},\"storageClassName\":\"local-path\"}}\n",
+        "pv.kubernetes.io/bind-completed": "yes",
+        "pv.kubernetes.io/bound-by-controller": "yes",
+        "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+        "volume.kubernetes.io/selected-node": "ubuntu-lucas-engineering",
+        "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+      },
+      "ownerReferences": [],
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "10Gi"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-e858df73-763b-4984-b15e-c3b3fd2dd03d"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "10Gi"
+        },
+        "phase": "Bound"
+      }
+    }
+  ],
+  "persistent_volumes": [
+    {
+      "name": "pvc-3c099e8a-bea8-4641-9a14-dcff30cdf8ff",
+      "uid": "89ae3358-d8c4-4710-8ed2-b7ae7d581602",
+      "claimRef": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "openclaw-data",
+        "namespace": "apps-prod",
+        "resourceVersion": "3901295",
+        "uid": "3c099e8a-bea8-4641-9a14-dcff30cdf8ff"
+      },
+      "reclaimPolicy": "Delete",
+      "capacity": {
+        "storage": "10Gi"
+      },
+      "storageClassName": "local-path",
+      "phase": "Bound"
+    },
+    {
+      "name": "pvc-504241f0-6aa9-46e1-905a-298321eed19c",
+      "uid": "3e76368d-2b76-47ea-a878-fa519d11d2b5",
+      "claimRef": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "data-odoo-postgresql-0",
+        "namespace": "odoo",
+        "resourceVersion": "16068531",
+        "uid": "504241f0-6aa9-46e1-905a-298321eed19c"
+      },
+      "reclaimPolicy": "Delete",
+      "capacity": {
+        "storage": "8Gi"
+      },
+      "storageClassName": "local-path",
+      "phase": "Bound"
+    },
+    {
+      "name": "pvc-bff78087-5f5f-44a1-b705-a5e0c64d4480",
+      "uid": "36959da0-3e50-47c9-be25-2f2053056f16",
+      "claimRef": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "code-server-data",
+        "namespace": "code-server",
+        "resourceVersion": "5665578",
+        "uid": "bff78087-5f5f-44a1-b705-a5e0c64d4480"
+      },
+      "reclaimPolicy": "Delete",
+      "capacity": {
+        "storage": "30Gi"
+      },
+      "storageClassName": "local-path",
+      "phase": "Bound"
+    },
+    {
+      "name": "pvc-e858df73-763b-4984-b15e-c3b3fd2dd03d",
+      "uid": "246ed215-5c24-408c-a264-ba83ced089a9",
+      "claimRef": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "odoo",
+        "namespace": "odoo",
+        "resourceVersion": "16068512",
+        "uid": "e858df73-763b-4984-b15e-c3b3fd2dd03d"
+      },
+      "reclaimPolicy": "Delete",
+      "capacity": {
+        "storage": "10Gi"
+      },
+      "storageClassName": "local-path",
+      "phase": "Bound"
+    },
+    {
+      "name": "pvc-f70da283-45c1-44db-9bc0-14cd23ede08e",
+      "uid": "ce76367e-5a20-40de-890e-5d2651f4fd33",
+      "claimRef": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "uptime-kuma-pvc",
+        "namespace": "monitoring",
+        "resourceVersion": "12365",
+        "uid": "f70da283-45c1-44db-9bc0-14cd23ede08e"
+      },
+      "reclaimPolicy": "Delete",
+      "capacity": {
+        "storage": "4Gi"
+      },
+      "storageClassName": "local-path",
+      "phase": "Bound"
+    }
+  ],
+  "workloads": [
+    {
+      "kind": "Deployment",
+      "namespace": "apps-prod",
+      "name": "clawspace",
+      "replicas": 1,
+      "readyReplicas": 1,
+      "suspend": null,
+      "pvcRetention": null,
+      "claimTemplates": [],
+      "volumes": [
+        {
+          "name": "openclaw-data",
+          "claimName": "openclaw-data"
+        }
+      ]
+    },
+    {
+      "kind": "Deployment",
+      "namespace": "code-server",
+      "name": "code-server",
+      "replicas": 1,
+      "readyReplicas": 1,
+      "suspend": null,
+      "pvcRetention": null,
+      "claimTemplates": [],
+      "volumes": [
+        {
+          "name": "data",
+          "claimName": "code-server-data"
+        }
+      ]
+    },
+    {
+      "kind": "Deployment",
+      "namespace": "epheros",
+      "name": "epheros-api",
+      "replicas": 2,
+      "readyReplicas": 2,
+      "suspend": null,
+      "pvcRetention": null,
+      "claimTemplates": [],
+      "volumes": []
+    },
+    {
+      "kind": "Deployment",
+      "namespace": "epheros",
+      "name": "epheros-web",
+      "replicas": 2,
+      "readyReplicas": 2,
+      "suspend": null,
+      "pvcRetention": null,
+      "claimTemplates": [],
+      "volumes": []
+    },
+    {
+      "kind": "Deployment",
+      "namespace": "monitoring",
+      "name": "uptime-kuma",
+      "replicas": 1,
+      "readyReplicas": 1,
+      "suspend": null,
+      "pvcRetention": null,
+      "claimTemplates": [],
+      "volumes": [
+        {
+          "name": "storage",
+          "claimName": "uptime-kuma-pvc"
+        }
+      ]
+    },
+    {
+      "kind": "Deployment",
+      "namespace": "odoo",
+      "name": "odoo",
+      "replicas": 1,
+      "readyReplicas": 1,
+      "suspend": null,
+      "pvcRetention": null,
+      "claimTemplates": [],
+      "volumes": [
+        {
+          "name": "odoo-data",
+          "claimName": "odoo"
+        }
+      ]
+    },
+    {
+      "kind": "StatefulSet",
+      "namespace": "apps-prod",
+      "name": "openclaw",
+      "replicas": 1,
+      "readyReplicas": 1,
+      "suspend": null,
+      "pvcRetention": {
+        "whenDeleted": "Retain",
+        "whenScaled": "Retain"
+      },
+      "claimTemplates": [],
+      "volumes": [
+        {
+          "name": "data",
+          "claimName": "openclaw-data"
+        }
+      ]
+    },
+    {
+      "kind": "StatefulSet",
+      "namespace": "odoo",
+      "name": "odoo-postgresql",
+      "replicas": 1,
+      "readyReplicas": 1,
+      "suspend": null,
+      "pvcRetention": {
+        "whenDeleted": "Retain",
+        "whenScaled": "Retain"
+      },
+      "claimTemplates": [
+        "data"
+      ],
+      "volumes": []
+    }
+  ]
+}
