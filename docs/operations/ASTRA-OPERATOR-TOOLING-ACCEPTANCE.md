@@ -1,6 +1,6 @@
 # ASTRA: Operator tooling acceptance
 
-Status: implementation, local/live validation and installation complete; repository merge is recorded below when available. This is acceptance of operator tooling, not PHarness coding qualification or autonomous Finance delivery.
+Status: complete. Implementation, local/live validation, installation and CI passed; [PR 58](https://github.com/lward27/lucas_engineering/pull/58) merged as `a0dcded522907a2cd8f171b0fcb60f5b6bffcc62`. This is acceptance of operator tooling, not PHarness coding qualification or autonomous Finance delivery.
 
 ## Changes and boundaries
 
@@ -34,3 +34,5 @@ All 91 inactive temporary ASTRA Python helpers were copied into a private archiv
 ## Current PHarness checkpoint
 
 Deployed implementation: `92f8f1b8e98dd45d0a01e030aeb99ef9bcf95267`; PHarness main/Argo pin at observation: `4bf9f0ae73a3ed2ef25e9bca53090e0edecf32f6`. Native schema: 55; minimum compatible reader: source 92. M04 remains open. Evaluation `infeval_01a07730b1e275e096ba85c8afb04d4c` completed as a failed diagnostic with no qualification. Inspect its retained first failure before choosing another primary/control experiment. The [LEA assessment](ASTRA-LEA-RETIREMENT-ASSESSMENT.md) is read-only; no LEA retirement is authorized.
+
+The durable [PHarness checkpoint](https://github.com/lward27/pharness/blob/main/planning/evidence/autonomous-sdlc/ASTRA-CLUSTER-OPERATOR-CHECKPOINT.md) and source-92 live evidence were committed through [PHarness PR 373](https://github.com/lward27/pharness/pull/373), merge `4206a1447744a08e3a2bf6712e0a028479a0fb23`. This is a documentation commit, not a new compiled release. The separately requested [application retirement](ASTRA-APPLICATION-RETIREMENT.md) leaves the PHarness/Finance platform and its shared dependencies in service.

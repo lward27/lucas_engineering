@@ -1,6 +1,6 @@
 # ASTRA: Retire unused applications from lucas_engineering
 
-Status: retention preparation merged as `89c2a268270b428eecaa47dea6bf3ddce4948a34`; application removal prepared for merge after the live retention gate.
+Status: complete. Retention protections and application removal were merged and observed on 2026-09-06. Stored data remains retained.
 
 ## Authorized scope
 
@@ -103,4 +103,13 @@ Cloudflared is remotely managed by token; this repository contains no per-host t
 
 ## Completion evidence
 
-Pending: merged revisions, live retention gate, exact removal verification, Homepage/Prometheus observed updates, unrelated application comparison.
+- [Retention PR 57](https://github.com/lward27/lucas_engineering/pull/57), merge `89c2a268270b428eecaa47dea6bf3ddce4948a34`: [live annotation and original claim-identity gate](ASTRA-APPLICATION-RETENTION-OBSERVED.json) passed before removal.
+- [Removal PR 59](https://github.com/lward27/lucas_engineering/pull/59), merge `507ad5fbb3f9613d11d2fdb78a473de9f5c3f5a5`: [local rendering, exact scope comparison and dry-runs](ASTRA-APPLICATION-REMOVAL-VALIDATION.json) passed. Only the six named Applications disappear from the root render.
+- [Post-removal inventory](ASTRA-APPLICATION-RETIREMENT-OBSERVED.json): all six Applications, all targeted application-owned non-retained resources and all matching Pods are absent. All five original claims remain Bound with unchanged UIDs/PV bindings; the three dedicated namespaces remain Active. Root-app, Homepage and Prometheus are Synced/Healthy at the removal revision.
+- All 42 remaining Argo applications are Healthy; 41 are Synced. Hermes was already Healthy/OutOfSync in the baseline and remains so. It was not changed or synchronized as part of this retirement.
+- [Live application checks](ASTRA-APPLICATION-RETIREMENT-RUNTIME-CHECKS.json): Homepage serves the remaining bookmarks without retired entries; Prometheus's loaded configuration omits the three retired jobs and keeps Mimir/Loki collection. Homepage observed generation 15 and the expected configuration hash.
+- The only direct cluster mutations were bounded refresh annotations on the owning Argo Applications. Existing automatic sync, pruning and finalizers performed the retirement. No direct workload, namespace, PVC, PV, database or external Cloudflare deletion was executed.
+
+The first inventory collector stopped when `kubectl --ignore-not-found` successfully returned an empty response for absent resources. It was corrected to represent that result as an empty list and the full inventory was repeated. This was an observation-script defect, not a failed application removal.
+
+Data retention is not a backup or restore test. Deleting the retained namespaces, claims, local-path backing disks or shared database later is a separate irreversible action. External Cloudflare DNS/Access/tunnel entries remain outside this GitOps repository; no end-user application remains behind the retired Kubernetes origins.
