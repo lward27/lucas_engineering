@@ -8,6 +8,7 @@ from pathlib import Path
 from .common import OpsError, canonical, digest, identifier, now, run, save
 from .connections import Pharness, github_read, registry_read
 from .builder import inspect as inspect_builder
+from .evaluation_receipts import execution_receipt
 
 
 def doctor(profile, credentials=False, builder=False):
@@ -171,9 +172,11 @@ def watch_evaluation(api, evaluation_id, directory, deadline=600, interval=25):
     end = time.monotonic() + deadline
     while True:
         result = evaluation_status(api, evaluation_id, directory)
-        if result["status"] not in ("running", "queued", "pending"):
-            return evaluation_summary(result)
+        receipt = execution_receipt(api.profile, result, directory)
+        summary = {**evaluation_summary(result), "execution_receipt": receipt}
+        if result["status"] not in ("running", "queued", "pending") and receipt["status"] != "pending":
+            return summary
         remaining = end - time.monotonic()
         if remaining <= 0:
-            return {**evaluation_summary(result), "observation": "deadline_reached", "resume_by_id": True}
+            return {**summary, "observation": "deadline_reached", "resume_by_id": True}
         time.sleep(min(interval, remaining))

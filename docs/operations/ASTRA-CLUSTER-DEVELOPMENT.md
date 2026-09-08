@@ -35,7 +35,7 @@ For a real uncached AMD64 execution check, use a clean PHarness worktree at curr
   --output ASTRA-AMD64-PREFLIGHT.json
 ```
 
-That effectful command invokes PHarness's existing platform-check build. It can establish and close its own SSH tunnel if the reviewed local port is free. An occupied port must pass the identity check; the tool never kills an existing connection. No release image is pushed.
+That effectful command invokes PHarness's existing platform-check build against the selected Mac endpoint. The local route must already be available and pass its identity check. The tool never kills an existing connection or falls back to a remote builder. No release image is pushed.
 
 ## Resume existing work
 
@@ -45,6 +45,10 @@ That effectful command invokes PHarness's existing platform-check build. It can 
 ```
 
 The durable PHarness API record is authoritative even when Kubernetes has expired its Job. Terminal results are retained once and checked for unexpected changes. Running snapshots may advance. A timeout ends observation, not the remote operation. Resume using its ID; do not submit another request to recover a lost view.
+
+`evaluation watch` also captures the named Job and its owned Pods in `<evaluation-id>.execution.json` once their terminal states are observed. It records configured images, actual image IDs, initialization/process exits and restart counts, and checks the evaluation label and Job/Pod ownership. It waits through the short interval between a native callback and process termination within the same observation deadline. It never reads logs, Secret values, container arguments or environment fields for this receipt.
+
+A `captured` receipt means termination evidence was saved; it is not a passing evaluation, image-provenance validation or qualification. The native report is unchanged. Missing Jobs/Pods and read failures produce explicit observation gaps, preserving any previous snapshot. Once saved, a terminal receipt remains available after cleanup and is returned as retained evidence. Neither a missing receipt nor a timeout dispatches another evaluation or stops remote work.
 
 The operator client owns its localhost-only port-forward, reconnects read requests at most once after transport failure, and closes only its own process. A transport failure is missing observation, not proof of application failure. Long acceptance measurements belong in existing durable application/Job mechanisms; this CLI does not move PHarness's controller into the laptop.
 
