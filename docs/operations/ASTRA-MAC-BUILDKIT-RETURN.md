@@ -1,6 +1,6 @@
 # ASTRA: Restore the Mac route for Tekton
 
-2026-09-08. GitOps base `192bed8b6e014e26dbb88dce5d76c8f24b1579d8`. The owner reports lucas-desktop off and previously authorized this M1 Mac as its replacement. Status: direct Mac prerequisite verified; GitOps Service-route change and routed acceptance pending. This is infrastructure readiness, not autonomous Finance delivery.
+2026-09-08. GitOps base `192bed8b6e014e26dbb88dce5d76c8f24b1579d8`. The owner reports lucas-desktop off and previously authorized this M1 Mac as its replacement. Status: direct and Service-routed Mac builds, exact GitOps reconciliation, and operator readiness accepted. This is infrastructure readiness, not autonomous Finance delivery.
 
 The existing `k3s-buildkit` Service, port 12340 and `buildkit-k3s.lucas.internal` mTLS identity stay the same. Only the EndpointSlice address changes from `192.168.50.145` to the observed Mac VPN address `192.168.2.2`. The [existing forwarding script](../../ops/buildkit-macos/forward-rancher-desktop.sh) is running as an owned process bound to that exact VPN address; it reaches the existing daemon through Rancher Desktop's local VM SSH connection. No default Docker context, other builder, credential, namespace, PVC or application deployment changes.
 
@@ -12,8 +12,16 @@ The retained `astra-tekton-buildkit` container is the existing pinned BuildKit v
 
 Keep the Mac, VPN, Rancher Desktop and forwarding process up while this route is selected. A lost forward or sleeping Mac is a build dependency failure, not permission to switch builders silently. Before any recreation, reproduce the recorded capacity/emulation settings and rerun uncached AMD64 and authenticated registry checks. No recreation, cache deletion or host expansion is part of this change. M12 still needs actual unattended operation evidence.
 
-Before restoring the desktop route, verify its same mTLS identity and real AMD64 publication, reconcile active builds, then change only the EndpointSlice address through GitOps. Preserve both builder caches and build history. After this Mac pin merges, verify the exact `tekton-ci` Argo revision and Service endpoint, then perform a Service-routed build under the existing deadline.
+Before restoring the desktop route, verify its same mTLS identity and real AMD64 publication, reconcile active builds, then change only the EndpointSlice address through GitOps. Preserve both builder caches and build history. For any later route change, verify the exact `tekton-ci` Argo revision and Service endpoint, then perform a Service-routed build under the existing deadline. The current Mac route is accepted below.
 
 ## Operator helper validation
 
 The profile explicitly selects `pharness-mac` and localhost port 12344. Inspection verifies its remote-driver endpoint and mutual TLS identity; it reports advertised platforms and does not infer execution from them. A missing local daemon fails without opening a desktop SSH fallback. Explicitly configured SSH builders still own and close their own tunnels. All 28 operator tests pass, including ARM-only advertisement, unavailable local endpoint, TLS identity checks and the existing SSH route. The [native helper preflight](ASTRA-MAC-BUILDKIT-HELPER-PREFLIGHT.json) then actually passed uncached AMD64 execution on clean PHarness main `81de84f70393c9dd9dad302930a97acf88da4ec9`, with no image push or cluster mutation.
+
+## Accepted Service route
+
+[PR 62](https://github.com/lward27/lucas_engineering/pull/62) merged at `af86ac8184b1085c80e9b5b0b448aa3ec127be66`. [Argo observation](ASTRA-MAC-BUILDKIT-ARGO-OBSERVED.json) confirms that exact `tekton-ci` revision, Synced/Healthy, with EndpointSlice `192.168.2.2`. No manual sync or live endpoint patch was used.
+
+The [Service probe](ASTRA-MAC-BUILDKIT-SERVICE-PROBE.job.json), dispatched once under its [operation record](ASTRA-MAC-BUILDKIT-SERVICE-OPERATION.json), uses the exact existing Task address `k3s-buildkit.tekton-pipelines.svc.cluster.local:12340`. Its [terminal Job/Pod receipt](ASTRA-MAC-BUILDKIT-SERVICE-RESULT.json) records success in 93 seconds, within the unchanged 360-second deadline. [Independent artifact verification](ASTRA-MAC-BUILDKIT-SERVICE-ARTIFACT-VERIFIED.json) checks digest `sha256:6015c9b8e156ccf9bfbaf4858603271d6c116d57eaad8bb5dc02832824316389`, AMD64 configuration, the uncached 112 MiB payload build, and digest-pinned network-disabled execution after pulling through Rancher Desktop.
+
+The content-addressed helper installer activated bundle `169f93c6f2e8ed26f2f9b5088ab5647bbc3741a7c442dea8cb123cda0c8da4c0`, preserving the previous version and skill backups. No skill content changed. [Installed readiness](ASTRA-MAC-BUILDKIT-OPERATOR-READINESS.json) passes all 15 checks: named credentials, both Finance source protections, GitOps authentication, selected builder mTLS, Service address, registry TLS and cluster/API identities. These read checks do not prove future writer calls or replace M07–M12 acceptance. The Mac forward remains running; the powered-off desktop is not needed for the selected build route.
