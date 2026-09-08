@@ -18,9 +18,9 @@
   "pharness": {"namespace": "pharness", "resource": "service/pharness-api", "port": 4777, "argo_application": "pharness"},
   "registry": {"hostname": "registry.lucas.engineering", "address": "192.168.20.210", "port": 32443, "ca_file": "~/.config/lucas-engineering/pki/buildkit/registry/ca.pem"},
   "builder": {
-    "docker_context": "rancher-desktop", "name": "lucas-desktop", "platform": "linux/amd64",
-    "client_endpoint": "tcp://127.0.0.1:12342",
-    "ssh_host": "lucas-desktop", "remote_address": "192.168.50.145", "remote_port": 12340,
+    "docker_context": "rancher-desktop", "name": "pharness-mac", "platform": "linux/amd64",
+    "client_endpoint": "tcp://127.0.0.1:12344",
+    "ssh_host": null, "remote_address": "192.168.2.2", "remote_port": 12340,
     "tls_servername": "buildkit-k3s.lucas.internal", "tls_directory": "~/.config/lucas-engineering/pki/buildkit/k3s",
     "service_namespace": "tekton-pipelines", "endpoint_slice": "k3s-buildkit-ipv4"
   },
@@ -37,6 +37,6 @@
   "source_repositories": ["lward27/yfinance_wrapper", "lward27/finance-frontend"],
   "gitops_repository": "lward27/lucas_engineering",
   "pipelines": ["pharness-yfinance-build", "pharness-finance-frontend-build"],
-  "verified_at": "2026-09-06",
+  "verified_at": "2026-09-08",
   "notes": "Expected identities, not cached health. Every command revalidates the kubeconfig API server. Credential values are never part of this profile."
 }

@@ -1,0 +1,31 @@
+{
+  "buildkit_metadata": {
+    "containerimage.config.digest": "sha256:70bb4de1f9fbb660b7120fe72bbdb5fd92d49c072a2786840435640884cd1f0e",
+    "containerimage.descriptor": {
+      "digest": "sha256:58c88d92972721ae08031bf5775ac6f982d7c5380311b05e5ebad34b5d43eb3d",
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "platform": {
+        "architecture": "amd64",
+        "os": "linux"
+      },
+      "size": 897
+    },
+    "containerimage.digest": "sha256:58c88d92972721ae08031bf5775ac6f982d7c5380311b05e5ebad34b5d43eb3d",
+    "image.name": "registry.lucas.engineering/buildkit-smoke:astra-mac-return-20260908"
+  },
+  "endpoint": "192.168.2.2:12340",
+  "exact_digest_pull_and_network_disabled_run": "passed",
+  "job_name": "astra-m02-mac-return-20260908",
+  "job_result": "passed",
+  "job_uid": "1b3f71ac-f837-4ae0-9ad3-fd262b9c3cc4",
+  "log_sha256": "sha256:1d4afd98da1f70d0f712d0f4db299d0ad21863850b874e7865e01a3ac4816a9d",
+  "observed_at": "2026-09-08T13:23:57.985011+00:00",
+  "platform": "linux/amd64",
+  "random_payload_bytes": 117440512,
+  "registry_config_digest": "sha256:70bb4de1f9fbb660b7120fe72bbdb5fd92d49c072a2786840435640884cd1f0e",
+  "registry_manifest_digest": "sha256:58c88d92972721ae08031bf5775ac6f982d7c5380311b05e5ebad34b5d43eb3d",
+  "scope": "Direct Mac host prerequisite, before GitOps Service-route change; not autonomous Finance source/build acceptance.",
+  "tls_server_name": "buildkit-k3s.lucas.internal",
+  "tls_verification_disabled": false,
+  "uncached_amd64_execution": true
+}

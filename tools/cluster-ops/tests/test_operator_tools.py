@@ -185,6 +185,46 @@ class ConnectionTests(unittest.TestCase):
                 with BuilderConnection(profile): pass
             launch.assert_not_called()
 
+    def test_builder_advertisement_is_not_execution_proof(self):
+        profile = Mock(data={"builder": {"name": "pharness-mac", "docker_context": "rancher-desktop",
+            "client_endpoint": "tcp://127.0.0.1:12344", "platform": "linux/amd64",
+            "tls_directory": "/fixture/tls", "tls_servername": "buildkit-k3s.lucas.internal"}})
+        for advertised in ("linux/arm64", "linux/amd64, linux/arm64"):
+            with self.subTest(advertised=advertised), \
+                 patch("lib.builder.run", return_value=("Driver: remote\nEndpoint: tcp://127.0.0.1:12344\nPlatforms: " + advertised + "\n").encode()), \
+                 patch("lib.builder.socket.create_connection"), \
+                 patch("lib.builder.ssl.create_default_context") as tls:
+                tls.return_value.wrap_socket.return_value.__enter__.return_value.version.return_value = "TLSv1.3"
+                result = inspect_builder(profile)
+                self.assertEqual(result["advertised_platforms"], advertised.split(", "))
+                self.assertEqual(result["requested_platform"], "linux/amd64")
+                self.assertEqual(result["execution_test"], "not_run")
+                tls.assert_called_once_with(cafile="/fixture/tls/ca.pem")
+                tls.return_value.load_cert_chain.assert_called_once_with("/fixture/tls/client-cert.pem", "/fixture/tls/client-key.pem")
+                self.assertEqual(tls.return_value.wrap_socket.call_args.kwargs["server_hostname"], "buildkit-k3s.lucas.internal")
+
+    def test_missing_local_builder_never_starts_a_fallback(self):
+        profile = Mock(data={"builder": {"client_endpoint": "tcp://127.0.0.1:12344", "ssh_host": None}})
+        with patch("lib.builder.socket.create_connection", side_effect=ConnectionRefusedError), \
+             patch("lib.builder.subprocess.Popen") as launch:
+            with self.assertRaisesRegex(OpsError, "Selected local BuildKit endpoint is unavailable"):
+                with BuilderConnection(profile): pass
+            launch.assert_not_called()
+
+    def test_explicit_ssh_builder_preserves_its_owned_route(self):
+        profile = Mock(data={"builder": {"client_endpoint": "tcp://127.0.0.1:12342",
+            "ssh_host": "lucas-desktop", "remote_port": 12340}})
+        from unittest.mock import MagicMock
+        with patch("lib.builder.socket.create_connection", side_effect=[ConnectionRefusedError, MagicMock()]), \
+             patch("lib.builder.inspect") as inspection, \
+             patch("lib.builder.subprocess.Popen") as launch:
+            launch.return_value.poll.return_value = None
+            with BuilderConnection(profile): pass
+            argv = launch.call_args.args[0]
+            self.assertEqual(argv[-2:], ["127.0.0.1:12342:127.0.0.1:12340", "lucas-desktop"])
+            inspection.assert_called_once_with(profile)
+            launch.return_value.terminate.assert_called_once()
+
     def test_cli_existing_receipt_stops_before_operations(self):
         with tempfile.TemporaryDirectory() as temp:
             output = Path(temp) / "receipt.json"

@@ -1,0 +1,19 @@
+{
+  "all_existing_pipeline_runs_terminal": true,
+  "context": "lucas_engineering",
+  "dry_run": "passed",
+  "forward_pid": 67317,
+  "forward_session": 17712,
+  "gitops_base": "192bed8b6e014e26dbb88dce5d76c8f24b1579d8",
+  "job_name": "astra-m02-mac-return-20260908",
+  "job_uid": "1b3f71ac-f837-4ae0-9ad3-fd262b9c3cc4",
+  "mac_vpn_address": "192.168.2.2",
+  "namespace": "tekton-pipelines",
+  "pipeline_status_counts": {
+    "False": 25,
+    "True": 241
+  },
+  "scope": "Direct Mac mTLS/uncached AMD64/112 MiB registry push probe; no Service route changed yet",
+  "started_at": "2026-09-08T13:20:30.846130+00:00",
+  "state": "dispatched"
+}

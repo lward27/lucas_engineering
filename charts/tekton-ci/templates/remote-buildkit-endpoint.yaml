@@ -29,7 +29,7 @@ ports:
     protocol: TCP
     port: 12340
 endpoints:
-  # K3s-only desktop BuildKit; the Mac remains a documented manual fallback.
-  - addresses: ["192.168.50.145"]
+  # Owner-selected Mac fallback while the desktop is off; retain end-to-end mTLS.
+  - addresses: ["192.168.2.2"]
     conditions:
       ready: true

@@ -85,7 +85,7 @@ def doctor(profile, credentials=False, builder=False):
         check("gitops_authentication", lambda: {
             "repository": github_read(profile, "gitops_writer", "/repos/" + profile.data["gitops_repository"])["full_name"]})
     if builder:
-        check("builder_mtls_and_platform", lambda: inspect_builder(profile))
+        check("builder_identity_and_mtls", lambda: inspect_builder(profile))
     report["status"] = "passed" if all(c["status"] == "passed" for c in report["checks"]) else "blocked"
     report["completed_at"] = now()
     return report

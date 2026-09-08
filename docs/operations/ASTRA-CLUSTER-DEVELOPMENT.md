@@ -20,11 +20,11 @@ The installer creates a bundle addressed by its content hash under `~/.local/sha
 ~/.local/bin/lucas-ops doctor --credentials --builder --output ASTRA-READINESS.json
 ```
 
-The environment profile pins the intended API server, repositories, actual PHarness Argo values, registry TLS route, named credential references and existing desktop builder. Every cluster command uses the explicit kubeconfig/context; current-context is never changed. The profile is expected configuration, not authorization or cached health. Correct a changed binding in its authoritative source, then update the reference.
+The environment profile pins the intended API server, repositories, actual PHarness Argo values, registry TLS route, named credential references and selected existing Mac builder. Every cluster command uses the explicit kubeconfig/context; current-context is never changed. The profile is expected configuration, not authorization or cached health. Correct a changed binding in its authoritative source, then update the reference.
 
 The default doctor is read-only. `--credentials` privately uses the three named Secrets for the already-authorized PHarness/GitHub authentication checks. Values remain in memory and never appear in arguments or receipts. The checks do not exercise source writes, run models, submit builds, or approve production.
 
-`--builder` verifies the existing `lucas-desktop` Buildx configuration and mTLS through its SSH route. It reports platform advertisement separately from execution. The selected Rancher Desktop client and builder never fall back to another daemon or worker.
+`--builder` verifies the existing `pharness-mac` Buildx configuration and mTLS at its local endpoint. It reports the worker's advertised platforms without treating them as execution proof: the Mac's Rosetta path can execute AMD64 even when the worker advertises ARM64 only. The native `builder preflight` below must still demonstrate uncached AMD64 execution. A missing local endpoint fails explicitly; the selected Rancher Desktop client and builder never fall back to another daemon or worker. The cluster uses the separately verified [Mac VPN forwarding route](ASTRA-MAC-BUILDKIT-RETURN.md).
 
 For a real uncached AMD64 execution check, use a clean PHarness worktree at current merged main:
 
