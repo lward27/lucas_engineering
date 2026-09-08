@@ -1,0 +1,32 @@
+{
+  "buildkit_metadata": {
+    "containerimage.config.digest": "sha256:80dc3230b21daa79f04f3c95dcabe6170fc43a8418fb94e588e97aa7233b9903",
+    "containerimage.descriptor": {
+      "digest": "sha256:6015c9b8e156ccf9bfbaf4858603271d6c116d57eaad8bb5dc02832824316389",
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "platform": {
+        "architecture": "amd64",
+        "os": "linux"
+      },
+      "size": 897
+    },
+    "containerimage.digest": "sha256:6015c9b8e156ccf9bfbaf4858603271d6c116d57eaad8bb5dc02832824316389",
+    "image.name": "registry.lucas.engineering/buildkit-smoke:astra-mac-service-20260908"
+  },
+  "endpoint": "k3s-buildkit.tekton-pipelines.svc.cluster.local:12340",
+  "exact_digest_pull_and_network_disabled_run": "passed",
+  "gitops_revision": "af86ac8184b1085c80e9b5b0b448aa3ec127be66",
+  "job_name": "astra-m02-mac-service-20260908",
+  "job_result": "passed",
+  "job_uid": "7d47c0ca-7864-4454-8571-7299dedf5f57",
+  "log_sha256": "sha256:c1742620e0baaa82af918dc6d12827c2e6e0621c9e6026824d9c7cd6f7cbc4b1",
+  "observed_at": "2026-09-08T13:44:12.589696+00:00",
+  "platform": "linux/amd64",
+  "random_payload_bytes": 117440512,
+  "registry_config_digest": "sha256:80dc3230b21daa79f04f3c95dcabe6170fc43a8418fb94e588e97aa7233b9903",
+  "registry_manifest_digest": "sha256:6015c9b8e156ccf9bfbaf4858603271d6c116d57eaad8bb5dc02832824316389",
+  "scope": "Service-routed Mac infrastructure readiness; not an autonomous Finance source/build acceptance.",
+  "tls_server_name": "buildkit-k3s.lucas.internal",
+  "tls_verification_disabled": false,
+  "uncached_amd64_execution": true
+}

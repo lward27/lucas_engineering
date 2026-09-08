@@ -1,0 +1,112 @@
+{
+  "job": {
+    "name": "astra-m02-mac-service-20260908",
+    "status": {
+      "completionTime": "2026-09-08T13:42:50Z",
+      "conditions": [
+        {
+          "lastProbeTime": "2026-09-08T13:42:50Z",
+          "lastTransitionTime": "2026-09-08T13:42:50Z",
+          "message": "Reached expected number of succeeded pods",
+          "reason": "CompletionsReached",
+          "status": "True",
+          "type": "SuccessCriteriaMet"
+        },
+        {
+          "lastProbeTime": "2026-09-08T13:42:50Z",
+          "lastTransitionTime": "2026-09-08T13:42:50Z",
+          "message": "Reached expected number of succeeded pods",
+          "reason": "CompletionsReached",
+          "status": "True",
+          "type": "Complete"
+        }
+      ],
+      "ready": 0,
+      "startTime": "2026-09-08T13:41:17Z",
+      "succeeded": 1,
+      "terminating": 0,
+      "uncountedTerminatedPods": {}
+    },
+    "uid": "7d47c0ca-7864-4454-8571-7299dedf5f57"
+  },
+  "observed_at": "2026-09-08T13:42:58.778016+00:00",
+  "pods": [
+    {
+      "containers": [
+        {
+          "allocatedResources": {
+            "cpu": "25m",
+            "memory": "64Mi"
+          },
+          "containerID": "containerd://014447dfda9e0bc3b35eba47aa4003639086d3788c2769aa271f6a1dae8a76ac",
+          "image": "sha256:3150e38f81f5cf66d5b732bcddf8e4e2bd805e0eb5f743db55539f2d7b482185",
+          "imageID": "docker.io/moby/buildkit@sha256:60d1f642e29dc938bd6c109ba5500849fccf41921927c5339788b8227f57feb9",
+          "lastState": {},
+          "name": "probe",
+          "ready": false,
+          "resources": {
+            "limits": {
+              "cpu": "250m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "25m",
+              "memory": "64Mi"
+            }
+          },
+          "restartCount": 0,
+          "started": false,
+          "state": {
+            "terminated": {
+              "containerID": "containerd://014447dfda9e0bc3b35eba47aa4003639086d3788c2769aa271f6a1dae8a76ac",
+              "exitCode": 0,
+              "finishedAt": "2026-09-08T13:42:47Z",
+              "reason": "Completed",
+              "startedAt": "2026-09-08T13:41:19Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 0,
+              "supplementalGroups": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                10,
+                11,
+                20,
+                26,
+                27
+              ],
+              "uid": 0
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/var/run/buildkit-tls",
+              "name": "tls",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            },
+            {
+              "mountPath": "/var/run/registry",
+              "name": "registry-auth",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            },
+            {
+              "mountPath": "/work",
+              "name": "work"
+            }
+          ]
+        }
+      ],
+      "name": "astra-m02-mac-service-20260908-xrf85",
+      "phase": "Succeeded",
+      "uid": "d388a61b-573a-40f9-bd26-fd28309c39f8"
+    }
+  ]
+}

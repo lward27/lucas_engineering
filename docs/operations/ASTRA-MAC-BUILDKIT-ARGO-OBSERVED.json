@@ -1,0 +1,16 @@
+{
+  "addresses": [
+    "192.168.2.2"
+  ],
+  "endpoint_uid": "485dd0ca-e2f9-4efd-a919-a6d6f5b7ed31",
+  "health": "Healthy",
+  "observed_at": "2026-09-08T13:40:36.986627+00:00",
+  "revision": "af86ac8184b1085c80e9b5b0b448aa3ec127be66",
+  "source": {
+    "path": "charts/tekton-ci",
+    "repoURL": "https://github.com/lward27/lucas_engineering.git",
+    "targetRevision": "HEAD"
+  },
+  "status": "passed",
+  "sync": "Synced"
+}
