@@ -1,4 +1,4 @@
-"""Use the existing Buildx builder and SSH route; never select a fallback."""
+"""Use the selected existing Buildx endpoint; never select a fallback."""
 import os
 import re
 import socket
@@ -19,18 +19,21 @@ def inspect(profile):
         raise OpsError("builder_identity", "Existing Buildx builder has an unexpected driver or endpoint")
     endpoint = urlsplit(endpoints[0])
     if endpoint.scheme != "tcp" or endpoint.hostname != "127.0.0.1" or endpoint.port is None:
-        raise OpsError("builder_identity", "Expected the reviewed localhost SSH route")
+        raise OpsError("builder_identity", "Expected the reviewed localhost BuildKit endpoint")
     tls = Path(settings["tls_directory"]).expanduser()
     context = ssl.create_default_context(cafile=str(tls / "ca.pem"))
     context.load_cert_chain(str(tls / "client-cert.pem"), str(tls / "client-key.pem"))
     with socket.create_connection((endpoint.hostname, endpoint.port), timeout=15) as connection:
         with context.wrap_socket(connection, server_hostname=settings["tls_servername"]) as secure:
             version = secure.version()
-    if not re.search(r"(?m)^Platforms:.*\blinux/amd64(?:,|\s|$)", text):
-        raise OpsError("builder_platform", "Linux AMD64 is not advertised by the selected worker")
+    # Rosetta can execute AMD64 even when the worker advertises only ARM64.
+    # Identity inspection cannot establish execution support in either case.
+    platforms = re.findall(r"(?m)^Platforms:\s*(.+)$", text)
+    advertised = [p.strip().rstrip("*") for row in platforms for p in row.split(",")]
     return {"builder": settings["name"], "docker_context": settings["docker_context"],
             "client_endpoint": endpoints[0], "tls_version": version,
-            "platform_advertised": settings["platform"], "execution_test": "not_run"}
+            "advertised_platforms": advertised, "requested_platform": settings["platform"],
+            "execution_test": "not_run"}
 
 
 class BuilderConnection:
@@ -41,13 +44,15 @@ class BuilderConnection:
         expected = self.profile.data["builder"]
         endpoint = urlsplit(expected["client_endpoint"])
         if endpoint.hostname != "127.0.0.1" or endpoint.scheme != "tcp" or not endpoint.port:
-            raise OpsError("builder_identity", "Only the reviewed localhost SSH route is supported")
+            raise OpsError("builder_identity", "Only the reviewed localhost BuildKit endpoint is supported")
         try:
             with socket.create_connection(("127.0.0.1", endpoint.port), timeout=1):
                 inspect(self.profile)
                 return self
         except ConnectionRefusedError:
             pass
+        if not expected.get("ssh_host"):
+            raise OpsError("transport", "Selected local BuildKit endpoint is unavailable; restore that daemon before retrying")
         argv = ["ssh", "-N", "-o", "BatchMode=yes", "-o", "ExitOnForwardFailure=yes",
                 "-o", "ConnectTimeout=10", "-o", "ServerAliveInterval=15", "-o", "ServerAliveCountMax=2",
                 "-L", f"127.0.0.1:{endpoint.port}:127.0.0.1:{expected['remote_port']}", expected["ssh_host"]]

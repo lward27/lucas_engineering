@@ -1,8 +1,10 @@
 # ASTRA: Temporary M1 Mac BuildKit host
 
 The owner selected this M1 Mac on 2026-09-05 while `192.168.50.145` was powered off.
-The desktop returned later that day. The active GitOps endpoint now selects the
-desktop; this document retains the Mac fallback and its historical evidence.
+The desktop returned later that day and was selected until the owner reported it
+off again. [The September 8 return record](../../docs/operations/ASTRA-MAC-BUILDKIT-RETURN.md)
+owns the current routing change and observed daemon state; this document retains
+the fallback mechanism and historical bootstrap instructions.
 See [desktop restoration](../../docs/ASTRA-DESKTOP-BUILDKIT-RETURN.md).
 This fallback is for `lucas_engineering` only. It does not change
 the retired Talos environment or introduce another PHarness coding backend.
@@ -22,8 +24,10 @@ credential are reused. No TLS verification is disabled and no credentials are
 placed in Git. Changing the host does not require credential reprovisioning.
 
 The daemon image is the pinned native ARM64 BuildKit v0.26.2 manifest in
-`start-rancher-desktop.sh`. It runs inside Rancher Desktop's VM with two CPUs,
-2 GiB memory, one parallel build, and its own bounded cache volume. Unlike the
+`start-rancher-desktop.sh`. The original bootstrap defaults were two CPUs and
+2 GiB; the retained daemon was subsequently adjusted to four CPUs and 6 GiB,
+with one parallel build and its own bounded cache volume. The September 8 record
+distinguishes this observed working daemon from an unqualified fresh bootstrap. Unlike the
 Ubuntu desktop's rootless daemon, this temporary container is privileged inside
 the VM. It mounts only its configuration, the existing three K3s TLS files,
 the private registry CA, and its cache. It does not mount the Docker socket or a
@@ -34,7 +38,7 @@ The worker advertises ARM64. Actual uncached `linux/amd64` execution has been
 verified explicitly, both through Rancher Desktop's named local builder and
 through the cluster's TLS client. Never infer AMD64 support from the worker list.
 
-## Start and verify
+## Historical bootstrap and verification
 
 Run from this GitOps checkout with Rancher Desktop and the VPN active:
 

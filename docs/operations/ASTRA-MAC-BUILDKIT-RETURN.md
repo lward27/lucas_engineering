@@ -1,0 +1,19 @@
+# ASTRA: Restore the Mac route for Tekton
+
+2026-09-08. GitOps base `192bed8b6e014e26dbb88dce5d76c8f24b1579d8`. The owner reports lucas-desktop off and previously authorized this M1 Mac as its replacement. Status: direct Mac prerequisite verified; GitOps Service-route change and routed acceptance pending. This is infrastructure readiness, not autonomous Finance delivery.
+
+The existing `k3s-buildkit` Service, port 12340 and `buildkit-k3s.lucas.internal` mTLS identity stay the same. Only the EndpointSlice address changes from `192.168.50.145` to the observed Mac VPN address `192.168.2.2`. The [existing forwarding script](../../ops/buildkit-macos/forward-rancher-desktop.sh) is running as an owned process bound to that exact VPN address; it reaches the existing daemon through Rancher Desktop's local VM SSH connection. No default Docker context, other builder, credential, namespace, PVC or application deployment changes.
+
+The [probe operation](ASTRA-MAC-BUILDKIT-RETURN-PROBE-OPERATION.json) records all 266 existing PipelineRuns as terminal before preparation, the named Job, current source and forwarding process. Its [bounded Job definition](ASTRA-MAC-BUILDKIT-RETURN-PROBE.job.json) retains the 360-second deadline, no retry, pinned base/client images and read-only credential mounts without shell tracing. The [terminal Job and Pod receipt](ASTRA-MAC-BUILDKIT-RETURN-PROBE-RESULT.json) proves completion; [registry and execution evidence](ASTRA-MAC-BUILDKIT-RETURN-ARTIFACT-VERIFIED.json) binds uncached AMD64 execution and a 112 MiB random payload to the pushed digest and subsequent network-disabled pull/run.
+
+## Current daemon and recovery limits
+
+The retained `astra-tekton-buildkit` container is the existing pinned BuildKit v0.26.2 ARM64 image, with four CPUs, 6 GiB memory, a separate cache volume, and its mTLS port published on VM loopback 12344. The current PHarness Mac builds also exercised real AMD64 evaluator/native binaries. Its bundled QEMU executable was retained under `.disabled-rosetta` so Rancher Desktop's Rosetta path handles AMD64 execution. This adjustment survives a restart, not container recreation. The historical bootstrap script uses smaller defaults and does not recreate this verified state by itself.
+
+Keep the Mac, VPN, Rancher Desktop and forwarding process up while this route is selected. A lost forward or sleeping Mac is a build dependency failure, not permission to switch builders silently. Before any recreation, reproduce the recorded capacity/emulation settings and rerun uncached AMD64 and authenticated registry checks. No recreation, cache deletion or host expansion is part of this change. M12 still needs actual unattended operation evidence.
+
+Before restoring the desktop route, verify its same mTLS identity and real AMD64 publication, reconcile active builds, then change only the EndpointSlice address through GitOps. Preserve both builder caches and build history. After this Mac pin merges, verify the exact `tekton-ci` Argo revision and Service endpoint, then perform a Service-routed build under the existing deadline.
+
+## Operator helper validation
+
+The profile explicitly selects `pharness-mac` and localhost port 12344. Inspection verifies its remote-driver endpoint and mutual TLS identity; it reports advertised platforms and does not infer execution from them. A missing local daemon fails without opening a desktop SSH fallback. Explicitly configured SSH builders still own and close their own tunnels. All 28 operator tests pass, including ARM-only advertisement, unavailable local endpoint, TLS identity checks and the existing SSH route. The [native helper preflight](ASTRA-MAC-BUILDKIT-HELPER-PREFLIGHT.json) then actually passed uncached AMD64 execution on clean PHarness main `81de84f70393c9dd9dad302930a97acf88da4ec9`, with no image push or cluster mutation.

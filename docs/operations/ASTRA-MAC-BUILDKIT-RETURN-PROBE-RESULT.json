@@ -1,0 +1,111 @@
+{
+  "job_name": "astra-m02-mac-return-20260908",
+  "job_status": {
+    "completionTime": "2026-09-08T13:22:03Z",
+    "conditions": [
+      {
+        "lastProbeTime": "2026-09-08T13:22:03Z",
+        "lastTransitionTime": "2026-09-08T13:22:03Z",
+        "message": "Reached expected number of succeeded pods",
+        "reason": "CompletionsReached",
+        "status": "True",
+        "type": "SuccessCriteriaMet"
+      },
+      {
+        "lastProbeTime": "2026-09-08T13:22:03Z",
+        "lastTransitionTime": "2026-09-08T13:22:03Z",
+        "message": "Reached expected number of succeeded pods",
+        "reason": "CompletionsReached",
+        "status": "True",
+        "type": "Complete"
+      }
+    ],
+    "ready": 0,
+    "startTime": "2026-09-08T13:20:31Z",
+    "succeeded": 1,
+    "terminating": 0,
+    "uncountedTerminatedPods": {}
+  },
+  "job_uid": "1b3f71ac-f837-4ae0-9ad3-fd262b9c3cc4",
+  "observed_at": "2026-09-08T13:22:15.499551+00:00",
+  "pods": [
+    {
+      "container_statuses": [
+        {
+          "allocatedResources": {
+            "cpu": "25m",
+            "memory": "64Mi"
+          },
+          "containerID": "containerd://55e306c3f23cde915a27ec3b26b5db2d994a1c33beb6a32b8d8feaf16bef97d2",
+          "image": "sha256:3150e38f81f5cf66d5b732bcddf8e4e2bd805e0eb5f743db55539f2d7b482185",
+          "imageID": "docker.io/moby/buildkit@sha256:60d1f642e29dc938bd6c109ba5500849fccf41921927c5339788b8227f57feb9",
+          "lastState": {},
+          "name": "probe",
+          "ready": false,
+          "resources": {
+            "limits": {
+              "cpu": "250m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "25m",
+              "memory": "64Mi"
+            }
+          },
+          "restartCount": 0,
+          "started": false,
+          "state": {
+            "terminated": {
+              "containerID": "containerd://55e306c3f23cde915a27ec3b26b5db2d994a1c33beb6a32b8d8feaf16bef97d2",
+              "exitCode": 0,
+              "finishedAt": "2026-09-08T13:22:00Z",
+              "reason": "Completed",
+              "startedAt": "2026-09-08T13:20:32Z"
+            }
+          },
+          "user": {
+            "linux": {
+              "gid": 0,
+              "supplementalGroups": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                10,
+                11,
+                20,
+                26,
+                27
+              ],
+              "uid": 0
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/var/run/buildkit-tls",
+              "name": "tls",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            },
+            {
+              "mountPath": "/var/run/registry",
+              "name": "registry-auth",
+              "readOnly": true,
+              "recursiveReadOnly": "Disabled"
+            },
+            {
+              "mountPath": "/work",
+              "name": "work"
+            }
+          ]
+        }
+      ],
+      "name": "astra-m02-mac-return-20260908-4qjdh",
+      "node": "ubuntu-lucas-engineering",
+      "phase": "Succeeded",
+      "uid": "5dba9edd-e3b5-4b56-ba2d-c80e4c6df2ce"
+    }
+  ]
+}
