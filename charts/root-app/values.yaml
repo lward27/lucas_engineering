@@ -10,7 +10,7 @@ apps:
   cert-manager:
     enabled: true
   directus:
-    enabled: true
+    enabled: false
   docker-registry:
     enabled: true
   cloudflared:
@@ -39,9 +39,6 @@ apps:
   nanoclaw:
     enabled: false
   hermes-agent:
-    enabled: true
-  openclaw:
-    # Retired and data purged 2026-09-06: docs/operations/ASTRA-RETIRED-DATA-PURGE.md
     enabled: false
   openfaas:
     enabled: false
