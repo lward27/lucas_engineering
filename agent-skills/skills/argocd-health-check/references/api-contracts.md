@@ -3,26 +3,23 @@
 ## Input Contract
 
 ```yaml
-argocd_app: hermes-agent
-namespace: hermes-agent
+argocd_app: <application-name>
+namespace: <namespace>
 expected_revision: HEAD
 expected_image_digest: null
 observation_window: 10m
-environment: apps-prod
+environment: <environment>
 ```
 
 ## Output Contract
 
 ```yaml
-app: hermes-agent
-namespace: hermes-agent
+app: <application-name>
+namespace: <namespace>
 sync_status: Synced
 health_status: Healthy
 revision: abc123
-resources:
-  - kind: StatefulSet
-    name: hermes-agent
-    health: Healthy
+resources: []
 kubernetes_summary:
   ready: true
   warnings: []

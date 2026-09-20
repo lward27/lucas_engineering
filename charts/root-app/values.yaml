@@ -9,8 +9,6 @@ apps:
     enabled: true
   cert-manager:
     enabled: true
-  directus:
-    enabled: false
   docker-registry:
     enabled: true
   cloudflared:
@@ -37,8 +35,6 @@ apps:
   mimir:
     enabled: true
   nanoclaw:
-    enabled: false
-  hermes-agent:
     enabled: false
   openfaas:
     enabled: false

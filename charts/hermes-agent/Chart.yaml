@@ -1,5 +1,0 @@
-apiVersion: v2
-name: hermes-agent
-description: Standalone Hermes Agent deployment
-version: 1.0.0
-type: application

@@ -66,10 +66,6 @@ data:
             - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/ghost.png
               href: https://blog.lucas.engineering
               description: Blog (ipponusa.com)
-        - Directus:
-            - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/directus.png
-              href: https://admin.reefusion.lucas.engineering
-              description: Headless CMS
         - Registry:
             - icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/docker.png
               href: https://registry.lucas.engineering

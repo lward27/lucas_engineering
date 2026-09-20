@@ -13,15 +13,13 @@ This document is the implementation-facing permissions model for the Hermes-only
 | Skill catalog | `agent-skills/skills/catalog.yaml` |
 | Registry validator | `agent-skills/agents/registry/scripts/validate-agent-registry.rb` |
 | Foundation validator | `agent-skills/scripts/validate-foundation.rb` |
-| Desktop kubeconfig helper | `agent-skills/scripts/generate-desktop-hermes-kubeconfig.rb` |
-| Read-only Kubernetes RBAC | `cluster/rbac/hermes-readonly-observer.yaml` |
 | Network policy scaffolding | `cluster/network-policies/` |
 
 ## Phase 1 Rule
 
-Hermes is the only active worker runtime and it runs on the desktop host. Custom harnesses are schema-level future support only. The platform starts with read-only observation, planning, review, and gated GitOps proposal work.
+Hermes is the only active worker runtime and it runs on the desktop host. The Kubernetes Hermes front door and service-account observer identity have been retired. Custom harnesses are schema-level future support only. The platform starts with read-only observation, planning, review, and gated GitOps proposal work.
 
-Kubernetes RBAC is granted to `system:serviceaccount:hermes-agent:hermes-agent`. Desktop Hermes can use that identity only when supplied a kubeconfig generated from that service account token.
+Desktop Hermes uses its local kubeconfig or another separately managed identity. This repository no longer provisions a Kubernetes Hermes service account or generates a service-account kubeconfig.
 
 ## Default Policy
 

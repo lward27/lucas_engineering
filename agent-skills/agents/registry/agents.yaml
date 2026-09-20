@@ -4,15 +4,11 @@ description: Hermes-only phase 1 agent registry for the lucas_engineering agenti
 defaults:
   runtime: hermes
   phase: 1
-  namespace: hermes-agent
-  serviceAccount:
-    namespace: hermes-agent
-    name: hermes-agent
   invocation:
     transport: hermes-api
     apiUrl: http://192.168.50.145:9120
     dashboardUrl: https://hermes.lucas.engineering
-    note: Hermes runs on the desktop host. Kubernetes ingress fronts the dashboard, and API orchestration targets the same desktop service on /api routes.
+    note: Hermes runs on the desktop host and dispatch targets the desktop API directly; the Kubernetes front door has been retired.
   modelPolicy:
     providerPreference:
       - fireworks
@@ -49,7 +45,6 @@ agents:
         - docs
         - diagrams
         - charts/root-app
-        - charts/hermes-agent
         - agent-skills
       exclude:
         - secret-values

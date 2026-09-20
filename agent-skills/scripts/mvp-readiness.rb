@@ -65,34 +65,6 @@ checks << {
   note: "The MVP chart should be enabled when executing the read-only cluster MVP."
 }
 
-hermes_values = YAML.safe_load(File.read(File.join(ROOT, "charts/hermes-agent/values.yaml")), aliases: false)
-runtime_mode = hermes_values.dig("hermes", "runtime", "mode")
-external_host = hermes_values.dig("hermes", "external", "host")
-external_port = hermes_values.dig("hermes", "external", "port")
-api_enabled = hermes_values.dig("hermes", "gateway", "apiServer", "enabled")
-automount_token = hermes_values.dig("hermes", "serviceAccount", "automountToken")
-
-checks << {
-  name: "Hermes chart configured for external desktop runtime",
-  ok: runtime_mode == "external" && !!external_host && !!external_port,
-  required: true,
-  note: "Kubernetes provides the ingress/service front door; Hermes runs on the desktop host."
-}
-
-checks << {
-  name: "Hermes external dashboard/API port configured",
-  ok: api_enabled == true && !!external_port,
-  required: true,
-  note: "Desktop Hermes serves dashboard and authenticated /api routes from the same external port."
-}
-
-checks << {
-  name: "Hermes pod service account token automount disabled",
-  ok: automount_token == false,
-  required: false,
-  note: "Expected for external-desktop mode. Use the generated desktop kubeconfig instead of pod token automount."
-}
-
 blocking = checks.select { |check| check[:required] && !check[:ok] }
 ready_for_local_dry_run = blocking.empty?
 ready_for_cluster_mvp = ready_for_local_dry_run && agentic_enabled == true
