@@ -1,3 +1,4 @@
 charts/**/charts
 .vscode/
+.DS_Store
 slides/
