@@ -4,8 +4,9 @@ Status: proposed. The GitOps chart is the source of truth; this route is not
 active until its PR is merged and Argo CD reports the resulting
 `tekton-ci` revision as `Synced` and `Healthy`.
 
-The `remote-buildkit` Task retains its Tekton inputs and image URL/digest results.
-Its `k3s-buildkit` ClusterIP Service now selects a single rootless BuildKit
+The `remote-buildkit` Task retains its Tekton image URL/digest results and
+supports an optional validated Dockerfile stage target. Its `k3s-buildkit`
+ClusterIP Service now selects a single rootless BuildKit
 Deployment on the dedicated AMD64 node labeled `workload=build` and tainted
 `workload=build:NoSchedule`. The daemon image is pinned to the official
 `moby/buildkit:v0.33.0-rootless` multi-platform image digest. The node must remain

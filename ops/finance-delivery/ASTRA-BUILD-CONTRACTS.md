@@ -10,7 +10,9 @@ Production GitOps merge requires its separate, state-bound human approval.
 | `pharness-finance-frontend-build` | `lward27/finance-frontend` | `registry.lucas.engineering/finance-frontend` |
 
 Both run in `tekton-pipelines`, accept the full lowercase 40-character `revision`,
-verify the actual checkout, and use the existing `remote-buildkit` Task. That Task
+verify the actual checkout, and use the existing `remote-buildkit` Task. The
+generic PHarness build target may select an explicitly named Dockerfile stage;
+the default remains unchanged when omitted. That Task
 connects over mTLS to the rootless in-cluster BuildKit daemon on the dedicated
 AMD64 build node and pushes through the private registry gateway; see [in-cluster
 builder operation](../buildkit-incluster/ASTRA-INCLUSTER-BUILDKIT.md). They pass

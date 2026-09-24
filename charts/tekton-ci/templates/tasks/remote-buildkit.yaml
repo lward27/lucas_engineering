@@ -32,6 +32,9 @@ spec:
       description: Dockerfile build arguments in NAME=value form.
       type: array
       default: []
+    - name: BUILD_TARGET
+      description: Optional named Dockerfile stage to build.
+      default: ""
   workspaces:
     - name: source
       description: Holds the build context and Dockerfile.
@@ -73,11 +76,16 @@ spec:
         - { name: IMAGE, value: $(params.IMAGE) }
         - { name: DOCKERFILE, value: $(params.DOCKERFILE) }
         - { name: CONTEXT, value: $(params.CONTEXT) }
+        - { name: BUILD_TARGET, value: $(params.BUILD_TARGET) }
       command: [/bin/sh, -ec]
       args:
         - |
           case "$DOCKERFILE" in /*|*../*|../*) echo "unsafe Dockerfile path" >&2; exit 1 ;; esac
           case "$CONTEXT" in /*|*../*|../*) echo "unsafe context path" >&2; exit 1 ;; esac
+          case "$BUILD_TARGET" in
+            '') ;;
+            [!a-zA-Z]*|*[!a-zA-Z0-9_.-]*) echo "invalid Dockerfile target" >&2; exit 1 ;;
+          esac
           source_root="$(workspaces.source.path)"
           context_dir="$source_root/$CONTEXT"
           dockerfile_path="$source_root/$DOCKERFILE"
@@ -115,6 +123,10 @@ spec:
             --opt platform=linux/amd64 \
             --output "type=image,name=registry-write-gateway.registry.svc.cluster.local:8443/$image_path,push=true" \
             --metadata-file /var/run/buildkit-metadata/image.json
+
+          if [ -n "$BUILD_TARGET" ]; then
+            set -- "$@" --opt "target=$BUILD_TARGET"
+          fi
 
           while IFS= read -r build_arg; do
             set -- "$@" --opt "build-arg:$build_arg"
