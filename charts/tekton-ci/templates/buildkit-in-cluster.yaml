@@ -205,18 +205,18 @@ spec:
               containerPort: 12340
               protocol: TCP
           startupProbe:
-            exec:
-              command: ["buildctl", "debug", "workers"]
+            tcpSocket:
+              port: buildkit
             periodSeconds: 10
             failureThreshold: 30
           readinessProbe:
-            exec:
-              command: ["buildctl", "debug", "workers"]
+            tcpSocket:
+              port: buildkit
             periodSeconds: 10
             timeoutSeconds: 5
           livenessProbe:
-            exec:
-              command: ["buildctl", "debug", "workers"]
+            tcpSocket:
+              port: buildkit
             periodSeconds: 30
             timeoutSeconds: 5
           resources:
