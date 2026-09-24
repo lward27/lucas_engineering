@@ -64,6 +64,7 @@ builder = resources[('Deployment', 'k3s-buildkit')]['spec']
 builder_pod = builder['template']['spec']
 builder_container = builder_pod['containers'][0]
 check('BuildKit daemon is pinned to the released rootless image', builder_container['image'] == 'docker.io/moby/buildkit@sha256:80b15f0735e87bab7bf59ec4d695dfb4a7cfb25521cf56dc75d6f256285b63ef')
+check('BuildKit lifecycle probes use its configured TCP listener', all(builder_container[name].get('tcpSocket') == {'port': 'buildkit'} and 'exec' not in builder_container[name] for name in ['startupProbe', 'readinessProbe', 'livenessProbe']))
 check('BuildKit daemon selects the dedicated AMD64 build node', builder_pod['nodeSelector'] == {'kubernetes.io/arch': 'amd64', 'workload': 'build'})
 check('BuildKit daemon tolerates only the build-node taint', builder_pod['tolerations'] == [{'key': 'workload', 'operator': 'Equal', 'value': 'build', 'effect': 'NoSchedule'}])
 check('BuildKit daemon runs rootless without host access', builder_pod['securityContext']['runAsUser'] == 1000 and builder_pod['securityContext']['runAsNonRoot'] is True and not builder_pod.get('hostNetwork') and not any(v.get('hostPath') for v in builder_pod.get('volumes', [])) and builder_container['securityContext'].get('privileged') is not True)
