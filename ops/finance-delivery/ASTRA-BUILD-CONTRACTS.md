@@ -10,16 +10,19 @@ Production GitOps merge requires its separate, state-bound human approval.
 | `pharness-finance-frontend-build` | `lward27/finance-frontend` | `registry.lucas.engineering/finance-frontend` |
 
 Both run in `tekton-pipelines`, accept the full lowercase 40-character `revision`,
-verify the actual checkout, and use the existing `remote-buildkit` Task. They pass
+verify the actual checkout, and use the existing `remote-buildkit` Task. That Task
+connects over mTLS to the rootless in-cluster BuildKit daemon on the dedicated
+AMD64 build node and pushes through the private registry gateway; see [in-cluster
+builder operation](../buildkit-incluster/ASTRA-INCLUSTER-BUILDKIT.md). They pass
 `SOURCE_COMMIT` into the Dockerfile, publish `git-<sha>`, and return `SOURCE_COMMIT`,
 `IMAGE_URL`, and `IMAGE_DIGEST`. The application's Dockerfile must retain the source
 revision in its OCI label. The controller must independently verify image identity;
 a result alone is not supply-chain attestation or deployment evidence.
 
-The owner-authorized Mac serves the existing mutually authenticated BuildKit service.
-See [Mac operation](../buildkit-macos/ASTRA-MACOS-BUILDER.md) for its availability and TLS
-boundary. Builds target Linux AMD64. TLS verification stays enabled; credentials
-remain mounted only in the shared build Task's existing authentication boundary.
+The earlier Mac service route is retained as historical evidence in
+[Mac operation](../buildkit-macos/ASTRA-MACOS-BUILDER.md); it is not a silent
+fallback. Builds target Linux AMD64. TLS verification stays enabled; credentials
+remain mounted only in the shared build Task's authentication boundary.
 No Finance Pipeline contains a deployment or rollout-restart task.
 
 Finance PipelineRuns must explicitly select `pharness-finance-build` in
@@ -43,9 +46,10 @@ helm lint charts/tekton-ci
 ```
 
 The checker needs the existing Helm, Ruby YAML reader, Bash and Python tools. It
-performs 36 checks without credentials, builds or cluster writes. It covers invalid
+performs 58 checks without credentials, builds or cluster writes. It covers invalid
 source revisions, mismatched checkouts, malformed digest results, fixed repository
-and image bindings, and retirement of the frontend webhook.
+and image bindings, in-cluster builder scheduling/network/TLS contracts, scoped
+EventListener RBAC, and retirement of the frontend webhook.
 
 Deployment evidence and real build acceptance belong to PHarness's
 `planning/evidence/autonomous-sdlc/ASTRA-M07-SOURCE-DELIVERY-AND-BUILDS.md`.

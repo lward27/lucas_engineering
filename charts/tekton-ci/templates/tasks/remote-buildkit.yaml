@@ -4,17 +4,18 @@ metadata:
   name: remote-buildkit
   namespace: {{ .Values.namespace }}
   labels:
-    app.kubernetes.io/version: "0.32.2"
+    app.kubernetes.io/version: "0.33.0"
     app.kubernetes.io/part-of: tekton-ci
   annotations:
     tekton.dev/pipelines.minVersion: "0.38.0"
     tekton.dev/categories: Image Build
     tekton.dev/tags: image-build
-    tekton.dev/displayName: "Build and push through the isolated desktop BuildKit"
+    tekton.dev/displayName: "Build and push through the in-cluster BuildKit"
 spec:
   description: >-
-    Build one Linux/AMD64 image through the K3s-only, mutually authenticated
-    desktop BuildKit service and preserve the image URL and digest contract.
+    Build one Linux/AMD64 image through the rootless, mutually authenticated
+    BuildKit daemon pinned to the dedicated lucas_engineering build node. Push
+    through the in-cluster registry write gateway and preserve URL/digest results.
   params:
     - name: IMAGE
       description: Full image reference to build and push.
@@ -42,8 +43,12 @@ spec:
   volumes:
     - name: buildkit-client-tls
       secret:
-        secretName: remote-buildkit-client-tls
+        secretName: k3s-buildkit-client-tls
         defaultMode: 0400
+        items:
+          - { key: ca.crt, path: ca.pem }
+          - { key: tls.crt, path: cert.pem }
+          - { key: tls.key, path: key.pem }
     - name: registry-auth
       secret:
         secretName: lucas-registry-push
@@ -60,7 +65,7 @@ spec:
   steps:
     - name: build-and-push
       workingDir: $(workspaces.source.path)
-      image: docker.io/moby/buildkit@sha256:60d1f642e29dc938bd6c109ba5500849fccf41921927c5339788b8227f57feb9
+      image: {{ .Values.builder.image | quote }}
       env:
         - { name: DOCKER_CONFIG, value: /var/run/registry }
         - { name: HOME, value: /tmp }
@@ -79,6 +84,14 @@ spec:
           test -d "$context_dir"
           test -f "$dockerfile_path"
 
+          case "$IMAGE" in
+            registry.lucas.engineering/*) image_path="${IMAGE#registry.lucas.engineering/}" ;;
+            *) echo "destination must use registry.lucas.engineering" >&2; exit 1 ;;
+          esac
+          case "$image_path" in
+            ''|*[!a-zA-Z0-9_./:@-]*|/*|../*|*../*|*//*) echo "unsafe destination path" >&2; exit 1 ;;
+          esac
+
           build_args_file=/tmp/build-args
           : >"$build_args_file"
           for build_arg in "$@"; do
@@ -90,7 +103,7 @@ spec:
 
           set -- \
             --addr tcp://k3s-buildkit.{{ .Values.namespace }}.svc.cluster.local:12340 \
-            --tlsservername buildkit-k3s.lucas.internal \
+            --tlsservername k3s-buildkit.{{ .Values.namespace }}.svc.cluster.local \
             --tlscacert /var/run/buildkit-tls/ca.pem \
             --tlscert /var/run/buildkit-tls/cert.pem \
             --tlskey /var/run/buildkit-tls/key.pem \
@@ -100,7 +113,7 @@ spec:
             --local "dockerfile=$(dirname "$dockerfile_path")" \
             --opt "filename=$(basename "$dockerfile_path")" \
             --opt platform=linux/amd64 \
-            --output "type=image,name=$IMAGE,push=true" \
+            --output "type=image,name=registry-write-gateway.registry.svc.cluster.local:8443/$image_path,push=true" \
             --metadata-file /var/run/buildkit-metadata/image.json
 
           while IFS= read -r build_arg; do

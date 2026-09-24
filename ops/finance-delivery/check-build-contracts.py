@@ -59,6 +59,43 @@ with tempfile.TemporaryDirectory(prefix='astra-finance-contract-') as directory:
         check('BuildKit result ' + label, (result == 0) == valid)
         if valid:
             check('BuildKit exact result preserved', (root / 'digest').read_text() == digest and (root / 'image').read_text() == 'registry.test/finance:git-' + 'a' * 40)
+
+builder = resources[('Deployment', 'k3s-buildkit')]['spec']
+builder_pod = builder['template']['spec']
+builder_container = builder_pod['containers'][0]
+check('BuildKit daemon is pinned to the released rootless image', builder_container['image'] == 'docker.io/moby/buildkit@sha256:80b15f0735e87bab7bf59ec4d695dfb4a7cfb25521cf56dc75d6f256285b63ef')
+check('BuildKit daemon selects the dedicated AMD64 build node', builder_pod['nodeSelector'] == {'kubernetes.io/arch': 'amd64', 'workload': 'build'})
+check('BuildKit daemon tolerates only the build-node taint', builder_pod['tolerations'] == [{'key': 'workload', 'operator': 'Equal', 'value': 'build', 'effect': 'NoSchedule'}])
+check('BuildKit daemon runs rootless without host access', builder_pod['securityContext']['runAsUser'] == 1000 and builder_pod['securityContext']['runAsNonRoot'] is True and not builder_pod.get('hostNetwork') and not any(v.get('hostPath') for v in builder_pod.get('volumes', [])) and builder_container['securityContext'].get('privileged') is not True)
+check('BuildKit daemon has no Kubernetes API token', builder_pod['automountServiceAccountToken'] is False and resources[('ServiceAccount', 'k3s-buildkit')]['automountServiceAccountToken'] is False)
+build_sa = resources[('ServiceAccount', 'tekton-ci-build')]
+check('Build-only TaskRuns have a no-token identity with no chart RBAC binding', build_sa['automountServiceAccountToken'] is False and not any(subject.get('name') == 'tekton-ci-build' for (kind, _), resource in resources.items() if kind in ['RoleBinding', 'ClusterRoleBinding'] for subject in resource.get('subjects', [])))
+check('BuildKit uses a bounded persistent cache', resources[('PersistentVolumeClaim', 'k3s-buildkit-cache')]['spec']['resources']['requests']['storage'] == '60Gi' and any(v.get('persistentVolumeClaim', {}).get('claimName') == 'k3s-buildkit-cache' for v in builder_pod['volumes']))
+service = resources[('Service', 'k3s-buildkit')]['spec']
+check('BuildKit service selects only the in-cluster daemon', service['selector'] == builder['selector']['matchLabels'] and service['ports'][0]['port'] == 12340)
+check('Static external BuildKit endpoint is removed', ('EndpointSlice', 'k3s-buildkit-ipv4') not in resources)
+policy = resources[('NetworkPolicy', 'k3s-buildkit-isolation')]['spec']
+check('BuildKit ingress is limited to its Tekton Task clients', policy['ingress'][0]['from'][0]['podSelector']['matchLabels'] == {'tekton.dev/task': 'remote-buildkit'} and policy['ingress'][0]['ports'] == [{'protocol': 'TCP', 'port': 12340}] and policy['policyTypes'] == ['Ingress', 'Egress'])
+check('BuildKit egress allows only its registry gateway, DNS and public web', len(policy['egress']) == 3 and policy['egress'][0]['to'][0]['namespaceSelector']['matchLabels']['kubernetes.io/metadata.name'] == 'registry' and policy['egress'][0]['to'][0]['podSelector']['matchLabels'] == {'app.kubernetes.io/name': 'registry-write-gateway'} and policy['egress'][1]['to'][0]['podSelector']['matchLabels'] == {'k8s-app': 'kube-dns'} and policy['egress'][2]['to'][0]['ipBlock']['except'] == ['10.0.0.0/8', '100.64.0.0/10', '127.0.0.0/8', '169.254.0.0/16', '172.16.0.0/12', '192.168.0.0/16'] and policy['egress'][2]['ports'] == [{'protocol': 'TCP', 'port': 80}, {'protocol': 'TCP', 'port': 443}])
+buildkitd_config = resources[('ConfigMap', 'k3s-buildkit')]['data']['buildkitd.toml']
+check('BuildKit worker is rootless and writes registry traffic through the private gateway', 'rootless = true' in buildkitd_config and 'registry-write-gateway.registry.svc.cluster.local:8443' in buildkitd_config and 'registry.lucas.engineering' not in buildkitd_config)
+task = resources[('Task', 'remote-buildkit')]['spec']
+client_script = task['steps'][0]['args'][0]
+check('BuildKit client script has valid shell syntax', subprocess.run(['sh', '-n'], input=client_script, text=True, capture_output=True).returncode == 0)
+check('Tekton client uses in-cluster mTLS and private registry output', task['volumes'][0]['secret']['secretName'] == 'k3s-buildkit-client-tls' and '--tlsservername k3s-buildkit.tekton-pipelines.svc.cluster.local' in client_script and 'registry-write-gateway.registry.svc.cluster.local:8443/$image_path' in client_script and 'destination must use registry.lucas.engineering' in client_script and 'unsafe destination path' in client_script)
+check('BuildKit client preserves public immutable image result', 'image="$RESULT_IMAGE_URL"' in task['steps'][1]['script'] and 'image="$IMAGE"' in task['steps'][1]['script'])
+check('BuildKit server certificate covers its Service DNS name', 'k3s-buildkit.tekton-pipelines.svc.cluster.local' in resources[('Certificate', 'k3s-buildkit-server')]['spec']['dnsNames'] and resources[('Certificate', 'k3s-buildkit-server')]['spec']['usages'] == ['digital signature', 'server auth'])
+check('BuildKit client certificate is separate and client-only', resources[('Certificate', 'k3s-buildkit-client')]['spec']['secretName'] == 'k3s-buildkit-client-tls' and resources[('Certificate', 'k3s-buildkit-client')]['spec']['usages'] == ['digital signature', 'client auth'])
+trigger_role = resources[('Role', 'tekton-ci-triggers-role')]['rules']
+secret_rules = [rule for rule in trigger_role if rule.get('resources') == ['secrets']]
+cluster_refs = resources[('ClusterRole', 'tekton-ci-triggers-clusterrefs')]['rules']
+check('Trigger service account can read only the named webhook Secret', len(secret_rules) == 1 and secret_rules[0].get('resourceNames') == ['github-webhook-secret'] and secret_rules[0].get('verbs') == ['get'])
+sa_impersonation = [rule for rule in trigger_role if rule.get('resources') == ['serviceaccounts']]
+check('Trigger service account can impersonate only the pipeline identity', len(sa_impersonation) == 1 and sa_impersonation[0].get('resourceNames') == ['tekton-ci-pipeline-sa'] and sa_impersonation[0].get('verbs') == ['impersonate'])
+role_binding = resources[('RoleBinding', 'tekton-ci-triggers-namespaced-binding')]
+check('Trigger namespaced binding uses the scoped chart Role', role_binding['roleRef']['kind'] == 'Role' and role_binding['roleRef']['name'] == 'tekton-ci-triggers-role')
+check('Trigger cluster binding excludes the upstream cluster-wide Secret reader', len(cluster_refs) == 1 and cluster_refs[0].get('resources') == ['clustertriggerbindings', 'clusterinterceptors'] and all('secrets' not in rule.get('resources', []) for rule in cluster_refs))
+check('Least-privilege trigger binding uses a new immutable roleRef', resources[('ClusterRoleBinding', 'tekton-ci-triggers-clusterrefs-binding')]['roleRef']['name'] == 'tekton-ci-triggers-clusterrefs')
 listener = resources[('EventListener', 'github-webhook-listener')]
 account = resources[('ServiceAccount', 'pharness-finance-build')]
 check('Finance build has no mounted API token', account['automountServiceAccountToken'] is False)
