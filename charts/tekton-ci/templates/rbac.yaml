@@ -8,6 +8,17 @@ metadata:
   labels:
     app.kubernetes.io/part-of: tekton-ci
 ---
+# Build-only PipelineRuns use this unprivileged identity when no rollout Task is
+# needed. Keep the existing rollout-capable identity for webhook pipelines.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tekton-ci-build
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: tekton-ci
+automountServiceAccountToken: false
+---
 # ServiceAccount used by the EventListener pods
 apiVersion: v1
 kind: ServiceAccount
@@ -38,11 +49,21 @@ rules:
       - interceptors
     verbs: ["get", "list", "watch"]
   - apiGroups: [""]
-    resources: ["configmaps", "secrets"]
+    resources: ["configmaps"]
     verbs: ["get", "list", "watch"]
   - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames:
+      - {{ .Values.github.webhookSecretName }}
+    verbs: ["get"]
+  - apiGroups: [""]
     resources: ["serviceaccounts"]
+    resourceNames:
+      - tekton-ci-pipeline-sa
     verbs: ["impersonate"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "patch"]
 ---
 # Allow the pipeline SA to restart deployments after builds
 apiVersion: rbac.authorization.k8s.io/v1
@@ -58,6 +79,20 @@ rules:
   - apiGroups: ["apps"]
     resources: ["deployments/scale"]
     verbs: ["get", "patch"]
+---
+# The upstream EventListener ClusterRole also grants secrets get/list/watch
+# cluster-wide. This chart only needs cluster-scoped Trigger bindings and
+# interceptors; the webhook Secret is scoped separately in the namespaced Role.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: tekton-ci-triggers-clusterrefs
+  labels:
+    app.kubernetes.io/part-of: tekton-ci
+rules:
+  - apiGroups: ["triggers.tekton.dev"]
+    resources: ["clustertriggerbindings", "clusterinterceptors"]
+    verbs: ["get", "list", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -80,7 +115,7 @@ roleRef:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: tekton-ci-triggers-rolebinding
+  name: tekton-ci-triggers-namespaced-binding
   namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/part-of: tekton-ci
@@ -90,13 +125,13 @@ subjects:
     namespace: {{ .Values.namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: tekton-triggers-eventlistener-roles
+  kind: Role
+  name: tekton-ci-triggers-role
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: tekton-ci-triggers-clusterrolebinding
+  name: tekton-ci-triggers-clusterrefs-binding
   labels:
     app.kubernetes.io/part-of: tekton-ci
 subjects:
@@ -106,4 +141,4 @@ subjects:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: tekton-triggers-eventlistener-clusterroles
+  name: tekton-ci-triggers-clusterrefs

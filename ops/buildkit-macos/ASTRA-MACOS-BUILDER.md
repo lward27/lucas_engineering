@@ -1,9 +1,14 @@
 # ASTRA: Temporary M1 Mac BuildKit host
 
+Historical fallback procedure. The GitOps route proposed in
+[in-cluster BuildKit operation](../buildkit-incluster/ASTRA-INCLUSTER-BUILDKIT.md)
+replaces this endpoint after that change is merged and observed by Argo CD. This
+Mac is not an automatic fallback when the in-cluster builder is unavailable.
+
 The owner selected this M1 Mac on 2026-09-05 while `192.168.50.145` was powered off.
 The desktop returned later that day and was selected until the owner reported it
 off again. [The September 8 return record](../../docs/operations/ASTRA-MAC-BUILDKIT-RETURN.md)
-owns the current routing change and observed daemon state; this document retains
+records the accepted Mac routing change and observed daemon state; this document retains
 the fallback mechanism and historical bootstrap instructions.
 See [desktop restoration](../../docs/ASTRA-DESKTOP-BUILDKIT-RETURN.md).
 This fallback is for `lucas_engineering` only. It does not change

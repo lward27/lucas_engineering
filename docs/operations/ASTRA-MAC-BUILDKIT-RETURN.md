@@ -1,5 +1,10 @@
 # ASTRA: Restore the Mac route for Tekton
 
+Historical acceptance record for the Mac-based endpoint. The in-cluster builder
+route is defined in [current build operation](../../ops/buildkit-incluster/ASTRA-INCLUSTER-BUILDKIT.md)
+and becomes active only after its GitOps merge and Argo observation. The old Mac
+route is not an automatic fallback.
+
 2026-09-08. GitOps base `192bed8b6e014e26dbb88dce5d76c8f24b1579d8`. The owner reports lucas-desktop off and previously authorized this M1 Mac as its replacement. Status: direct and Service-routed Mac builds, exact GitOps reconciliation, and operator readiness accepted. This is infrastructure readiness, not autonomous Finance delivery.
 
 The existing `k3s-buildkit` Service, port 12340 and `buildkit-k3s.lucas.internal` mTLS identity stay the same. Only the EndpointSlice address changes from `192.168.50.145` to the observed Mac VPN address `192.168.2.2`. The [existing forwarding script](../../ops/buildkit-macos/forward-rancher-desktop.sh) is running as an owned process bound to that exact VPN address; it reaches the existing daemon through Rancher Desktop's local VM SSH connection. No default Docker context, other builder, credential, namespace, PVC or application deployment changes.
@@ -12,7 +17,7 @@ The retained `astra-tekton-buildkit` container is the existing pinned BuildKit v
 
 Keep the Mac, VPN, Rancher Desktop and forwarding process up while this route is selected. A lost forward or sleeping Mac is a build dependency failure, not permission to switch builders silently. Before any recreation, reproduce the recorded capacity/emulation settings and rerun uncached AMD64 and authenticated registry checks. No recreation, cache deletion or host expansion is part of this change. M12 still needs actual unattended operation evidence.
 
-Before restoring the desktop route, verify its same mTLS identity and real AMD64 publication, reconcile active builds, then change only the EndpointSlice address through GitOps. Preserve both builder caches and build history. For any later route change, verify the exact `tekton-ci` Argo revision and Service endpoint, then perform a Service-routed build under the existing deadline. The current Mac route is accepted below.
+Before any future return to the desktop route, verify its same mTLS identity and real AMD64 publication, reconcile active builds, then change only the EndpointSlice address through GitOps. Preserve both builder caches and build history. For any route change, verify the exact `tekton-ci` Argo revision and Service endpoint, then perform a Service-routed build under the existing deadline. At the time of this historical record, the Mac route was accepted below.
 
 ## Operator helper validation
 

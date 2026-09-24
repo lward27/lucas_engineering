@@ -4,6 +4,29 @@ registry:
   host: registry.lucas.engineering
   buildArgs: []
 
+# The dedicated Linux builder is an in-cluster, rootless BuildKit daemon. Its
+# node label and taint are provisioned with the lucas_engineering node itself.
+builder:
+  image: docker.io/moby/buildkit@sha256:80b15f0735e87bab7bf59ec4d695dfb4a7cfb25521cf56dc75d6f256285b63ef
+  nodeSelector:
+    kubernetes.io/arch: amd64
+    workload: build
+  tolerations:
+    - key: workload
+      operator: Equal
+      value: build
+      effect: NoSchedule
+  cacheStorage: 60Gi
+  resources:
+    requests:
+      cpu: "2"
+      memory: 4Gi
+      ephemeral-storage: 2Gi
+    limits:
+      cpu: "8"
+      memory: 20Gi
+      ephemeral-storage: 10Gi
+
 # GitHub webhook secret - must be pre-created as a K8s Secret in the tekton-pipelines
 # namespace before deploying this chart. Example:
 #   kubectl create secret generic github-webhook-secret \
