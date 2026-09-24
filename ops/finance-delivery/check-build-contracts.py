@@ -55,7 +55,7 @@ with tempfile.TemporaryDirectory(prefix='astra-finance-contract-') as directory:
     script = publisher.replace('/var/run/buildkit-metadata/image.json', str(root / 'metadata.json')).replace('$(results.IMAGE_DIGEST.path)', str(root / 'digest')).replace('$(results.IMAGE_URL.path)', str(root / 'image'))
     for label, digest, valid in [('sha256', 'sha256:' + 'a' * 64, True), ('missing-prefix', 'a' * 64, False), ('short', 'sha256:abc', False), ('uppercase', 'sha256:' + 'A' * 64, False), ('missing', '', False)]:
         (root / 'metadata.json').write_text(json.dumps({'containerimage.digest': digest}))
-        result = shell(script, {'IMAGE': 'registry.test/finance:git-' + 'a' * 40, 'RESULT_IMAGE_URL': ''})
+        result = shell(script, {'IMAGE': 'registry.test/finance:git-' + 'a' * 40, 'RESULT_IMAGE_URL': '', 'BUILD_TARGET': ''})
         check('BuildKit result ' + label, (result == 0) == valid)
         if valid:
             check('BuildKit exact result preserved', (root / 'digest').read_text() == digest and (root / 'image').read_text() == 'registry.test/finance:git-' + 'a' * 40)
@@ -84,6 +84,12 @@ task = resources[('Task', 'remote-buildkit')]['spec']
 client_script = task['steps'][0]['args'][0]
 check('BuildKit client script has valid shell syntax', subprocess.run(['sh', '-n'], input=client_script, text=True, capture_output=True).returncode == 0)
 check('Tekton client uses in-cluster mTLS and private registry output', task['volumes'][0]['secret']['secretName'] == 'k3s-buildkit-client-tls' and '--tlsservername k3s-buildkit.tekton-pipelines.svc.cluster.local' in client_script and 'registry-write-gateway.registry.svc.cluster.local:8443/$image_path' in client_script and 'destination must use registry.lucas.engineering' in client_script and 'unsafe destination path' in client_script)
+check('BuildKit Task exposes a safe optional stage target', next(p for p in task['params'] if p['name'] == 'BUILD_TARGET')['default'] == '' and 'target=$BUILD_TARGET' in client_script and 'invalid Dockerfile target' in client_script)
+target_guard = 'case "$BUILD_TARGET" in' + client_script.split('case "$BUILD_TARGET" in', 1)[1].split('source_root=', 1)[0]
+for target, valid in [('', True), ('runtime', True), ('bundle', True), ('bad;echo', False), ('../escape', False), ('9stage', False)]:
+    check('BuildKit Dockerfile target guard ' + (target or 'default'), (shell(target_guard, {'BUILD_TARGET': target}) == 0) == valid)
+generic_pipeline = resources[('Pipeline', 'clone-build-push')]['spec']
+check('Generic PHarness build Pipeline forwards its optional Dockerfile target', next(p for p in generic_pipeline['params'] if p['name'] == 'build-target')['default'] == '' and any(p['name'] == 'BUILD_TARGET' and p['value'] == '$(params.build-target)' for p in next(t for t in generic_pipeline['tasks'] if t['name'] == 'build-push')['params']))
 check('BuildKit client preserves public immutable image result', 'image="$RESULT_IMAGE_URL"' in task['steps'][1]['script'] and 'image="$IMAGE"' in task['steps'][1]['script'])
 check('BuildKit server certificate covers its Service DNS name', 'k3s-buildkit.tekton-pipelines.svc.cluster.local' in resources[('Certificate', 'k3s-buildkit-server')]['spec']['dnsNames'] and resources[('Certificate', 'k3s-buildkit-server')]['spec']['usages'] == ['digital signature', 'server auth'])
 check('BuildKit client certificate is separate and client-only', resources[('Certificate', 'k3s-buildkit-client')]['spec']['secretName'] == 'k3s-buildkit-client-tls' and resources[('Certificate', 'k3s-buildkit-client')]['spec']['usages'] == ['digital signature', 'client auth'])

@@ -35,6 +35,10 @@ spec:
         {{- range .Values.registry.buildArgs }}
         - {{ . | quote }}
         {{- end }}
+    - name: build-target
+      type: string
+      description: Optional named Dockerfile stage to build.
+      default: ""
     - name: deployment
       type: string
       description: Deployment name to restart after build (empty = skip).
@@ -76,6 +80,8 @@ spec:
           value: $(params.context)
         - name: BUILD_ARGS
           value: $(params.build-args[*])
+        - name: BUILD_TARGET
+          value: $(params.build-target)
 
     - name: rollout-restart
       runAfter:
