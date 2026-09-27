@@ -21,9 +21,9 @@
     "docker_context": "rancher-desktop", "name": "pharness-mac", "platform": "linux/amd64",
     "client_endpoint": "tcp://127.0.0.1:12344",
     "ssh_host": null, "remote_address": "192.168.2.2", "remote_port": 12340,
-    "tls_servername": "buildkit-k3s.lucas.internal", "tls_directory": "~/.config/lucas-engineering/pki/buildkit/k3s",
-    "service_namespace": "tekton-pipelines", "endpoint_slice": "k3s-buildkit-ipv4"
+    "tls_servername": "buildkit-k3s.lucas.internal", "tls_directory": "~/.config/lucas-engineering/pki/buildkit/k3s"
   },
+  "cluster_builder": {"namespace": "tekton-pipelines", "service": "k3s-buildkit", "port": 12340, "node_labels": {"workload": "build"}},
   "telemetry": {
     "metrics": {"namespace": "monitoring", "resource": "service/mimir-gateway", "port": 80},
     "logs": {"namespace": "monitoring", "resource": "service/loki", "port": 3100},
