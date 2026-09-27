@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from lib.common import OpsError, Profile, canonical, digest, run
 from lib.connections import Tunnel, Pharness
-from lib.operations import evaluation_status, start_evaluation
+from lib.operations import cluster_buildkit, evaluation_status, start_evaluation
 from lib.releases import COMPONENTS, validate_manifest, verify_release
 from lib.builder import inspect as inspect_builder, BuilderConnection
 
@@ -235,6 +235,43 @@ class ConnectionTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertEqual(json.loads(result.stdout)['category'], 'existing_record')
             self.assertEqual(output.read_text(), '{"retained":true}')
+
+
+class ClusterBuilderTests(unittest.TestCase):
+    def profile(self, ready=True, labels=None, endpoints=None):
+        endpoints = endpoints if endpoints is not None else [
+            {"conditions": {"ready": True}, "targetRef": {"kind": "Pod", "name": "k3s-buildkit-abc"}}]
+        objects = {
+            "pod/k3s-buildkit-abc": {"spec": {"nodeName": "build-node"}, "status": {"conditions": [
+                {"type": "Ready", "status": "True" if ready else "False"}]}},
+            "node/build-node": {"metadata": {"labels": labels if labels is not None else
+                                             {"workload": "build", "kubernetes.io/arch": "amd64"}}},
+        }
+        profile = Mock(data={"cluster_builder": {"namespace": "tekton-pipelines", "service": "k3s-buildkit",
+                                                 "port": 12340, "node_labels": {"workload": "build"}}})
+        profile.kubectl.return_value = json.dumps({"items": [{"endpoints": endpoints,
+                                                              "ports": [{"port": 12340}]}]}).encode()
+        profile.get.side_effect = lambda resource, namespace=None: objects[resource]
+        return profile
+
+    def test_accepts_single_ready_pod_on_amd64_build_node(self):
+        self.assertEqual(cluster_buildkit(self.profile()),
+                         {"service": "k3s-buildkit", "pod": "k3s-buildkit-abc", "node": "build-node", "port": 12340})
+
+    def test_rejects_missing_or_ambiguous_endpoints(self):
+        with self.assertRaisesRegex(OpsError, "exactly one ready"):
+            cluster_buildkit(self.profile(endpoints=[]))
+        two = [{"conditions": {"ready": True}, "targetRef": {"kind": "Pod", "name": n}} for n in ("a", "b")]
+        with self.assertRaisesRegex(OpsError, "exactly one ready"):
+            cluster_buildkit(self.profile(endpoints=two))
+
+    def test_rejects_unready_pod_and_wrong_node(self):
+        with self.assertRaisesRegex(OpsError, "not Ready"):
+            cluster_buildkit(self.profile(ready=False))
+        with self.assertRaisesRegex(OpsError, "AMD64 build node"):
+            cluster_buildkit(self.profile(labels={"workload": "general", "kubernetes.io/arch": "amd64"}))
+        with self.assertRaisesRegex(OpsError, "AMD64 build node"):
+            cluster_buildkit(self.profile(labels={"workload": "build", "kubernetes.io/arch": "arm64"}))
 
 
 class EvaluationTests(unittest.TestCase):

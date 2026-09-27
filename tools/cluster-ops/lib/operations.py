@@ -40,15 +40,7 @@ def doctor(profile, credentials=False, builder=False):
         check("pipeline:" + name, lambda name=name: {
             "name": profile.get("pipeline/" + name, "tekton-pipelines")["metadata"]["name"]})
 
-    def endpoint():
-        expected = profile.data["builder"]
-        item = profile.get("endpointslice/" + expected["endpoint_slice"], expected["service_namespace"])
-        addresses = [a for e in item["endpoints"] for a in e["addresses"]]
-        ports = [p["port"] for p in item["ports"]]
-        if addresses != [expected["remote_address"]] or ports != [expected["remote_port"]]:
-            raise OpsError("identity", "BuildKit EndpointSlice differs from the environment profile")
-        return {"addresses": addresses, "ports": ports}
-    check("buildkit_endpoint", endpoint)
+    check("buildkit_endpoint", lambda: cluster_buildkit(profile))
 
     def argo():
         item = profile.get("application/" + profile.data["pharness"]["argo_application"], "argocd")
@@ -90,6 +82,37 @@ def doctor(profile, credentials=False, builder=False):
     report["status"] = "passed" if all(c["status"] == "passed" for c in report["checks"]) else "blocked"
     report["completed_at"] = now()
     return report
+
+
+def cluster_buildkit(profile):
+    """Require exactly one ready in-cluster BuildKit Pod on an AMD64 build node.
+
+    This is the release build path used by PHarness's Tekton pipeline. The
+    separate Mac builder remains reachable only through `builder preflight`.
+    """
+    expected = profile.data["cluster_builder"]
+    namespace = expected["namespace"]
+    slices = json.loads(profile.kubectl(["get", "endpointslices", "-l",
+                                         "kubernetes.io/service-name=" + identifier(expected["service"]),
+                                         "-o", "json"], namespace))["items"]
+    pods = sorted({e["targetRef"]["name"] for item in slices for e in item.get("endpoints") or []
+                   if (e.get("conditions") or {}).get("ready") and (e.get("targetRef") or {}).get("kind") == "Pod"})
+    ports = sorted({p["port"] for item in slices for p in item.get("ports") or []})
+    if len(pods) != 1:
+        raise OpsError("identity", "Expected exactly one ready in-cluster BuildKit endpoint")
+    if ports != [expected["port"]]:
+        raise OpsError("identity", "In-cluster BuildKit port differs from the environment profile")
+    pod = profile.get("pod/" + identifier(pods[0]), namespace)
+    if not any(c["type"] == "Ready" and c["status"] == "True" for c in pod["status"].get("conditions", [])):
+        raise OpsError("readiness", "In-cluster BuildKit Pod is not Ready")
+    node_name = pod["spec"].get("nodeName")
+    if not node_name:
+        raise OpsError("readiness", "In-cluster BuildKit Pod is not scheduled")
+    labels = profile.get("node/" + identifier(node_name))["metadata"]["labels"]
+    required = {**expected["node_labels"], "kubernetes.io/arch": "amd64"}
+    if any(labels.get(key) != value for key, value in required.items()):
+        raise OpsError("identity", "In-cluster BuildKit is not on the expected AMD64 build node")
+    return {"service": expected["service"], "pod": pods[0], "node": node_name, "port": ports[0]}
 
 
 def start_evaluation(profile, api, request, policy, policy_revision, source, registry_hash, directory, operation_id):
