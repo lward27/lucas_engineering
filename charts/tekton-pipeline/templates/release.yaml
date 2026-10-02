@@ -24751,6 +24751,22 @@ metadata:
     app.kubernetes.io/instance: default
     app.kubernetes.io/part-of: tekton-pipelines
 data:
+  default-pod-template: |
+    nodeSelector:
+      workload: build
+    tolerations:
+      - key: workload
+        operator: Equal
+        value: build
+        effect: NoSchedule
+  default-affinity-assistant-pod-template: |
+    nodeSelector:
+      workload: build
+    tolerations:
+      - key: workload
+        operator: Equal
+        value: build
+        effect: NoSchedule
   _example: |
     ################################
     #                              #
