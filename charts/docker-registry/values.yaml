@@ -5,6 +5,9 @@ docker-registry:
   configData:
     http:
       relativeurls: true
+    storage:
+      delete:
+        enabled: true
   service:
     type: ClusterIP
     # The authenticated gateway proxies to this stable backend address.
