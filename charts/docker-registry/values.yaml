@@ -1,15 +1,10 @@
 docker-registry:
-  # Temporarily stop registry writers while offline garbage collection runs.
-  replicaCount: 0
   configPath: /etc/distribution
   # Return relative upload URLs so authenticated in-cluster clients preserve
   # the gateway's non-default :8443 authority across resumable blob uploads.
   configData:
     http:
       relativeurls: true
-    storage:
-      delete:
-        enabled: true
   service:
     type: ClusterIP
     # The authenticated gateway proxies to this stable backend address.
