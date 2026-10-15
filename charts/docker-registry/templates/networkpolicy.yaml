@@ -36,8 +36,10 @@ spec:
       ports:
         - { protocol: TCP, port: 8080 }
     - from:
+        # Home LAN operators and the desktop builder. DHCP moves operator
+        # laptops within this subnet; the gateway still authenticates writes.
         - ipBlock:
-            cidr: 192.168.50.145/32
+            cidr: 192.168.50.0/24
         # Temporary M1 build host on the Lucas VPN; the desktop is powered off.
         - ipBlock:
             cidr: 192.168.2.2/32
