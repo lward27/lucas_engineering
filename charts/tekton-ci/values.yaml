@@ -81,7 +81,9 @@ services:
     workspaceStorageSize: 1Gi
 
   finance-app-db-service:
+    # Explicit immutable builds replace mutable-tag source-push rollouts.
     enabled: true
+    sourcePushEnabled: false
     repoName: finance_app_database_service
     repoURL: https://github.com/lward27/finance_app_database_service.git
     branch: main
