@@ -1,0 +1,95 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: finance-database-build
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: tekton-ci
+    app.kubernetes.io/component: finance-app-database-service
+spec:
+  description: Build and test an exact source commit without restarting production.
+  params:
+    - name: revision
+      type: string
+  workspaces:
+    - name: shared-data
+  results:
+    - name: IMAGE_URL
+      value: $(tasks.build-push.results.IMAGE_URL)
+    - name: IMAGE_DIGEST
+      value: $(tasks.build-push.results.IMAGE_DIGEST)
+    - name: SOURCE_COMMIT
+      value: $(tasks.fetch-source.results.commit)
+  tasks:
+    - name: validate-revision
+      params:
+        - name: revision
+          value: $(params.revision)
+      taskSpec:
+        params:
+          - name: revision
+        steps:
+          - name: validate
+            image: docker.io/library/alpine@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc
+            env:
+              - name: REVISION
+                value: $(params.revision)
+            script: |
+              #!/bin/sh
+              set -eu
+              case "$REVISION" in *[!0-9a-f]*|'') exit 1 ;; esac
+              test "${#REVISION}" -eq 40
+    - name: fetch-source
+      runAfter: [validate-revision]
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-data
+      params:
+        - name: url
+          value: https://github.com/lward27/finance_app_database_service.git
+        - name: revision
+          value: $(params.revision)
+        - name: verbose
+          value: "false"
+        - name: sslVerify
+          value: "true"
+    - name: verify-checkout
+      runAfter: [fetch-source]
+      params:
+        - name: requested
+          value: $(params.revision)
+        - name: resolved
+          value: $(tasks.fetch-source.results.commit)
+      taskSpec:
+        params:
+          - name: requested
+          - name: resolved
+        steps:
+          - name: compare
+            image: docker.io/library/alpine@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc
+            env:
+              - name: REQUESTED
+                value: $(params.requested)
+              - name: RESOLVED
+                value: $(params.resolved)
+            script: |
+              #!/bin/sh
+              set -eu
+              test "$REQUESTED" = "$RESOLVED"
+    - name: build-push
+      runAfter: [verify-checkout]
+      taskRef:
+        name: remote-buildkit
+      workspaces:
+        - name: source
+          workspace: shared-data
+      params:
+        - name: IMAGE
+          value: registry.lucas.engineering/finance_app_database_service:git-$(params.revision)
+        - name: RESULT_IMAGE_URL
+          value: registry.lucas.engineering/finance_app_database_service:git-$(params.revision)
+        - name: BUILD_ARGS
+          value:
+            - SOURCE_COMMIT=$(params.revision)

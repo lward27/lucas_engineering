@@ -31,6 +31,9 @@ spec:
               value: >-
                 body.repository.name == '{{ $svc.repoName | default $name }}' &&
                 body.ref == 'refs/heads/{{ $svc.branch }}'
+                {{- if hasKey $svc "sourcePushEnabled" }}
+                && {{ $svc.sourcePushEnabled }}
+                {{- end }}
       bindings:
         - ref: {{ $name }}-binding
           kind: TriggerBinding
