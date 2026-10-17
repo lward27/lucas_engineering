@@ -29,8 +29,15 @@ spec:
     spec:
       containers:
       - name: finance-app-database-service
-        image: registry.lucas.engineering/finance_app_database_service:latest
-        imagePullPolicy: Always
+        image: registry.lucas.engineering/finance_app_database_service@sha256:7fc16bf4aed484fb3f4f182455bf7973ce42ae8af3b357dc6904e14af5adfb8b
+        imagePullPolicy: IfNotPresent
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8000
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 12
         env:
         - name: PGHOST
           value: "postgresql.apps-prod.svc.cluster.local"
