@@ -1,8 +1,9 @@
-# Short, specific task title
+# Linear issue: short, specific task title
 
-- Status: queued
-- Category: security | helm | kubernetes | general
-- Priority: P1 | P2 | P3
+- Linear status: Todo | In Progress | Backlog | Done
+- Category label: maintenance:security | maintenance:helm | maintenance:kubernetes | maintenance:general
+- Add maintenance:review or maintenance:blocked when applicable
+- Priority: Urgent | High | Medium | Low
 - Created: YYYY-MM-DD HH:MM America/New_York
 - Updated: YYYY-MM-DD HH:MM America/New_York
 - Target: exact chart, application, node, or namespace
