@@ -48,6 +48,8 @@ apps:
     enabled: true
   promtail:
     enabled: true
+  alloy:
+    enabled: false
   scraper-manager:
     enabled: true
   sentinel-rbac:
