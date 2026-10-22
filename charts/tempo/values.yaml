@@ -1,4 +1,5 @@
 tempo:
+  retention: 24h
   tempo:
     receivers:
       otlp:
@@ -10,11 +11,8 @@ tempo:
     metricsGenerator:
       enabled: true
       remoteWriteUrl: "http://mimir-gateway.monitoring.svc.cluster.local:80/api/v1/push"
-      processors: [local-blocks, span-metrics, service-graphs]
+      processors: [span-metrics, service-graphs]
       processor:
-        local_blocks:
-          filter_server_spans: false
-          flush_to_storage: true
         span_metrics:
           histogram_buckets: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]
         service_graphs:
