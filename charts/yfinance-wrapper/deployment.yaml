@@ -50,6 +50,12 @@ spec:
           value: "deployment.environment=production,service.namespace=apps-prod"
         ports:
         - containerPort: 8000
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8000
+          periodSeconds: 10
+          timeoutSeconds: 3
 
 ---
 
