@@ -7,4 +7,4 @@ resources:
 images:
   - name: registry.lucas.engineering/yfinance_wrapper
     newName: registry.lucas.engineering/yfinance_wrapper
-    digest: sha256:a1a8e08c3f3c7596f153c166e282f4a4c4e737a860c42f35cce21bf25ef415b4
+    digest: sha256:0e1ff0551004128140f48e06c79f98cc288a96aacaa22587b5c795bcd21c328a
