@@ -1,4 +1,7 @@
 docker-registry:
+  image:
+    repository: docker.io/library/registry
+    tag: 3.1.2@sha256:1290056e2357eceb0c047cb60ae9abb370305a218e2df650eb8d3ea021b1c151
   configPath: /etc/distribution
   # Return relative upload URLs so authenticated in-cluster clients preserve
   # the gateway's non-default :8443 authority across resumable blob uploads.
