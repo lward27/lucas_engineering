@@ -49,7 +49,7 @@ apps:
   promtail:
     enabled: true
   alloy:
-    enabled: false
+    enabled: true
   scraper-manager:
     enabled: true
   sentinel-rbac:
