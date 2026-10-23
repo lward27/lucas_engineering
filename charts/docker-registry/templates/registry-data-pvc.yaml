@@ -1,0 +1,21 @@
+{{- with .Values.registryData }}
+# Dedicated data claim on the builder node's NVMe. Keep it out of Argo pruning
+# and Helm uninstall so a chart or values mistake cannot delete registry blobs.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .claimName }}
+  namespace: {{ $.Release.Namespace }}
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+    helm.sh/resource-policy: keep
+  labels:
+    app: docker-registry
+    release: {{ $.Release.Name }}
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: {{ .storageClass }}
+  resources:
+    requests:
+      storage: {{ .size }}
+{{- end }}
