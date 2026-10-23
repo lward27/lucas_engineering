@@ -30,7 +30,19 @@ docker-registry:
     className: nginx
   persistence:
     enabled: true
-    size: 10Gi
+    existingClaim: docker-registry-data
+    size: 100Gi
+  # The data claim is node-local on the builder; never run two registry pods
+  # against different storage during a rollout.
+  updateStrategy:
+    type: Recreate
+  nodeSelector:
+    kubernetes.io/hostname: ubuntu-lucas-engineering-build
+  tolerations:
+    - key: workload
+      operator: Equal
+      value: build
+      effect: NoSchedule
   resources:
     limits:
       cpu: 200m
