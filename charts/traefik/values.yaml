@@ -40,6 +40,10 @@ traefik:
 
   ports:
     web:
+      http:
+        # nginx drops underscore headers by default; keep backends from seeing
+        # spoofable aliases such as X_Forwarded_User.
+        aliasHeadersStrategy: delete
       # Cloudflare Tunnel pods (pod CIDR) and LAN proxies (node subnet) send
       # X-Forwarded-Proto: https; Ghost and Argo CD need it to avoid redirect
       # loops.
@@ -53,6 +57,8 @@ traefik:
         respondingTimeouts:
           readTimeout: 0
     websecure:
+      http:
+        aliasHeadersStrategy: delete
       forwardedHeaders:
         trustedIPs:
           - 10.42.0.0/16

@@ -6,7 +6,7 @@ uptime-kuma:
     type: ClusterIP
   ingress:
     enabled: true
-    className: nginx
+    className: traefik
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-prod
       cert-manager.io/private-key-rotation-policy: "Never"

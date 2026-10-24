@@ -16,11 +16,11 @@ spec:
     - Ingress
     - Egress
   ingress:
-    # Allow ingress from nginx-ingress controller
+    # Allow ingress from Traefik
     - from:
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: ingress-nginx
+              kubernetes.io/metadata.name: traefik
       ports:
         - protocol: TCP
           port: 8080

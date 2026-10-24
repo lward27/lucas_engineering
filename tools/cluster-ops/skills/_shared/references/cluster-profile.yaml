@@ -78,7 +78,7 @@ components:
     artifact_storage: []
   registries: ["in-cluster docker-registry where discovered"]
   ingress:
-    controllers: ["ingress-nginx and Traefik on lucas_engineering", "Cilium Envoy on lucas-engineering-v2"]
+    controllers: ["Traefik on lucas_engineering", "Cilium Envoy on lucas-engineering-v2"]
     gateway_api: "CRDs installed on both reachable clusters"
 
 conventions:
@@ -102,7 +102,7 @@ discovery:
     pipelines: "Tekton Pipelines, Triggers, Dashboard, and Resolvers"
     observability: "Grafana, Loki, Mimir, Tempo, Prometheus, and OpenTelemetry Collector"
     storage: "local-path"
-    ingress: "ingress-nginx and Traefik"
+    ingress: "Traefik"
     registry: "docker-registry"
     minio: "not discovered"
   lucas_engineering_v2:

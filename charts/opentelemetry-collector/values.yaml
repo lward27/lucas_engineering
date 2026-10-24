@@ -4,7 +4,7 @@ opentelemetry-collector:
     repository: otel/opentelemetry-collector-contrib
   ingress:
     enabled: true
-    ingressClassName: nginx
+    ingressClassName: traefik
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-prod
       cert-manager.io/private-key-rotation-policy: "Never"

@@ -9,13 +9,11 @@ spec:
   - Ingress
   - Egress
   ingress:
-  # Allow the ingress controllers to reach homepage
+  # Allow Traefik to reach homepage
   - from:
     - namespaceSelector:
-        matchExpressions:
-        - key: kubernetes.io/metadata.name
-          operator: In
-          values: [ingress-nginx, traefik]
+        matchLabels:
+          kubernetes.io/metadata.name: traefik
     ports:
     - protocol: TCP
       port: 3000

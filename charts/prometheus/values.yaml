@@ -103,7 +103,7 @@ prometheus:
       type: ClusterIP
     ingress:
       enabled: true
-      ingressClassName: nginx
+      ingressClassName: traefik
       annotations:
         cert-manager.io/cluster-issuer: letsencrypt-prod
         cert-manager.io/private-key-rotation-policy: "Never"
@@ -158,10 +158,6 @@ prometheus:
           target_label: namespace
         - source_labels: [__meta_kubernetes_pod_name]
           target_label: pod
-    - job_name: ingress-nginx
-      static_configs:
-        - targets:
-          - ingress-nginx-controller-metrics.ingress-nginx.svc.cluster.local:10254
     - job_name: opentelemetry-collector
       static_configs:
         - targets:

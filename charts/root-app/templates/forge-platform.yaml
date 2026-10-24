@@ -16,9 +16,13 @@ spec:
       valuesObject:
           forgePlatform:
             ingress:
+              className: traefik
               annotations:
                 cert-manager.io/private-key-rotation-policy: "Never"
                 cert-manager.io/revision-history-limit: "2147483647"
+                # Traefik sets no backend response timeout by default.
+                nginx.ingress.kubernetes.io/proxy-read-timeout: null
+                nginx.ingress.kubernetes.io/proxy-send-timeout: null
   destination:
     server: https://kubernetes.default.svc
     namespace: forge-platform
