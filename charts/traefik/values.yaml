@@ -40,6 +40,11 @@ traefik:
       ingressEndpoint:
         hostname: traefik.traefik.svc.cluster.local
 
+  # Middleware references such as pharness-pharness-console-basic-auth@kubernetescrd
+  # use the legacy names; the chart only renders safeNaming when true.
+  additionalArguments:
+    - --providers.kubernetescrd.safeNaming=false
+
   global:
     checkNewVersion: false
     sendAnonymousUsage: false
@@ -98,6 +103,10 @@ traefik:
       # Without this the tainted build node counts as an empty domain and the
       # surge pod of a rolling update can never be scheduled.
       nodeTaintsPolicy: Honor
+      # Count only the current ReplicaSet so a rollout does not stack both new
+      # pods on the node the old pods were leaving.
+      matchLabelKeys:
+        - pod-template-hash
       labelSelector:
         matchLabels:
           app.kubernetes.io/name: traefik
