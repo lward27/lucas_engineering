@@ -1,0 +1,26 @@
+{{- if (index .Values.apps "traefik").enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traefik
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/lward27/lucas_engineering.git
+    path: charts/traefik
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: traefik
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    # The Traefik CRDs exceed the client-side last-applied annotation limit.
+    - ServerSideApply=true
+{{- end }}

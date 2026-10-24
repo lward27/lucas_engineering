@@ -9,11 +9,13 @@ spec:
   - Ingress
   - Egress
   ingress:
-  # Allow ingress-nginx to reach ghost
+  # Allow the ingress controllers to reach ghost
   - from:
     - namespaceSelector:
-        matchLabels:
-          kubernetes.io/metadata.name: ingress-nginx
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values: [ingress-nginx, traefik]
     ports:
     - protocol: TCP
       port: 2368

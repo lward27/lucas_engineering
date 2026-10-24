@@ -31,8 +31,10 @@ spec:
   ingress:
     - from:
         - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: ingress-nginx
+            matchExpressions:
+              - key: kubernetes.io/metadata.name
+                operator: In
+                values: [ingress-nginx, traefik]
       ports:
         - { protocol: TCP, port: 8080 }
     - from:
