@@ -33,6 +33,12 @@ traefik:
       crossProviderNamespaces:
         - pharness
         - tekton-pipelines
+      # A NodePort Service has no load balancer status to copy, which would
+      # leave every Ingress (and its Argo health) Progressing.
+      publishedService:
+        enabled: false
+      ingressEndpoint:
+        hostname: traefik.traefik.svc.cluster.local
 
   global:
     checkNewVersion: false
@@ -89,6 +95,9 @@ traefik:
     - maxSkew: 1
       topologyKey: kubernetes.io/hostname
       whenUnsatisfiable: DoNotSchedule
+      # Without this the tainted build node counts as an empty domain and the
+      # surge pod of a rolling update can never be scheduled.
+      nodeTaintsPolicy: Honor
       labelSelector:
         matchLabels:
           app.kubernetes.io/name: traefik
