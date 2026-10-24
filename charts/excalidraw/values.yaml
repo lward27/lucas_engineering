@@ -33,7 +33,7 @@ room:
       memory: 256Mi
 
 ingress:
-  className: nginx
+  className: traefik
   clusterIssuer: letsencrypt-prod
 
 networkPolicy:

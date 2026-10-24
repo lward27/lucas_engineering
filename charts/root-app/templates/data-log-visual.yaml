@@ -15,9 +15,12 @@ spec:
     helm:
       valuesObject:
           ingress:
+            className: traefik
             annotations:
               cert-manager.io/private-key-rotation-policy: "Never"
               cert-manager.io/revision-history-limit: "2147483647"
+              # Traefik applies no request body limit by default.
+              nginx.ingress.kubernetes.io/proxy-body-size: null
   destination:
     server: https://kubernetes.default.svc
     namespace: apps-prod

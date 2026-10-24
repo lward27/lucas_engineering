@@ -15,11 +15,10 @@ docker-registry:
   ingress:
     # The first-party Ingress now targets the authenticated gateway.
     enabled: false
-    className: nginx
+    className: traefik
     hosts:
       - registry.lucas.engineering
     annotations:
-      nginx.ingress.kubernetes.io/proxy-body-size: "0"
       cert-manager.io/cluster-issuer: letsencrypt-prod
       cert-manager.io/private-key-rotation-policy: "Never"
       cert-manager.io/revision-history-limit: "2147483647"
@@ -27,7 +26,7 @@ docker-registry:
     - hosts:
       - registry.lucas.engineering
       secretName: registry-lucas-engineering-tls
-    className: nginx
+    className: traefik
   persistence:
     enabled: true
     existingClaim: docker-registry-data

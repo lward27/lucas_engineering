@@ -1,0 +1,10 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: github-webhook-body-limit
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: tekton-ci
+spec:
+  buffering:
+    maxRequestBodyBytes: {{ int .Values.webhookIngress.maxRequestBodyBytes }}

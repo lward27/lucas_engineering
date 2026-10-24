@@ -52,7 +52,7 @@ postgresql:
       memory: 1Gi
 
 ingress:
-  className: nginx
+  className: traefik
   clusterIssuer: letsencrypt-prod
   frontendTlsSecretName: escape-lucas-engineering-tls
   backendTlsSecretName: escape-api-lucas-engineering-tls

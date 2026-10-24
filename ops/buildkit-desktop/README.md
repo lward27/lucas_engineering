@@ -37,7 +37,7 @@ The generated private material lives under
 must be covered by an encrypted workstation backup.
 
 The public `registry.lucas.engineering` route continues through Cloudflare and
-ingress-nginx; Caddy is not part of this path. A dedicated in-cluster NGINX
+Traefik; Caddy is not part of this path. A dedicated in-cluster NGINX
 gateway accepts anonymous `GET`/`HEAD`, requires Basic authentication for
 write methods, and runs one replica per K3s node. The desktop targets its
 private-CA TLS NodePort at `192.168.20.210:32443`. The K3s RootlessKit namespace maps

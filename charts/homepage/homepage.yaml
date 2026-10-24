@@ -80,7 +80,7 @@ metadata:
     cert-manager.io/private-key-rotation-policy: "Never"
     cert-manager.io/revision-history-limit: "2147483647"
 spec:
-  ingressClassName: nginx
+  ingressClassName: traefik
   rules:
     - host: home.lucas.engineering
       http:

@@ -4,7 +4,7 @@
   - Kubernetes running in a k3s
 - ArgoCD deployed in argocd namespace
 - Every service (argoCD, Grafana, Prometheus, etc...) get's it's own subdomain (for example - argocd.lucas.eningeering).
-- Use NGINX for ingress controller.
+- Use Traefik (Argo app `traefik`) for ingress controller.
 - Path should be Caddy -> Ingress Controller -> Service
 - Use Caddy only for port 80 and 443 as well as TLS termination.
 - Caddy handles HTTPS with local_certs

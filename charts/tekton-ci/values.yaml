@@ -38,9 +38,12 @@ github:
 
 webhookIngress:
   host: tekton-webhooks.lucas.engineering
-  className: nginx
+  className: traefik
+  # Rejects webhook payloads over this size with 413 before they reach the
+  # EventListener.
+  maxRequestBodyBytes: 1048576
   annotations:
-    nginx.ingress.kubernetes.io/proxy-body-size: "1m"
+    traefik.ingress.kubernetes.io/router.middlewares: tekton-pipelines-github-webhook-body-limit@kubernetescrd
     cert-manager.io/cluster-issuer: letsencrypt-prod
     cert-manager.io/private-key-rotation-policy: "Never"
     cert-manager.io/revision-history-limit: "2147483647"
