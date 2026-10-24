@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: yfinance-wrapper
+spec:
+  podSelector:
+    matchLabels:
+      app: yfinance-wrapper
+  policyTypes: [Ingress]
+  ingress:
+    # Scraper jobs, the frontend nginx (/api/yfinance/), and pharness-api's
+    # read-only release probes.
+    - from:
+        - podSelector:
+            matchLabels:
+              app: scraper-manager
+        - podSelector:
+            matchLabels:
+              app: finance-frontend
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: pharness
+          podSelector:
+            matchLabels:
+              app: pharness-api
+      ports:
+        - protocol: TCP
+          port: 8000

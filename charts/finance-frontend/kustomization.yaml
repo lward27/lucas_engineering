@@ -4,10 +4,13 @@ resources:
   - deployment.yaml
 images:
   - name: registry.lucas.engineering/finance-frontend
-    digest: sha256:248437be58bdeed738d614d13dd2c09232c18119ea0f10309e2a14ffed6d3f3d
+    digest: sha256:963b6e0faf1c8f6eb63cb4d8ed0c6ec5742e4f3b2d29432a6c5a46c0044fc2ab
 configMapGenerator:
   - name: finance-runtime-config
     files:
       - runtime-config.json
+  - name: finance-frontend-nginx
+    files:
+      - default.conf=nginx.conf
 patches:
   - path: runtime-config-mount.yaml

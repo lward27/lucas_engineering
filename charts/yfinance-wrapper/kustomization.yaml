@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - deployment.yaml
+  - networkpolicy.yaml
 
 images:
   - name: registry.lucas.engineering/yfinance_wrapper

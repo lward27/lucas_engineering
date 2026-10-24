@@ -56,31 +56,3 @@ spec:
             port: 8000
           periodSeconds: 10
           timeoutSeconds: 3
-
----
-
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: yfinance-wrapper
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    cert-manager.io/private-key-rotation-policy: "Never"
-    cert-manager.io/revision-history-limit: "2147483647"
-spec:
-  ingressClassName: traefik
-  rules:
-  - host: yfinance.lucas.engineering
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: yfinance-wrapper
-            port:
-              number: 8090
-  tls:
-  - hosts:
-    - yfinance.lucas.engineering
-    secretName: yfinance-lucas-engineering-tls
