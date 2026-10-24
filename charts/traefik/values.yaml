@@ -1,0 +1,86 @@
+traefik:
+  image:
+    tag: v3.7.16@sha256:c8a121e4bb1347e8fd52657fab12f2cb70b68f8a018895e2068f92c9e519b9c2
+
+  deployment:
+    replicas: 2
+    podAnnotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "9100"
+      prometheus.io/path: /metrics
+
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+
+  # The dormant K3s bundled Traefik (kube-system, scaled to zero) created an
+  # identical "traefik" IngressClass. Argo adopts it here so routing does not
+  # depend on the K3s release; see docs/operations/ASTRA-TRAEFIK-INGRESS.md.
+  ingressClass:
+    enabled: true
+    isDefaultClass: true
+    name: traefik
+
+  providers:
+    kubernetesCRD:
+      enabled: true
+    kubernetesIngress:
+      enabled: true
+      ingressClass: traefik
+      # Kubernetes Prefix semantics: /api must not match /apis.
+      strictPrefixMatching: true
+      # Only these namespaces may attach Middlewares through Ingress annotations.
+      crossProviderNamespaces:
+        - pharness
+        - tekton-pipelines
+
+  global:
+    checkNewVersion: false
+    sendAnonymousUsage: false
+
+  ports:
+    web:
+      # Cloudflare Tunnel pods (pod CIDR) and LAN proxies (node subnet) send
+      # X-Forwarded-Proto: https; Ghost and Argo CD need it to avoid redirect
+      # loops.
+      forwardedHeaders:
+        trustedIPs:
+          - 10.42.0.0/16
+          - 192.168.20.0/24
+      # Traefik v3 defaults to a 60s total request read deadline, which also
+      # cuts upgraded WebSocket and long upload connections.
+      transport:
+        respondingTimeouts:
+          readTimeout: 0
+    websecure:
+      forwardedHeaders:
+        trustedIPs:
+          - 10.42.0.0/16
+          - 192.168.20.0/24
+      transport:
+        respondingTimeouts:
+          readTimeout: 0
+
+  service:
+    spec:
+      type: ClusterIP
+
+  accessLog:
+    enabled: true
+    format: json
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/name: traefik
+          app.kubernetes.io/instance: traefik-traefik

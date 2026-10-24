@@ -30,6 +30,8 @@ apps:
     enabled: true
   ingress-nginx:
     enabled: true
+  traefik:
+    enabled: true
   loki:
     enabled: true
   mimir:
