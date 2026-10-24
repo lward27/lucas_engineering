@@ -9,12 +9,13 @@ images:
     digest: sha256:0e1ff0551004128140f48e06c79f98cc288a96aacaa22587b5c795bcd21c328a
 patches:
   - path: deployment-patch.yaml
+  # Staging uses its own yfinance-staging policy.
   - target:
-      kind: Ingress
+      kind: NetworkPolicy
       name: yfinance-wrapper
     patch: |-
       $patch: delete
       apiVersion: networking.k8s.io/v1
-      kind: Ingress
+      kind: NetworkPolicy
       metadata:
         name: yfinance-wrapper

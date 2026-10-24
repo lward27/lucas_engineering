@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: finance-app-database-service
+spec:
+  podSelector:
+    matchLabels:
+      app: finance-app-database-service
+  policyTypes: [Ingress]
+  ingress:
+    # Scraper writes scraped data; the frontend nginx proxies /api/database/.
+    - from:
+        - podSelector:
+            matchLabels:
+              app: scraper-manager
+        - podSelector:
+            matchLabels:
+              app: finance-frontend
+      ports:
+        - protocol: TCP
+          port: 8000

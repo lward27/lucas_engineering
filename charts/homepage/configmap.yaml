@@ -24,14 +24,6 @@ data:
             - icon: https://icon.icepanel.io/Technology/svg/React.svg
               href: https://finance.lucas.engineering
               description: Finance app UI
-        - Finance API:
-            - icon: https://icon.icepanel.io/Technology/svg/Python.svg
-              href: https://finance-db.lucas.engineering/docs
-              description: FastAPI backend
-        - YFinance:
-            - icon: https://icon.icepanel.io/Technology/svg/Python.svg
-              href: https://yfinance.lucas.engineering/docs
-              description: Yahoo Finance scraper
 
     - Platform:
         - ArgoCD:
