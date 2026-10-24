@@ -40,6 +40,7 @@ traefik:
 
   ports:
     web:
+      nodePort: 30080
       http:
         # nginx drops underscore headers by default; keep backends from seeing
         # spoofable aliases such as X_Forwarded_User.
@@ -57,6 +58,7 @@ traefik:
         respondingTimeouts:
           readTimeout: 0
     websecure:
+      nodePort: 30443
       http:
         aliasHeadersStrategy: delete
       forwardedHeaders:
@@ -67,9 +69,10 @@ traefik:
         respondingTimeouts:
           readTimeout: 0
 
+  # Same NodePorts ingress-nginx used, so LAN proxies keep working.
   service:
     spec:
-      type: ClusterIP
+      type: NodePort
 
   accessLog:
     enabled: true
