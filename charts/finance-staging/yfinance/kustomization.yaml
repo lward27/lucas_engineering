@@ -6,7 +6,7 @@ resources:
   - network-policy.yaml
 images:
   - name: registry.lucas.engineering/yfinance_wrapper
-    digest: sha256:0e1ff0551004128140f48e06c79f98cc288a96aacaa22587b5c795bcd21c328a
+    digest: sha256:32e269b5d5b9eed559f0b8ea8ac56ed5c449d3dd0f875f698b6d1b0b2f328d2b
 patches:
   - path: deployment-patch.yaml
   # Staging uses its own yfinance-staging policy.
