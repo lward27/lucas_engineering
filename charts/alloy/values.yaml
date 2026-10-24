@@ -1,15 +1,27 @@
 alloy:
   alloy:
     enableReporting: false
+    # Persisted on the host so a restart resumes from saved offsets instead of
+    # re-reading every pod log from the beginning.
+    storagePath: /var/lib/alloy/data
     mounts:
       varlog: true
+      extra:
+        - name: alloy-data
+          mountPath: /var/lib/alloy/data
+        - name: promtail-positions
+          mountPath: /run/promtail
+          readOnly: true
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 1Gi
     configMap:
       content: |
         discovery.kubernetes "kubernetes_pods" {
           role = "pod"
-          namespaces {
-            names = ["apps-prod"]
-          }
           selectors {
             role  = "pod"
             field = "spec.nodeName=" + coalesce(sys.env("HOSTNAME"), constants.hostname)
@@ -82,96 +94,51 @@ alloy:
           file_match {
             enabled = true
           }
-          legacy_positions_file = "/tmp/alloy/positions.yaml"
-        }
-        discovery.kubernetes "openclaw" {
-          role = "pod"
-          namespaces {
-            names = ["apps-prod"]
-          }
-          selectors {
-            role  = "pod"
-            field = "spec.nodeName=" + coalesce(sys.env("HOSTNAME"), constants.hostname)
-          }
-        }
-        loki.process "openclaw" {
-          forward_to = [loki.write.default.receiver]
-          stage.regex {
-            expression = "^\\S+ \\[(?P<component>[^\\]]+)\\] .+ (?P<method>[a-zA-Z][\\w.]+) (?P<duration>\\d+ms)"
-          }
-          stage.labels {
-            values = {
-              component = null,
-              method    = null,
-            }
-          }
-        }
-        discovery.relabel "openclaw" {
-          targets = discovery.kubernetes.openclaw.targets
-          rule {
-            source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
-            regex         = "openclaw"
-            action        = "keep"
-          }
-          rule {
-            source_labels = ["__meta_kubernetes_namespace"]
-            target_label  = "namespace"
-          }
-          rule {
-            source_labels = ["__meta_kubernetes_pod_name"]
-            target_label  = "pod"
-          }
-          rule {
-            source_labels = ["__meta_kubernetes_container_name"]
-            target_label  = "container"
-          }
-          rule {
-            source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
-            separator     = "/"
-            target_label  = "__path__"
-            replacement   = "/var/log/pods/*$1/*.log"
-          }
-          rule {
-            target_label = "app"
-            replacement  = "openclaw"
-          }
-        }
-        loki.source.file "openclaw" {
-          targets    = discovery.relabel.openclaw.output
-          forward_to = [loki.process.openclaw.receiver]
-          file_match {
-            enabled = true
-          }
-          legacy_positions_file = "/tmp/alloy/positions.yaml"
+          // Imported once, only while Alloy has no positions file of its own,
+          // so the handoff resumes from Promtail's last offsets.
+          legacy_positions_file = "/run/promtail/positions.yaml"
         }
         loki.write "default" {
           endpoint {
             url = "http://loki-gateway.monitoring.svc.cluster.local:80/loki/api/v1/push"
           }
-          external_labels = {
-            collector = "alloy-canary",
-          }
         }
   rbac:
     create: true
-    namespaces:
-      - apps-prod
     rules:
       - apiGroups: [""]
         resources: ["pods"]
         verbs: ["get", "list", "watch"]
-    clusterRules: []
+    # The chart renders an empty list here as invalid YAML, so the pods rule is
+    # repeated rather than falling back to the chart's node and metrics rules.
+    clusterRules:
+      - apiGroups: [""]
+        resources: ["pods"]
+        verbs: ["get", "list", "watch"]
   crds:
     create: false
   controller:
     type: daemonset
-    nodeSelector:
-      kubernetes.io/hostname: ubuntu-lucas-engineering-2
-    resources:
-      requests:
-        cpu: 50m
-        memory: 128Mi
-      limits:
-        memory: 512Mi
+    tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+      - key: workload
+        operator: Equal
+        value: build
+        effect: NoSchedule
+    volumes:
+      extra:
+        - name: alloy-data
+          hostPath:
+            path: /var/lib/alloy/data
+            type: DirectoryOrCreate
+        - name: promtail-positions
+          hostPath:
+            path: /run/promtail
+            type: DirectoryOrCreate
   service:
     enabled: false
