@@ -15,12 +15,11 @@ Traefik replaced the retired ingress-nginx controller for every public route on 
 
 ```text
 Cloudflare -> cloudflared (tunnel, remotely managed config)
-  -> ingress-nginx-controller.ingress-nginx.svc:80 (ExternalName alias)
   -> traefik.traefik.svc:80 -> Ingress backends
 LAN proxy -> node:30080 / node:30443 (Traefik NodePorts)
 ```
 
-The Cloudflare tunnel's public hostnames still point to `http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80`. To keep that name resolving, `charts/traefik` ships an ExternalName Service by that name. After the tunnel origins are changed to `http://traefik.traefik.svc.cluster.local:80`, remove `templates/ingress-nginx-compat.yaml`.
+The Cloudflare tunnel's public hostnames point to `http://traefik.traefik.svc.cluster.local:80`. The tunnel config is managed in the Cloudflare dashboard, not in this repository.
 
 `tekton-webhooks.lucas.engineering` goes from the tunnel straight to the EventListener and does not pass through Traefik.
 
@@ -51,9 +50,8 @@ A pilot on the live controller (before cutover) confirmed: basic auth returns 40
 
 ## Rollback
 
-Revert the cutover merge commits. That restores `charts/ingress-nginx`, its root-app Application, the `nginx` class on every route, and the NetworkPolicies. Remove the ExternalName alias first, or Argo cannot recreate the `ingress-nginx-controller` Service. The Traefik application can stay deployed during a rollback.
+Revert the cutover merge commits. That restores `charts/ingress-nginx`, its root-app Application, the `nginx` class on every route, and the NetworkPolicies. Then point the tunnel's public hostnames back to `http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80`. The Traefik application can stay deployed during a rollback.
 
 ## Follow-ups
 
-- Change the Cloudflare tunnel origins to `traefik.traefik.svc.cluster.local:80`, then remove the ExternalName alias.
 - On the next K3s upgrade, add `disable: [traefik]` to the K3s server config so the dormant bundled release is removed. Its Helm uninstall deletes the shared CRDs and IngressClass, so plan a short window and hard-refresh the `traefik` Application immediately to recreate them. Middleware objects are deleted together with their CRD and come back when their applications resync.
