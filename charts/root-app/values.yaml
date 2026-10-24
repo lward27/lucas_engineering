@@ -47,7 +47,8 @@ apps:
   prometheus:
     enabled: true
   promtail:
-    enabled: true
+    # Replaced by Alloy (LUC-16); Promtail reached end of life 2026-03-02.
+    enabled: false
   alloy:
     enabled: true
   scraper-manager:
