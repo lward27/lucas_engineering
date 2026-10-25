@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: finance-app-database-service
-        image: registry.lucas.engineering/finance_app_database_service@sha256:099ccb295db0df41f71503b62542c8198875a628179f4ab81446a62371016163
+        image: registry.lucas.engineering/finance_app_database_service@sha256:59b9fef34d6b47f962e9aabb2c30e923234766220f6d90f589a577a355860e90
         imagePullPolicy: IfNotPresent
         readinessProbe:
           httpGet:
@@ -58,6 +58,20 @@ spec:
               name: finance-app-database-service-env
               key: DATABASE_URL
               optional: true
+        - name: FINANCE_SERVICE_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: finance-app-database-service-auth
+              key: FINANCE_SERVICE_TOKEN
+        - name: FINANCE_GUEST_RATE_LIMIT_KEY
+          valueFrom:
+            secretKeyRef:
+              name: finance-app-database-service-auth
+              key: FINANCE_GUEST_RATE_LIMIT_KEY
+        - name: FINANCE_ALLOWED_ORIGINS
+          value: "https://finance.lucas.engineering"
+        - name: FINANCE_GAMES_ENABLED
+          value: "false"
         - name: OTEL_SERVICE_NAME
           value: "finance-app-database-service"
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
@@ -76,3 +90,65 @@ spec:
           value: "deployment.environment=production,service.namespace=apps-prod"
         ports:
         - containerPort: 8000
+
+---
+
+# Processes accepted game advances. Idle while FINANCE_GAMES_ENABLED=false, but
+# the flag does not stop it; scale to 0 to pause queue processing.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: finance-app-database-advance-worker
+spec:
+  selector:
+    matchLabels:
+      app: finance-app-database-advance-worker
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: finance-app-database-advance-worker
+    spec:
+      containers:
+      - name: advance-worker
+        image: registry.lucas.engineering/finance_app_database_service@sha256:59b9fef34d6b47f962e9aabb2c30e923234766220f6d90f589a577a355860e90
+        imagePullPolicy: IfNotPresent
+        command: ["opentelemetry-instrument", "python", "-m", "finance_app_database_service.advance_worker", "--execute"]
+        env:
+        - name: PGHOST
+          value: "postgresql.apps-prod.svc.cluster.local"
+        - name: PGPORT
+          value: "5432"
+        - name: PGDATABASE
+          value: "finance_app"
+        - name: PGUSER
+          value: "finance_app_user"
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-auth
+              key: postgres-password
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: finance-app-database-service-env
+              key: DATABASE_URL
+              optional: true
+        - name: FINANCE_GAMES_ENABLED
+          value: "false"
+        - name: OTEL_SERVICE_NAME
+          value: "finance-app-database-advance-worker"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://opentelemetry-collector.monitoring.svc.cluster.local:4317"
+        - name: OTEL_EXPORTER_OTLP_PROTOCOL
+          value: "grpc"
+        - name: OTEL_LOGS_EXPORTER
+          value: "otlp"
+        - name: OTEL_METRICS_EXPORTER
+          value: "otlp"
+        - name: OTEL_TRACES_EXPORTER
+          value: "otlp"
+        - name: OTEL_PYTHON_LOG_CORRELATION
+          value: "true"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "deployment.environment=production,service.namespace=apps-prod"
