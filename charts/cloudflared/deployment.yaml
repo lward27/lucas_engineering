@@ -43,3 +43,17 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "500m"
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          # Without this the tainted build node counts as an empty domain and the
+          # surge pod of a rolling update can never be scheduled.
+          nodeTaintsPolicy: Honor
+          # Count only the current ReplicaSet so a rollout does not stack both new
+          # pods on the node the old pods were leaving.
+          matchLabelKeys:
+            - pod-template-hash
+          labelSelector:
+            matchLabels:
+              app: cloudflared
