@@ -4,7 +4,7 @@ resources:
   - deployment.yaml
 images:
   - name: registry.lucas.engineering/finance-frontend
-    digest: sha256:963b6e0faf1c8f6eb63cb4d8ed0c6ec5742e4f3b2d29432a6c5a46c0044fc2ab
+    digest: sha256:f99a4a944e572b883243c4bcce188aae16d3c3399a0e3bf4c0484eb71b06138e
 configMapGenerator:
   - name: finance-runtime-config
     files:

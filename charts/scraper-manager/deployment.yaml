@@ -34,6 +34,11 @@ spec:
           value: "false"
         - name: DATABASE_SERVICE_URL
           value: "http://finance-app-database-service.apps-prod.svc.cluster.local:8091"
+        - name: DATABASE_SERVICE_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: finance-app-database-service-auth
+              key: FINANCE_SERVICE_TOKEN
         - name: YFINANCE_SERVICE_URL
           value: "http://yfinance-wrapper.apps-prod.svc.cluster.local:8090"
         - name: RABBITMQ_URL
@@ -124,6 +129,11 @@ spec:
           value: "false"
         - name: DATABASE_SERVICE_URL
           value: "http://finance-app-database-service.apps-prod.svc.cluster.local:8091"
+        - name: DATABASE_SERVICE_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: finance-app-database-service-auth
+              key: FINANCE_SERVICE_TOKEN
         - name: YFINANCE_SERVICE_URL
           value: "http://yfinance-wrapper.apps-prod.svc.cluster.local:8090"
         - name: RABBITMQ_URL
