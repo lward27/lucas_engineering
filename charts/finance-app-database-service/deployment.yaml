@@ -27,10 +27,45 @@ spec:
       labels:
         app: finance-app-database-service
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+      - name: tmp
+        emptyDir:
+          sizeLimit: 128Mi
       containers:
       - name: finance-app-database-service
-        image: registry.lucas.engineering/finance_app_database_service@sha256:59b9fef34d6b47f962e9aabb2c30e923234766220f6d90f589a577a355860e90
+        image: registry.lucas.engineering/finance_app_database_service@sha256:dfda532b4916fd31e0ecf82e13f87c595dcedb9c70b18d4ef45ac11bc7c302b8
         imagePullPolicy: IfNotPresent
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ["ALL"]
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 2
+          failureThreshold: 6
         readinessProbe:
           httpGet:
             path: /healthz
@@ -109,10 +144,37 @@ spec:
       labels:
         app: finance-app-database-advance-worker
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+      - name: tmp
+        emptyDir:
+          sizeLimit: 128Mi
       containers:
       - name: advance-worker
-        image: registry.lucas.engineering/finance_app_database_service@sha256:59b9fef34d6b47f962e9aabb2c30e923234766220f6d90f589a577a355860e90
+        image: registry.lucas.engineering/finance_app_database_service@sha256:dfda532b4916fd31e0ecf82e13f87c595dcedb9c70b18d4ef45ac11bc7c302b8
         imagePullPolicy: IfNotPresent
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ["ALL"]
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        resources:
+          requests:
+            cpu: 25m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
         command: ["opentelemetry-instrument", "python", "-m", "finance_app_database_service.advance_worker", "--execute"]
         env:
         - name: PGHOST
