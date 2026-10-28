@@ -129,3 +129,5 @@ data:
 
   kubernetes.yaml: |
     mode: cluster
+    # Ingress discovery is on by default and the homepage-reader role cannot list ingresses.
+    ingress: false
