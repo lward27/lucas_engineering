@@ -3,18 +3,59 @@ mimir-distributed:
   # chart default is 3.0.4, but 3.0.9 is the latest available 3.0 patch.
   image:
     tag: 3.0.9
+  # MinIO credentials live in the out-of-Git Secret mimir-minio (keys
+  # rootUser/rootPassword) and reach the config via -config.expand-env.
+  global:
+    extraEnv:
+      - name: MINIO_ROOT_USER
+        valueFrom:
+          secretKeyRef:
+            name: mimir-minio
+            key: rootUser
+      - name: MINIO_ROOT_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: mimir-minio
+            key: rootPassword
   mimir:
     structuredConfig:
+      # Every component needs the same object store. A filesystem backend on
+      # per-component local-path PVCs left the compactor and store-gateway
+      # blind to ingester blocks, so they piled up on the ingester volume.
       common:
         storage:
-          backend: filesystem
-      # Override chart default of s3 to use local filesystem
+          backend: s3
+          s3:
+            endpoint: mimir-minio.monitoring.svc:9000
+            insecure: true
+            access_key_id: ${MINIO_ROOT_USER}
+            secret_access_key: ${MINIO_ROOT_PASSWORD}
       blocks_storage:
-        backend: filesystem
-        filesystem:
-          dir: /data/blocks
+        backend: s3
+        s3:
+          bucket_name: mimir-tsdb
+          endpoint: mimir-minio.monitoring.svc:9000
+          insecure: true
+          access_key_id: ${MINIO_ROOT_USER}
+          secret_access_key: ${MINIO_ROOT_PASSWORD}
         bucket_store:
           sync_dir: /data/tsdb-sync
+      ruler_storage:
+        backend: s3
+        s3:
+          bucket_name: mimir-ruler
+          endpoint: mimir-minio.monitoring.svc:9000
+          insecure: true
+          access_key_id: ${MINIO_ROOT_USER}
+          secret_access_key: ${MINIO_ROOT_PASSWORD}
+      alertmanager_storage:
+        backend: s3
+        s3:
+          bucket_name: mimir-ruler
+          endpoint: mimir-minio.monitoring.svc:9000
+          insecure: true
+          access_key_id: ${MINIO_ROOT_USER}
+          secret_access_key: ${MINIO_ROOT_PASSWORD}
       # Separate data dirs so none overlap with blocks_storage.filesystem.dir
       compactor:
         data_dir: /data/compactor
@@ -31,9 +72,12 @@ mimir-distributed:
           replication_factor: 1
       limits:
         max_global_series_per_user: 10000000
+        compactor_blocks_retention_period: 14d
       store_gateway:
         sharding_ring:
           replication_factor: 1
+  # The bundled MinIO subchart's images are no longer pullable; see
+  # objectStore below and templates/object-store.yaml.
   minio:
     enabled: false
 
@@ -135,3 +179,23 @@ mimir-distributed:
 
   rollout_operator:
     enabled: false
+
+objectStore:
+  enabled: true
+  image: cgr.dev/chainguard/minio@sha256:e70b2b1e74d79457f808710483bd726ff364529ca30736eaa15a6ab547d3a5a7
+  clientImage: cgr.dev/chainguard/minio-client@sha256:799a60aa839c0d79b53f1dccdddc974d0fe94282cca712fbfbad3b196f88d0ee
+  credentialsSecret: mimir-minio
+  buckets:
+    - mimir-tsdb
+    - mimir-ruler
+  size: 20Gi
+  storageClassName: local-path
+  # Keep with the other monitoring local-path volumes.
+  nodeSelector:
+    kubernetes.io/hostname: ubuntu-lucas-engineering
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
