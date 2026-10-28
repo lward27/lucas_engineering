@@ -1,4 +1,8 @@
 mimir-distributed:
+  # Keep the whole cluster on one supported stable patch release. The upstream
+  # chart default is 3.0.4, but 3.0.9 is the latest available 3.0 patch.
+  image:
+    tag: 3.0.9
   mimir:
     structuredConfig:
       common:
@@ -48,10 +52,6 @@ mimir-distributed:
         memory: 512Mi
       limits:
         memory: 1Gi
-    # Use stable release instead of RC
-    image:
-      tag: 3.0.0
-
   store_gateway:
     zoneAwareReplication:
       enabled: false
