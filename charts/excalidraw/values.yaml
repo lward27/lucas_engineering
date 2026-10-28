@@ -3,7 +3,8 @@ nameOverride: excalidraw
 frontend:
   image:
     repository: registry.lucas.engineering/excalidraw
-    tag: collab-latest
+    # Built from images/excalidraw (FROM excalidraw/excalidraw:latest); no Tekton trigger rebuilds this tag.
+    tag: collab-latest@sha256:21bb48f131086fbe6d8a5f1608868c9c3a98fa5432f5edfc073e817a730aab9d
     pullPolicy: Always
   replicas: 1
   host: draw.lucas.engineering
@@ -19,7 +20,7 @@ frontend:
 room:
   image:
     repository: excalidraw/excalidraw-room
-    tag: latest
+    tag: sha-03ff435@sha256:2fe999f9be4379e3ee282fc45d75d84a691a6383dde33544514cc395287c7a70
     pullPolicy: Always
   replicas: 1
   host: draw-room.lucas.engineering
