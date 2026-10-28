@@ -1,5 +1,6 @@
 {{- range $name, $svc := .Values.services }}
 {{- if $svc.enabled }}
+{{- $buildArgs := concat ($.Values.registry.buildArgs | default list) ($svc.buildArgs | default list) }}
 ---
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerTemplate
@@ -51,13 +52,7 @@ spec:
           - name: context
             value: {{ $svc.context | default "./" | quote }}
           - name: build-args
-            value:
-              {{- range $.Values.registry.buildArgs }}
-              - {{ . | quote }}
-              {{- end }}
-              {{- range $svc.buildArgs }}
-              - {{ . | quote }}
-              {{- end }}
+            value: {{ if eq (len $buildArgs) 0 }}[]{{ else }}{{ $buildArgs | toJson }}{{ end }}
           - name: deployment
             value: {{ $svc.deployment | default "" | quote }}
           - name: deployment-namespace
