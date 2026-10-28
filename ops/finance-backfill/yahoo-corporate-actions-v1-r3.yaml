@@ -1,0 +1,80 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: yahoo-corporate-actions-v1-20261017-r3
+  namespace: apps-prod
+  labels:
+    app.kubernetes.io/name: finance-market-backfill
+    app.kubernetes.io/part-of: finance
+  annotations:
+    finance.lucas.engineering/source-revision: e29fee2b0ee9024a935f4a9e5f78034a00dc0703
+    finance.lucas.engineering/replaces-job: yahoo-corporate-actions-v1-20261017-r2
+spec:
+  backoffLimit: 6
+  activeDeadlineSeconds: 1814400
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: finance-market-backfill
+        app.kubernetes.io/part-of: finance
+    spec:
+      automountServiceAccountToken: false
+      restartPolicy: OnFailure
+      terminationGracePeriodSeconds: 120
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: backfill
+          image: registry.lucas.engineering/finance_app_database_service@sha256:dfda532b4916fd31e0ecf82e13f87c595dcedb9c70b18d4ef45ac11bc7c302b8
+          imagePullPolicy: IfNotPresent
+          command: [python, -m, finance_app_database_service.backfill]
+          args:
+            - --execute
+            - --name
+            - yahoo-full-history-v1
+            - --interval-seconds
+            - "60"
+            - --batch-size
+            - "250"
+            - --ticker-batch-size
+            - "10"
+            - --batch-pause-seconds
+            - "300"
+            - --max-database-bytes
+            - "12884901888"
+          env:
+            - name: PYTHONDONTWRITEBYTECODE
+              value: "1"
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: PGHOST
+              value: postgresql.apps-prod.svc.cluster.local
+            - name: PGPORT
+              value: "5432"
+            - name: PGDATABASE
+              value: finance_app
+            - name: PGUSER
+              value: finance_app_user
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-auth
+                  key: postgres-password
+            - name: YFINANCE_SERVICE_URL
+              value: http://yfinance-wrapper.apps-prod.svc.cluster.local:8090
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
