@@ -8,8 +8,9 @@ spec:
       app: yfinance-wrapper
   policyTypes: [Ingress]
   ingress:
-    # Scraper jobs, the frontend nginx (/api/yfinance/), and pharness-api's
-    # read-only release probes.
+    # Scraper jobs, the frontend nginx (/api/yfinance/), pharness-api's
+    # read-only release probes, and the operator-run market backfill Job
+    # (ops/finance-backfill).
     - from:
         - podSelector:
             matchLabels:
@@ -23,6 +24,9 @@ spec:
           podSelector:
             matchLabels:
               app: pharness-api
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: finance-market-backfill
       ports:
         - protocol: TCP
           port: 8000

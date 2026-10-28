@@ -61,3 +61,30 @@ the replacement.
 Stopping/deleting the Job or rolling back API image pins requires the applicable
 explicit operational approval. A code rollback must retain these additive tables
 and source data; it must not prune persistent data.
+
+## Revision r3 (2026-10-28)
+
+`r2` failed on 2026-10-20 at 17:27 America/New_York (`BackoffLimitExceeded`).
+Total database size had passed the 6GiB ceiling after 1,575 completed
+snapshots (`market_history` about 3.97GB), so every retry stopped before the
+next ticker. Separately, the `yfinance-wrapper` NetworkPolicy added on
+2026-10-24 did not admit backfill pods; it now allows
+`app.kubernetes.io/name: finance-market-backfill`.
+
+With explicit approval, the ceiling was raised to 12GiB (`12884901888` bytes).
+The 1,038 remaining tickers are expected to add roughly 2.7GB, which the
+PostgreSQL node has room for. Because a named run refuses a changed
+configuration, the stored `market_backfill.config_json` for
+`yahoo-full-history-v1` was updated in place to the new `max_database_bytes`
+before creating `r3`. All other options are unchanged, so completed
+checkpoints are kept. `r3` uses the current production image
+(`dfda532b…`, source `e29fee2`); the backfill code has not changed since `r2`.
+
+```sh
+kubectl --context lucas_engineering -n apps-prod create \
+  -f ops/finance-backfill/yahoo-corporate-actions-v1-r3.yaml
+kubectl --context lucas_engineering -n apps-prod logs job/yahoo-corporate-actions-v1-20261017-r3 \
+  --tail=30 --since=10m
+```
+
+Do not run `r2` or the original Job alongside `r3`.
