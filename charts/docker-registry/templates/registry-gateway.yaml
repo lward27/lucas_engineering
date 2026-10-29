@@ -59,6 +59,13 @@ metadata:
     app.kubernetes.io/part-of: docker-registry
 spec:
   replicas: 2
+  # Required one-per-node anti-affinity leaves no node for a surge pod, so
+  # roll by replacing one replica at a time instead.
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   selector:
     matchLabels: *gatewayLabels
   template:
