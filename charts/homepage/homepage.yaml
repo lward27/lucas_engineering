@@ -12,7 +12,7 @@ spec:
     metadata:
       annotations:
         # setup-config copies the ConfigMap once at Pod initialization.
-        lucas.engineering/config-sha256: "3b9e8a44ee2c197f023f643a69e58f6b7ff29475ee74c29700e6b1353175e096"
+        lucas.engineering/config-sha256: "6df8bf6189e6dd9a556edfc2827b0be1b8934766f401adb6ee4afb79259dd1e5"
       labels:
         app: homepage
     spec:
@@ -33,7 +33,7 @@ spec:
               mountPath: /app/config
       containers:
         - name: homepage
-          image: ghcr.io/gethomepage/homepage:v0.10.9
+          image: ghcr.io/gethomepage/homepage:v2.7.0@sha256:19c5c09184458a41b7b5915e71463a39f36cd33540f41bdbed008791b8182d5f
           ports:
             - containerPort: 3000
           volumeMounts:
@@ -46,6 +46,10 @@ spec:
             limits:
               cpu: 500m
               memory: 256Mi
+          env:
+            # Homepage 1.0+ rejects requests whose Host header is not listed here.
+            - name: HOMEPAGE_ALLOWED_HOSTS
+              value: home.lucas.engineering
           envFrom:
             - secretRef:
                 name: homepage-secrets
