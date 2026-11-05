@@ -88,7 +88,7 @@ MemorySwapMax=0
 INI
 }
 
-# Values come from node 2 measurements on 2026-11-06 (ops/campus-lab-gvisor/README.md).
+# Values come from node 2 measurements on 2026-11-05 (ops/campus-lab-gvisor/README.md).
 # eviction-hard replaces the k3s default map, so it repeats the k3s disk
 # thresholds (5%) and adds the memory signal that map leaves out.
 desired_kubelet_dropin() {

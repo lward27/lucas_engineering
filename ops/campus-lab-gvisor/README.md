@@ -35,7 +35,7 @@ failure. Nothing privileged stays running.
 ## Kubelet values
 
 Measured on node 2 (16 CPU, 31.3 GiB, 4 GiB swap, `pid_max` 4194304,
-`threads-max` 256094) on 2026-11-06, before the change:
+`threads-max` 256094) on 2026-11-05, before the change:
 
 - `k3s-agent.service` (kubelet, containerd, 49 shims) used about 250m CPU,
   440 MiB anonymous memory and 570 MiB kernel memory; its peak including page
