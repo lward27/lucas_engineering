@@ -12,6 +12,7 @@ script:
 | gVisor | `release-20261026.0`, `runsc` and `containerd-shim-runsc-v1` in `/usr/local/bin`, pinned by sha512 (tarball and binaries) |
 | containerd | `/var/lib/rancher/k3s/agent/etc/containerd/config-v3.toml.tmpl` adds the `runsc` runtime (`io.containerd.runsc.v1`) to the k3s base template |
 | Node label | `pharness.dev/campus-lab-runtime=gvisor`: on the live Node and in `/etc/rancher/k3s/config.yaml.d/50-pharness-campus-lab.yaml` for re-registration |
+| Node taint | `pharness.dev/campus-lab=true:PreferNoSchedule`: on the live Node (set by `run-on-node.sh`) and in the same k3s drop-in (`node-taint`) for re-registration. Soft, because `apps-prod/qdrant-0` and `apps-prod/rabbitmq` use local-path PVs on this node and must stay schedulable here. Campus session Pods need no toleration, so the session guard still rejects all tolerations |
 | Swap | `/etc/systemd/system/kubepods.slice.d/50-pharness-campus-noswap.conf` sets `MemorySwapMax=0` on `kubepods.slice` (also applied to the running slice). The kubelet's NoSwap behaviour limits swap only on container cgroups, while `runsc-sandbox` runs in the Pod sandbox cgroup; without this a session above its memory limit pages into node swap instead of being OOM-killed. runc containers already have `memory.swap.max=0`, so only pause containers and gVisor sandboxes change |
 | Kubelet | `/etc/rancher/k3s/config.yaml.d/60-pharness-campus-kubelet.yaml` appends `kubelet-arg`: `pod-max-pids=4096`, `kube-reserved=cpu=500m,memory=1536Mi`, `system-reserved=cpu=250m,memory=512Mi`, `eviction-hard=memory.available<500Mi,nodefs.available<5%,imagefs.available<5%,nodefs.inodesFree<5%`. Applied by a k3s-agent restart; `--check` reports drift if the file differs or k3s-agent started before it was written |
 | Backups | Earlier versions of the kubelet drop-in go to `/root/pharness-campus-backups/` |
@@ -72,7 +73,11 @@ containers). k3s renders `config.toml` from the template on start.
    `systemctl set-property --runtime kubepods.slice MemorySwapMax=infinity`,
    restart `k3s-agent`, then
    delete `/usr/local/bin/runsc` and `/usr/local/bin/containerd-shim-runsc-v1`.
-4. Disable `apps.campus-lab` in `charts/root-app/values.yaml`.
+4. To remove only the taint: `kubectl taint node ubuntu-lucas-engineering-2 pharness.dev/campus-lab:PreferNoSchedule-`,
+   and drop `TAINT_*` from `run-on-node.sh` and `node-taint` from
+   `desired_dropin` (then rerun `run-on-node.sh` to rewrite the drop-in;
+   no restart is needed).
+5. Disable `apps.campus-lab` in `charts/root-app/values.yaml`.
 
 Without the handler, Pods with `runtimeClassName: gvisor` fail to start
 (`no runtime for "runsc" is configured`); they never fall back to runc.
