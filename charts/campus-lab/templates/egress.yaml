@@ -151,6 +151,9 @@ spec:
         runAsNonRoot: true
         runAsUser: 65532
         runAsGroup: 65532
+        # The key pair and token are mounted 0440; the group makes them
+        # readable to the proxy user only.
+        fsGroup: 65532
         seccompProfile:
           type: RuntimeDefault
       containers:
