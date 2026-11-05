@@ -61,4 +61,11 @@ elif [[ "$check" == true ]]; then
 else
   k label node "$NODE" "${LABEL_KEY}=${LABEL_VALUE}" --overwrite
 fi
+
+# The running kubelet's view of the managed kubelet-arg values.
+if command -v jq >/dev/null; then
+  k get --raw "/api/v1/nodes/${NODE}/proxy/configz" |
+    jq -c '.kubeletconfig | {podPidsLimit, kubeReserved, systemReserved, evictionHard}' |
+    sed 's/^/INFO   kubelet configz /'
+fi
 exit "$status"
