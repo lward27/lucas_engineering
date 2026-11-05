@@ -9,6 +9,10 @@ apps:
   campus-idp:
     # LUC-137: synthetic Keycloak test identity provider for the Campus PoC.
     enabled: true
+  pharness-campus:
+    # LUC-137: the Campus PoC API and page. Needs a PHarness release that
+    # contains deploy/helm/pharness-campus and the Kubernetes lab provider.
+    enabled: true
   argo-cd:
     enabled: true
   homepage:
