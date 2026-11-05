@@ -1,7 +1,9 @@
-# PHarness Campus lab slots (LUC-125). Everything here is admin-owned: the
-# Campus controller can create and delete session Jobs inside the slots, but
-# it cannot change these namespaces, their labels, quotas, network policy,
-# RBAC, the RuntimeClass or the admission policy.
+# PHarness Campus lab slots (LUC-125) and their network isolation and egress
+# proxy (LUC-130). Everything here is admin-owned: the Campus controller can
+# create and delete session Jobs and their broker token Secrets inside the
+# slots, but it cannot change these namespaces, their labels, quotas, network
+# policies, RBAC, the RuntimeClass, the egress proxy or the admission
+# policies.
 
 runtime:
   className: gvisor
@@ -36,6 +38,10 @@ slots:
     jobs: "1"
     # kube-root-ca.crt, the session anchor and a few deletion tombstones.
     configMaps: "16"
+    # The occupancy's broker token Secret (LUC-131), plus one while a
+    # deleted occupancy's Secret is still being removed. The secret guard
+    # admits nothing else.
+    secrets: "2"
 
 controller:
   # Identity the PHarness Campus controller runs as.
@@ -47,7 +53,74 @@ controller:
 
 admission:
   policyName: pharness-campus-lab-session-guard
+  secretPolicyName: pharness-campus-lab-secret-guard
   maxActiveDeadlineSeconds: 14400
+  # The init container the provider runs first in every session Pod. It
+  # holds the Pod until the slot NetworkPolicies are seen to be enforced.
+  networkGateContainer: network-gate
+  # Must match pharness_core::campus_sandbox_pod.
+  brokerTokenVolume: campus-broker-token
+  brokerTokenSecretPattern: "^campus-broker-[0-9a-f]{24}$"
+  brokerTokenSecretKeys: ["token", "egress-ca.pem"]
+
+# The Campus broker listener (LUC-131), served by pharness-api on a port of
+# its own (PHARNESS_CAMPUS_BROKER_BIND). Sessions reach it at a pinned
+# ClusterIP, so they need no DNS; the slot policy admits only this port of
+# these Pods.
+broker:
+  namespace: pharness
+  podLabels:
+    app: pharness-api
+  port: 4790
+
+# The Campus egress proxy (LUC-130): the only way out of a lab slot. Session
+# Pods labelled pharness.dev/campus-egress=proxy may open TCP connections to
+# it and nothing else outside the slot; it admits CONNECT to the approved
+# hosts below, and inside each tunnel only the requests
+# pharness_core::campus_egress approves.
+egress:
+  enabled: true
+  namespace: campus-egress
+  name: campus-egress-proxy
+  # pharness-runtime built from the LUC-130 branch; it carries the
+  # campus_egress_proxy execution kind of pharness-worker.
+  image: registry.lucas.engineering/pharness-runtime@sha256:2851f3b7d590c3317e7e660bf97460317e2e05c014fca60bbc813916e8c89ad1
+  # Pinned so the provider can name it without DNS.
+  clusterIP: 10.43.130.30
+  port: 3128
+  replicas: 1
+  podLabel:
+    key: pharness.dev/campus-egress
+    value: proxy
+  # The proxy terminates session TLS with a certificate for exactly these
+  # names from its own CA. Must match CAMPUS_EGRESS_ROUTES.
+  hosts:
+    - pypi.org
+    - files.pythonhosted.org
+    - registry.npmjs.org
+    - github.com
+    - codeload.github.com
+    - raw.githubusercontent.com
+  # The proxy looks up the session Pod behind each connection. The cluster
+  # API is reached at its post-DNAT endpoint.
+  apiServer:
+    cidr: 192.168.20.192/32
+    port: 6443
+  # Never dialled, whatever DNS answers; the proxy refuses them as well.
+  deniedCidrs:
+    - 0.0.0.0/8
+    - 10.0.0.0/8
+    - 100.64.0.0/10
+    - 127.0.0.0/8
+    - 169.254.0.0/16
+    - 172.16.0.0/12
+    - 192.0.0.0/24
+    - 192.168.0.0/16
+    - 198.18.0.0/15
+    - 224.0.0.0/3
+  resources:
+    requests: { cpu: 20m, memory: 32Mi, ephemeral-storage: 16Mi }
+    limits: { cpu: 500m, memory: 256Mi, ephemeral-storage: 64Mi }
 
 # Probe-only rendering used by the PHarness cluster test
 # (scripts/campus-session-jobs-cluster-test.sh). Argo never sets this. When

@@ -1,6 +1,8 @@
 {{- $runtime := .Values.runtime -}}
 {{- $slots := .Values.slots -}}
 {{- $maxDeadline := .Values.admission.maxActiveDeadlineSeconds -}}
+{{- $admission := .Values.admission -}}
+{{- $egress := .Values.egress -}}
 {{- if not .Values.probe.namespace }}
 # Independent, admin-owned guard for Campus lab slots. It does not trust the
 # controller's templates: everything the controller can create in a slot is
@@ -40,6 +42,12 @@ spec:
         object.kind == 'Pod' ? variables.objectLabels :
         (has(object.spec.template.metadata) && has(object.spec.template.metadata.labels)
           ? object.spec.template.metadata.labels : {})
+    - name: podAnnotations
+      expression: >-
+        object.kind == 'Pod'
+          ? (has(object.metadata.annotations) ? object.metadata.annotations : {})
+          : (has(object.spec.template.metadata) && has(object.spec.template.metadata.annotations)
+              ? object.spec.template.metadata.annotations : {})
     - name: ownershipKeys
       expression: >-
         ['pharness.dev/campus-controller', 'pharness.dev/campus-tenant',
@@ -106,8 +114,40 @@ spec:
       reason: Forbidden
     # API validation runs before validating admission, so a volume has exactly
     # one source here.
-    - expression: "!has(variables.podSpec.volumes) || variables.podSpec.volumes.all(v, has(v.emptyDir))"
-      message: "Campus lab Pods may mount only emptyDir volumes (no hostPath, projected token, secret, configMap or persistent volumes)"
+    - expression: >-
+        !has(variables.podSpec.volumes) || variables.podSpec.volumes.all(v, has(v.emptyDir) ||
+          (v.name == '{{ $admission.brokerTokenVolume }}' && has(v.secret) &&
+           has(v.secret.secretName) && v.secret.secretName.matches('{{ $admission.brokerTokenSecretPattern }}') &&
+           !(has(v.secret.optional) && v.secret.optional)))
+      message: "Campus lab Pods may mount only emptyDir volumes and their broker token Secret as {{ $admission.brokerTokenVolume }} (no hostPath, projected token, other secret, configMap or persistent volumes)"
+      reason: Forbidden
+    - expression: >-
+        variables.containers.all(c, !has(c.volumeMounts) || c.volumeMounts.all(m,
+          m.name != '{{ $admission.brokerTokenVolume }}' ||
+          (has(m.readOnly) && m.readOnly && (!has(m.subPath) || m.subPath == '') &&
+           (!has(m.subPathExpr) || m.subPathExpr == ''))))
+      message: "Campus lab containers must mount the broker token read-only and without subPath"
+      reason: Forbidden
+    # The gate holds the Pod until the slot NetworkPolicies are seen to be
+    # enforced, closing the window before the policy controller programs a
+    # new Pod's address.
+    - expression: >-
+        has(variables.podSpec.initContainers) && size(variables.podSpec.initContainers) == 1 &&
+        variables.podSpec.initContainers[0].name == '{{ $admission.networkGateContainer }}' &&
+        (!has(variables.podSpec.initContainers[0].restartPolicy) ||
+          variables.podSpec.initContainers[0].restartPolicy != 'Always')
+      message: "Campus lab Pods must run exactly one init container, the {{ $admission.networkGateContainer }} network gate"
+      reason: Forbidden
+    # The label admits a Pod to the egress proxy; the proxy then allows only
+    # the annotated hosts. Both or neither, and only approved hosts.
+    - expression: >-
+        ('{{ $egress.podLabel.key }}' in variables.podLabels) ==
+          ('pharness.dev/campus-egress-hosts' in variables.podAnnotations) &&
+        (!('{{ $egress.podLabel.key }}' in variables.podLabels) ||
+          (variables.podLabels['{{ $egress.podLabel.key }}'] == '{{ $egress.podLabel.value }}' &&
+           variables.podAnnotations['pharness.dev/campus-egress-hosts'].split(',').all(h,
+             h in {{ toJson $egress.hosts }})))
+      message: "Campus lab Pods with egress must carry {{ $egress.podLabel.key }}={{ $egress.podLabel.value }} and pharness.dev/campus-egress-hosts naming only approved hosts"
       reason: Forbidden
     - expression: >-
         variables.containers.all(c,
@@ -159,6 +199,72 @@ metadata:
     {{- include "campus-lab.labels" . | nindent 4 }}
 spec:
   policyName: {{ .Values.admission.policyName }}
+  validationActions: [Deny]
+  matchResources:
+    namespaceSelector:
+      matchLabels:
+        {{ $slots.labLabel.key }}: {{ $slots.labLabel.value | quote }}
+---
+# Secrets in a slot can only be broker token Secrets (LUC-131): Opaque, so
+# never a service-account token the controller manager would fill in, named
+# as the provider derives them, carrying the session's ownership labels and
+# holding only the token and the public egress CA certificate.
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: {{ $admission.secretPolicyName }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["secrets"]
+  variables:
+    - name: labels
+      expression: "has(object.metadata.labels) ? object.metadata.labels : {}"
+    - name: slot
+      expression: >-
+        has(namespaceObject.metadata.labels) && '{{ $slots.slotLabelKey }}' in namespaceObject.metadata.labels
+          ? namespaceObject.metadata.labels['{{ $slots.slotLabelKey }}'] : ''
+    - name: keys
+      expression: >-
+        (has(object.data) ? object.data.map(k, k) : []) +
+        (has(object.stringData) ? object.stringData.map(k, k) : [])
+  validations:
+    - expression: "has(object.type) && object.type == 'Opaque'"
+      message: "Campus lab slots admit only Opaque broker token Secrets"
+      reason: Forbidden
+    - expression: "object.metadata.name.matches('{{ $admission.brokerTokenSecretPattern }}')"
+      message: "Campus lab Secrets must be named as broker token Secrets"
+      reason: Forbidden
+    - expression: >-
+        ['pharness.dev/campus-controller', 'pharness.dev/campus-tenant',
+         'pharness.dev/campus-session', 'pharness.dev/campus-slot',
+         'pharness.dev/campus-generation', 'pharness.dev/campus-record'].all(key,
+          key in variables.labels && variables.labels[key] != '') &&
+        variables.labels['pharness.dev/campus-controller'] == '{{ .Values.controller.name }}' &&
+        variables.labels['pharness.dev/campus-record'] == 'broker-token' &&
+        variables.slot != '' && variables.labels['pharness.dev/campus-slot'] == variables.slot
+      message: "Campus lab broker token Secrets need the controller, tenant, session, slot (matching the namespace), generation and broker-token record labels"
+      reason: Forbidden
+    - expression: >-
+        'token' in variables.keys &&
+        variables.keys.all(k, k in {{ toJson $admission.brokerTokenSecretKeys }})
+      message: "Campus lab broker token Secrets may hold only {{ join ", " $admission.brokerTokenSecretKeys }}"
+      reason: Forbidden
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: {{ $admission.secretPolicyName }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+spec:
+  policyName: {{ $admission.secretPolicyName }}
   validationActions: [Deny]
   matchResources:
     namespaceSelector:
