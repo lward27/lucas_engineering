@@ -22,6 +22,7 @@ TARBALL_SHA512="26e4a327565f5da0f73261a6387e2c20f4695a232e330095a3111b70efd604fd
 RUNSC_SHA512="e656d169e5761482b5cfd081e73e0014158843fe82366274d0bfa5d9716d6352514617fb680d28b7a11e6e2796f4790a3262b75f0cc6414207c4012a2139fa21"
 SHIM_SHA512="4e5361092a17a17425d7e9e1d328b4d9769342c4b9803400d3a2beb8706e8d204719b55d2fdc74e6894affe2af63200f19ccfe732d90c4418fb2520e2eda6467"
 NODE_LABEL="pharness.dev/campus-lab-runtime=gvisor"
+NODE_TAINT="pharness.dev/campus-lab=true:PreferNoSchedule"
 
 CONTAINERD_DIR="/var/lib/rancher/k3s/agent/etc/containerd"
 TEMPLATE="${CONTAINERD_DIR}/config-v3.toml.tmpl"
@@ -66,9 +67,12 @@ TOML
 desired_dropin() {
   cat <<YAML
 # Managed by lucas_engineering ops/campus-lab-gvisor. k3s applies node labels
-# when the node registers; run-on-node.sh also labels the live Node object.
+# and taints when the node registers; run-on-node.sh also sets them on the
+# live Node object.
 node-label:
   - "${NODE_LABEL}"
+node-taint:
+  - "${NODE_TAINT}"
 YAML
 }
 

@@ -13,6 +13,11 @@ NODE="ubuntu-lucas-engineering-2"
 NAMESPACE="campus-lab-hostops"
 LABEL_KEY="pharness.dev/campus-lab-runtime"
 LABEL_VALUE="gvisor"
+# Soft taint: other workloads avoid the lab node when they can, while Pods
+# pinned to it (local-path PVs of qdrant and rabbitmq) still schedule there.
+TAINT_KEY="pharness.dev/campus-lab"
+TAINT_VALUE="true"
+TAINT_EFFECT="PreferNoSchedule"
 ARGS=()
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -60,6 +65,24 @@ elif [[ "$check" == true ]]; then
   status=1
 else
   k label node "$NODE" "${LABEL_KEY}=${LABEL_VALUE}" --overwrite
+fi
+
+want="${TAINT_VALUE}:${TAINT_EFFECT}"
+current="$(k get node "$NODE" -o jsonpath="{range .spec.taints[?(@.key=='${TAINT_KEY}')]}{.value}:{.effect}{'\n'}{end}")"
+if [[ "$current" == "$want" ]]; then
+  echo "OK     node ${NODE} carries taint ${TAINT_KEY}=${want}"
+elif [[ "$check" == true ]]; then
+  echo "DRIFT  node ${NODE} taints for ${TAINT_KEY}: ${current:-none}, want ${want}"
+  status=1
+else
+  # Drop any other effect for the key first; --overwrite only replaces the
+  # taint with the same key and effect.
+  while IFS=: read -r _ effect; do
+    if [[ -n "$effect" && "$effect" != "$TAINT_EFFECT" ]]; then
+      k taint node "$NODE" "${TAINT_KEY}:${effect}-"
+    fi
+  done <<<"$current"
+  k taint node "$NODE" "${TAINT_KEY}=${want}" --overwrite
 fi
 
 # The running kubelet's view of the managed kubelet-arg values.
