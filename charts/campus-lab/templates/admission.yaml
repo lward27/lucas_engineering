@@ -57,7 +57,8 @@ spec:
     - expression: "object.kind in ['Pod', 'Job']"
       message: "Campus lab slots admit only session Jobs and their Pods"
       reason: Forbidden
-    - expression: "request.subResource != 'ephemeralcontainers'"
+    # subResource is absent, not empty, on requests for the main resource.
+    - expression: "!has(request.subResource) || request.subResource != 'ephemeralcontainers'"
       message: "Campus lab slots do not admit ephemeral containers"
       reason: Forbidden
 {{- range $target := list "objectLabels" "podLabels" }}
