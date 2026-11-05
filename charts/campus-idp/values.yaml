@@ -78,11 +78,10 @@ ingressFrom:
 # Forwarded headers are trusted only from the Pod network (Traefik).
 trustedProxies: 10.42.0.0/16
 
-# The public route. Off until the Cloudflare tunnel hostname is added; only
-# the campus realm and static resources are routed, never /admin or the
-# master realm.
+# The public route, through the Cloudflare tunnel hostname. Only the campus
+# realm and static resources are routed, never /admin or the master realm.
 ingress:
-  enabled: false
+  enabled: true
   className: traefik
 
 resources:
