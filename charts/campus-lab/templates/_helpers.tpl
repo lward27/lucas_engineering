@@ -216,4 +216,39 @@ subjects:
   - kind: ServiceAccount
     name: {{ $root.Values.controller.serviceAccount.name }}
     namespace: {{ $root.Values.controller.serviceAccount.namespace }}
+---
+# Browser terminals: find the session Pod and exec into it, nothing else. The
+# API selects the Pod by its occupancy labels and only after authorizing the
+# browser session against the lab journal. Exec over WebSocket needs create
+# on pods/exec from Kubernetes 1.31 (get before), so both are granted.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pharness-campus-terminal
+  namespace: {{ $ns }}
+  labels:
+    {{- include "campus-lab.labels" $root | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["get", "create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pharness-campus-terminal
+  namespace: {{ $ns }}
+  labels:
+    {{- include "campus-lab.labels" $root | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pharness-campus-terminal
+subjects:
+  - kind: ServiceAccount
+    name: {{ $root.Values.terminal.serviceAccount.name }}
+    namespace: {{ $root.Values.terminal.serviceAccount.namespace }}
 {{- end }}
