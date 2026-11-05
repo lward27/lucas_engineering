@@ -54,7 +54,7 @@ spec:
     services: "0"
     services.loadbalancers: "0"
     services.nodeports: "0"
-    secrets: "0"
+    secrets: {{ $quota.secrets | quote }}
     configmaps: {{ $quota.configMaps | quote }}
 ---
 apiVersion: v1
@@ -87,6 +87,91 @@ spec:
     - Ingress
     - Egress
 ---
+# The broker listener is the only part of the control plane a session can
+# reach (LUC-131). Pinned ClusterIP, no DNS: the policy sees the post-DNAT
+# Pod address, so it names the broker Pods and their broker port only.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: campus-lab-session-broker
+  namespace: {{ $ns }}
+  labels:
+    {{- include "campus-lab.labels" $root | nindent 4 }}
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ $root.Values.broker.namespace }}
+          podSelector:
+            matchLabels:
+              {{- toYaml $root.Values.broker.podLabels | nindent 14 }}
+      ports:
+        - protocol: TCP
+          port: {{ $root.Values.broker.port }}
+{{- if $root.Values.egress.enabled }}
+---
+# Sessions whose effective policy approves egress carry the egress label
+# (set by the provider, checked by the session guard) and may reach the
+# egress proxy port; the proxy decides everything else per connection.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: campus-lab-session-egress
+  namespace: {{ $ns }}
+  labels:
+    {{- include "campus-lab.labels" $root | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{ $root.Values.egress.podLabel.key }}: {{ $root.Values.egress.podLabel.value | quote }}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ $root.Values.egress.namespace }}
+          podSelector:
+            matchLabels:
+              app: {{ $root.Values.egress.name }}
+      ports:
+        - protocol: TCP
+          port: {{ $root.Values.egress.port }}
+---
+# The proxy identifies the session behind a connection by its Pod address.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $root.Values.egress.name }}
+  namespace: {{ $ns }}
+  labels:
+    {{- include "campus-lab.labels" $root | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $root.Values.egress.name }}
+  namespace: {{ $ns }}
+  labels:
+    {{- include "campus-lab.labels" $root | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $root.Values.egress.name }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ $root.Values.egress.name }}
+    namespace: {{ $root.Values.egress.namespace }}
+{{- end }}
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -104,6 +189,17 @@ rules:
   - apiGroups: [""]
     resources: ["configmaps"]
     verbs: ["create", "get", "list", "delete"]
+  # The occupancy's broker token: created, replaced on rotation and deleted
+  # with the workload. No watch and no patch; the secret guard admits only
+  # Opaque token Secrets with the session's ownership labels.
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["create", "get", "list", "update", "delete"]
+  # Read-only: the provider refuses to launch when an isolation policy is
+  # missing or weakened, and can never change one.
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["networkpolicies"]
+    verbs: ["get", "list"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
