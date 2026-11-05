@@ -7,8 +7,10 @@
 #   /var/lib/rancher/k3s/agent/etc/containerd/config-v3.toml.tmpl
 #   /etc/rancher/k3s/config.yaml.d/50-pharness-campus-lab.yaml
 #   /etc/systemd/system/kubepods.slice.d/50-pharness-campus-noswap.conf
-# and restarts k3s-agent only when the containerd template changed and
-# --allow-restart was given. --check reports drift and changes nothing.
+#   /etc/rancher/k3s/config.yaml.d/60-pharness-campus-kubelet.yaml
+# and restarts k3s-agent only when the containerd template or the kubelet
+# drop-in changed (or k3s-agent predates them) and --allow-restart was given.
+# --check reports drift and changes nothing.
 set -euo pipefail
 
 GVISOR_RELEASE="20261026.0"
@@ -29,6 +31,8 @@ K3S_DROPIN="${K3S_DROPIN_DIR}/50-pharness-campus-lab.yaml"
 SWAP_DROPIN_DIR="/etc/systemd/system/kubepods.slice.d"
 SWAP_DROPIN="${SWAP_DROPIN_DIR}/50-pharness-campus-noswap.conf"
 KUBEPODS_CGROUP="/sys/fs/cgroup/kubepods.slice"
+KUBELET_DROPIN="${K3S_DROPIN_DIR}/60-pharness-campus-kubelet.yaml"
+BACKUP_DIR="/root/pharness-campus-backups"
 
 MODE=apply
 ALLOW_RESTART=false
@@ -84,6 +88,27 @@ MemorySwapMax=0
 INI
 }
 
+# Values come from node 2 measurements on 2026-11-06 (ops/campus-lab-gvisor/README.md).
+# eviction-hard replaces the k3s default map, so it repeats the k3s disk
+# thresholds (5%) and adds the memory signal that map leaves out.
+desired_kubelet_dropin() {
+  cat <<'YAML'
+# Managed by lucas_engineering ops/campus-lab-gvisor/install-gvisor-node.sh.
+# Kubelet hardening for the Campus lab node; k3s-agent must restart to apply.
+kubelet-arg+:
+  - "pod-max-pids=4096"
+  - "kube-reserved=cpu=500m,memory=1536Mi"
+  - "system-reserved=cpu=250m,memory=512Mi"
+  - "eviction-hard=memory.available<500Mi,nodefs.available<5%,imagefs.available<5%,nodefs.inodesFree<5%"
+YAML
+}
+
+backup_file() {
+  [[ -f "$1" ]] || return 0
+  install -d -m 0700 "$BACKUP_DIR"
+  cp -p "$1" "${BACKUP_DIR}/$(basename "$1").$(date +%Y%m%dT%H%M%S)"
+}
+
 binaries_current() {
   [[ -x /usr/local/bin/runsc && -x /usr/local/bin/containerd-shim-runsc-v1 ]] &&
     [[ "$(sha512_of /usr/local/bin/runsc)" == "$RUNSC_SHA512" ]] &&
@@ -115,6 +140,7 @@ PY
 }
 
 TEMPLATE_CHANGED=false
+KUBELET_CHANGED=false
 
 if binaries_current; then
   note "OK     runsc and containerd-shim-runsc-v1 are release-${GVISOR_RELEASE}"
@@ -177,6 +203,31 @@ else
   note "CHANGED set kubepods.slice MemorySwapMax=0"
 fi
 
+if [[ -f "$KUBELET_DROPIN" ]] && cmp -s <(desired_kubelet_dropin) "$KUBELET_DROPIN"; then
+  note "OK     ${KUBELET_DROPIN}"
+elif [[ "$MODE" == check ]]; then
+  drift "${KUBELET_DROPIN} missing or different"
+else
+  install -d -m 0755 "$K3S_DROPIN_DIR"
+  backup_file "$KUBELET_DROPIN"
+  desired_kubelet_dropin >"${KUBELET_DROPIN}.new"
+  chmod 0644 "${KUBELET_DROPIN}.new"
+  mv -f "${KUBELET_DROPIN}.new" "$KUBELET_DROPIN"
+  KUBELET_CHANGED=true
+  note "CHANGED wrote ${KUBELET_DROPIN}"
+fi
+
+# k3s reads config.yaml.d only at start, so a drop-in newer than the running
+# k3s-agent has not reached the kubelet yet.
+if [[ "$KUBELET_CHANGED" != true && -f "$KUBELET_DROPIN" ]]; then
+  agent_start="$(date -d "$(systemctl show k3s-agent -p ExecMainStartTimestamp --value)" +%s)"
+  if (( "$(stat -c %Y "$KUBELET_DROPIN")" < agent_start )); then
+    note "OK     k3s-agent started after ${KUBELET_DROPIN}"
+  else
+    drift "k3s-agent started before ${KUBELET_DROPIN}; it needs a restart"
+  fi
+fi
+
 # k3s renders config.toml from the template when k3s-agent starts.
 if grep -q "runtimes.runsc\]" "${CONTAINERD_DIR}/config.toml" 2>/dev/null; then
   note "OK     rendered config.toml registers the runsc handler"
@@ -184,7 +235,7 @@ elif [[ "$TEMPLATE_CHANGED" != true ]]; then
   drift "rendered config.toml does not register runsc; k3s-agent needs a restart"
 fi
 
-if [[ "$TEMPLATE_CHANGED" == true || "$DRIFT" == 1 && "$MODE" == apply ]]; then
+if [[ "$TEMPLATE_CHANGED" == true || "$KUBELET_CHANGED" == true || "$DRIFT" == 1 && "$MODE" == apply ]]; then
   if [[ "$ALLOW_RESTART" == true ]]; then
     # The restart also restarts the kubelet that carries this exec session,
     # so it runs detached; run-on-node.sh verifies with --check afterwards.
