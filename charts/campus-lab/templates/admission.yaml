@@ -1,0 +1,166 @@
+{{- $runtime := .Values.runtime -}}
+{{- $slots := .Values.slots -}}
+{{- $maxDeadline := .Values.admission.maxActiveDeadlineSeconds -}}
+{{- if not .Values.probe.namespace }}
+# Independent, admin-owned guard for Campus lab slots. It does not trust the
+# controller's templates: everything the controller can create in a slot is
+# checked here, whoever submits it. The image allowlist is the separate LUC-121
+# policy pharness-campus-lab-image-allowlist; both must admit a workload.
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: {{ .Values.admission.policyName }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods", "pods/ephemeralcontainers"]
+      - apiGroups: ["batch"]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["jobs", "cronjobs"]
+      - apiGroups: ["apps"]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+  variables:
+    - name: isJob
+      expression: "object.kind == 'Job'"
+    - name: podSpec
+      expression: "object.kind == 'Pod' ? object.spec : object.spec.template.spec"
+    - name: objectLabels
+      expression: "has(object.metadata.labels) ? object.metadata.labels : {}"
+    - name: podLabels
+      expression: >-
+        object.kind == 'Pod' ? variables.objectLabels :
+        (has(object.spec.template.metadata) && has(object.spec.template.metadata.labels)
+          ? object.spec.template.metadata.labels : {})
+    - name: ownershipKeys
+      expression: >-
+        ['pharness.dev/campus-controller', 'pharness.dev/campus-tenant',
+         'pharness.dev/campus-session', 'pharness.dev/campus-slot',
+         'pharness.dev/campus-generation', 'pharness.dev/campus-record']
+    - name: slot
+      expression: >-
+        has(namespaceObject.metadata.labels) && '{{ $slots.slotLabelKey }}' in namespaceObject.metadata.labels
+          ? namespaceObject.metadata.labels['{{ $slots.slotLabelKey }}'] : ''
+    - name: containers
+      expression: >-
+        variables.podSpec.containers +
+        (has(variables.podSpec.initContainers) ? variables.podSpec.initContainers : [])
+  validations:
+    - expression: "object.kind in ['Pod', 'Job']"
+      message: "Campus lab slots admit only session Jobs and their Pods"
+      reason: Forbidden
+    - expression: "request.subResource != 'ephemeralcontainers'"
+      message: "Campus lab slots do not admit ephemeral containers"
+      reason: Forbidden
+{{- range $target := list "objectLabels" "podLabels" }}
+    - expression: >-
+        variables.ownershipKeys.all(key, key in variables.{{ $target }} && variables.{{ $target }}[key] != '') &&
+        variables.{{ $target }}['pharness.dev/campus-controller'] == '{{ $.Values.controller.name }}' &&
+        variables.{{ $target }}['pharness.dev/campus-generation'].matches('^[1-9][0-9]{0,17}$') &&
+        variables.{{ $target }}['pharness.dev/campus-record'] == 'workload' &&
+        variables.slot != '' && variables.{{ $target }}['pharness.dev/campus-slot'] == variables.slot
+      message: "Campus lab workloads need controller, tenant, session, slot (matching the namespace), generation and record ownership labels on the {{ ternary "object" "Pod template" (eq $target "objectLabels") }}"
+      reason: Forbidden
+{{- end }}
+    - expression: >-
+        !variables.isJob ||
+        variables.ownershipKeys.all(key, key in variables.objectLabels && key in variables.podLabels &&
+          variables.objectLabels[key] == variables.podLabels[key])
+      message: "Campus lab Jobs must carry the same ownership labels on the Job and its Pod template"
+      reason: Forbidden
+    - expression: >-
+        has(variables.podSpec.runtimeClassName) &&
+        variables.podSpec.runtimeClassName == '{{ $runtime.className }}'
+      message: "Campus lab Pods must use runtimeClassName {{ $runtime.className }}"
+      reason: Forbidden
+    - expression: >-
+        has(variables.podSpec.nodeSelector) &&
+        '{{ $runtime.nodeLabel.key }}' in variables.podSpec.nodeSelector &&
+        variables.podSpec.nodeSelector['{{ $runtime.nodeLabel.key }}'] == '{{ $runtime.nodeLabel.value }}'
+      message: "Campus lab Pods must select the {{ $runtime.nodeLabel.key }}={{ $runtime.nodeLabel.value }} pool"
+      reason: Forbidden
+    # Pods are bound through pods/binding, which this policy does not match;
+    # a nodeName on create would bypass the scheduler and RuntimeClass pool.
+    - expression: "request.operation != 'CREATE' || !has(variables.podSpec.nodeName) || variables.podSpec.nodeName == ''"
+      message: "Campus lab Pods must not set nodeName"
+      reason: Forbidden
+    - expression: >-
+        !(has(variables.podSpec.hostNetwork) && variables.podSpec.hostNetwork) &&
+        !(has(variables.podSpec.hostPID) && variables.podSpec.hostPID) &&
+        !(has(variables.podSpec.hostIPC) && variables.podSpec.hostIPC)
+      message: "Campus lab Pods must not use host network, PID or IPC namespaces"
+      reason: Forbidden
+    - expression: >-
+        has(variables.podSpec.automountServiceAccountToken) &&
+        variables.podSpec.automountServiceAccountToken == false
+      message: "Campus lab Pods must set automountServiceAccountToken: false"
+      reason: Forbidden
+    # API validation runs before validating admission, so a volume has exactly
+    # one source here.
+    - expression: "!has(variables.podSpec.volumes) || variables.podSpec.volumes.all(v, has(v.emptyDir))"
+      message: "Campus lab Pods may mount only emptyDir volumes (no hostPath, projected token, secret, configMap or persistent volumes)"
+      reason: Forbidden
+    - expression: >-
+        variables.containers.all(c,
+          has(c.securityContext) &&
+          !(has(c.securityContext.privileged) && c.securityContext.privileged) &&
+          has(c.securityContext.allowPrivilegeEscalation) && !c.securityContext.allowPrivilegeEscalation &&
+          (!has(c.securityContext.capabilities) || !has(c.securityContext.capabilities.add) ||
+            size(c.securityContext.capabilities.add) == 0))
+      message: "Campus lab containers must not be privileged, allow privilege escalation or add capabilities"
+      reason: Forbidden
+    - expression: >-
+        variables.containers.all(c,
+          has(c.resources) && has(c.resources.limits) &&
+          ['cpu', 'memory', 'ephemeral-storage'].all(r, r in c.resources.limits))
+      message: "Campus lab containers must set cpu, memory and ephemeral-storage limits"
+      reason: Forbidden
+    - expression: >-
+        variables.containers.all(c,
+          !has(c.envFrom) && (!has(c.env) || c.env.all(e, !has(e.valueFrom))) &&
+          (!has(c.ports) || c.ports.all(p, !has(p.hostPort) || p.hostPort == 0)))
+      message: "Campus lab containers must not read environment from secrets, config maps or fields, or bind host ports"
+      reason: Forbidden
+    - expression: "variables.containers.all(c, has(c.image) && c.image.contains('@sha256:'))"
+      message: "Campus lab containers must use digest-pinned images"
+      reason: Forbidden
+    - expression: >-
+        has(variables.podSpec.activeDeadlineSeconds) &&
+        variables.podSpec.activeDeadlineSeconds <= {{ $maxDeadline }} &&
+        (!variables.isJob || (has(dyn(object.spec).activeDeadlineSeconds) &&
+          dyn(object.spec).activeDeadlineSeconds <= {{ $maxDeadline }}))
+      message: "Campus lab workloads must set activeDeadlineSeconds of at most {{ $maxDeadline }}"
+      reason: Forbidden
+    - expression: "variables.podSpec.restartPolicy == 'Never'"
+      message: "Campus lab Pods must use restartPolicy Never"
+      reason: Forbidden
+    # Only the NoExecute tolerations the DefaultTolerationSeconds plugin adds.
+    - expression: >-
+        !has(variables.podSpec.tolerations) || variables.podSpec.tolerations.all(t,
+          has(t.key) && t.key in ['node.kubernetes.io/not-ready', 'node.kubernetes.io/unreachable'] &&
+          has(t.effect) && t.effect == 'NoExecute')
+      message: "Campus lab Pods must not tolerate node taints"
+      reason: Forbidden
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: {{ .Values.admission.policyName }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+spec:
+  policyName: {{ .Values.admission.policyName }}
+  validationActions: [Deny]
+  matchResources:
+    namespaceSelector:
+      matchLabels:
+        {{ $slots.labLabel.key }}: {{ $slots.labLabel.value | quote }}
+{{- end }}

@@ -1,0 +1,60 @@
+# PHarness Campus lab slots (LUC-125). Everything here is admin-owned: the
+# Campus controller can create and delete session Jobs inside the slots, but
+# it cannot change these namespaces, their labels, quotas, network policy,
+# RBAC, the RuntimeClass or the admission policy.
+
+runtime:
+  className: gvisor
+  # Registered in containerd on the lab node by ops/campus-lab-gvisor.
+  handler: runsc
+  nodeLabel:
+    key: pharness.dev/campus-lab-runtime
+    value: gvisor
+  # LUC-114 measured about 100 MiB of host RSS per gVisor sandbox (Sentry and
+  # Gofer). Charging it to the Pod keeps quota and scheduling honest.
+  overhead:
+    cpu: 50m
+    memory: 128Mi
+
+slots:
+  # M1: five concurrent lab slots on ubuntu-lucas-engineering-2.
+  count: 5
+  namePrefix: campus-lab-slot-
+  # Also selects the LUC-121 image allowlist policy
+  # pharness-campus-lab-image-allowlist.
+  labLabel:
+    key: pharness.dev/campus-lab
+    value: "true"
+  slotLabelKey: pharness.dev/campus-slot
+  # One session per slot. The provider rejects envelopes that do not fit
+  # (container limits plus the RuntimeClass overhead).
+  quota:
+    cpu: "2"
+    memory: 3Gi
+    ephemeralStorage: 256Mi
+    pods: "1"
+    jobs: "1"
+    # kube-root-ca.crt, the session anchor and a few deletion tombstones.
+    configMaps: "16"
+
+controller:
+  # Identity the PHarness Campus controller runs as.
+  serviceAccount:
+    name: pharness-campus-controller
+    namespace: pharness
+  # Value of pharness.dev/campus-controller on every session resource.
+  name: pharness-campus-controller
+
+admission:
+  policyName: pharness-campus-lab-session-guard
+  maxActiveDeadlineSeconds: 14400
+
+# Probe-only rendering used by the PHarness cluster test
+# (scripts/campus-session-jobs-cluster-test.sh). Argo never sets this. When
+# set, only templates/probe.yaml renders anything meaningful for it: the slot
+# guardrails for an existing namespace plus a probe binding of the guard.
+probe:
+  namespace: ""
+  label:
+    key: pharness.dev/campus-lab-probe
+    value: "true"

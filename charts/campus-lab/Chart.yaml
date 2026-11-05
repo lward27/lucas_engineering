@@ -1,0 +1,6 @@
+apiVersion: v2
+name: campus-lab
+description: Admin-owned PHarness Campus lab runtime, slot namespaces, controller RBAC and session admission guard
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
