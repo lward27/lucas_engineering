@@ -12,6 +12,7 @@ script:
 | gVisor | `release-20261026.0`, `runsc` and `containerd-shim-runsc-v1` in `/usr/local/bin`, pinned by sha512 (tarball and binaries) |
 | containerd | `/var/lib/rancher/k3s/agent/etc/containerd/config-v3.toml.tmpl` adds the `runsc` runtime (`io.containerd.runsc.v1`) to the k3s base template |
 | Node label | `pharness.dev/campus-lab-runtime=gvisor`: on the live Node and in `/etc/rancher/k3s/config.yaml.d/50-pharness-campus-lab.yaml` for re-registration |
+| Swap | `/etc/systemd/system/kubepods.slice.d/50-pharness-campus-noswap.conf` sets `MemorySwapMax=0` on `kubepods.slice` (also applied to the running slice). The kubelet's NoSwap behaviour limits swap only on container cgroups, while `runsc-sandbox` runs in the Pod sandbox cgroup; without this a session above its memory limit pages into node swap instead of being OOM-killed. runc containers already have `memory.swap.max=0`, so only pause containers and gVisor sandboxes change |
 | Original config | `/root/containerd-config.toml.pre-gvisor` (rendered `config.toml` before gVisor) |
 
 ## Usage
@@ -35,7 +36,10 @@ containers). k3s renders `config.toml` from the template on start.
 ## Rollback
 
 1. Delete the slot workloads (`kubectl delete jobs --all -n campus-lab-slot-N`).
-2. On the node: remove the template and the drop-in, restart `k3s-agent`, then
+2. On the node: remove the template, the k3s drop-in and the kubepods.slice
+   drop-in, run `systemctl daemon-reload` and
+   `systemctl set-property --runtime kubepods.slice MemorySwapMax=infinity`,
+   restart `k3s-agent`, then
    delete `/usr/local/bin/runsc` and `/usr/local/bin/containerd-shim-runsc-v1`.
 3. Disable `apps.campus-lab` in `charts/root-app/values.yaml`.
 

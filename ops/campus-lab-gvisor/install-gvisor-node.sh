@@ -6,6 +6,7 @@
 #   /usr/local/bin/runsc, /usr/local/bin/containerd-shim-runsc-v1
 #   /var/lib/rancher/k3s/agent/etc/containerd/config-v3.toml.tmpl
 #   /etc/rancher/k3s/config.yaml.d/50-pharness-campus-lab.yaml
+#   /etc/systemd/system/kubepods.slice.d/50-pharness-campus-noswap.conf
 # and restarts k3s-agent only when the containerd template changed and
 # --allow-restart was given. --check reports drift and changes nothing.
 set -euo pipefail
@@ -25,6 +26,9 @@ TEMPLATE="${CONTAINERD_DIR}/config-v3.toml.tmpl"
 TEMPLATE_BACKUP="/root/containerd-config.toml.pre-gvisor"
 K3S_DROPIN_DIR="/etc/rancher/k3s/config.yaml.d"
 K3S_DROPIN="${K3S_DROPIN_DIR}/50-pharness-campus-lab.yaml"
+SWAP_DROPIN_DIR="/etc/systemd/system/kubepods.slice.d"
+SWAP_DROPIN="${SWAP_DROPIN_DIR}/50-pharness-campus-noswap.conf"
+KUBEPODS_CGROUP="/sys/fs/cgroup/kubepods.slice"
 
 MODE=apply
 ALLOW_RESTART=false
@@ -62,6 +66,22 @@ desired_dropin() {
 node-label:
   - "${NODE_LABEL}"
 YAML
+}
+
+# The kubelet's NoSwap behaviour sets memory.swap.max=0 on container cgroups
+# only. runsc-sandbox and runsc-gofer run in the Pod sandbox cgroup, which has
+# no swap limit, so a gVisor session above its memory limit spills into node
+# swap instead of being OOM-killed. Every runc process on the node already has
+# memory.swap.max=0, so capping the whole kubepods.slice changes only pause
+# containers and gVisor sandboxes.
+desired_swap_dropin() {
+  cat <<'INI'
+# Managed by lucas_engineering ops/campus-lab-gvisor/install-gvisor-node.sh.
+# Keeps gVisor sandboxes (and pause containers) out of node swap; runc
+# containers already get memory.swap.max=0 from the kubelet.
+[Slice]
+MemorySwapMax=0
+INI
 }
 
 binaries_current() {
@@ -130,6 +150,31 @@ else
   chmod 0644 "${K3S_DROPIN}.new"
   mv -f "${K3S_DROPIN}.new" "$K3S_DROPIN"
   note "CHANGED wrote ${K3S_DROPIN}"
+fi
+
+if [[ -f "$SWAP_DROPIN" ]] && cmp -s <(desired_swap_dropin) "$SWAP_DROPIN"; then
+  note "OK     ${SWAP_DROPIN}"
+elif [[ "$MODE" == check ]]; then
+  drift "${SWAP_DROPIN} missing or different"
+else
+  install -d -m 0755 "$SWAP_DROPIN_DIR"
+  desired_swap_dropin >"${SWAP_DROPIN}.new"
+  chmod 0644 "${SWAP_DROPIN}.new"
+  mv -f "${SWAP_DROPIN}.new" "$SWAP_DROPIN"
+  systemctl daemon-reload
+  note "CHANGED wrote ${SWAP_DROPIN}"
+fi
+
+if [[ "$(cat "${KUBEPODS_CGROUP}/memory.swap.max")" == 0 ]]; then
+  note "OK     ${KUBEPODS_CGROUP}/memory.swap.max is 0"
+elif [[ "$MODE" == check ]]; then
+  drift "${KUBEPODS_CGROUP}/memory.swap.max is $(cat "${KUBEPODS_CGROUP}/memory.swap.max")"
+else
+  # kubepods.slice is a transient unit the kubelet creates; apply the value
+  # to the running slice as well as through the drop-in.
+  systemctl set-property --runtime kubepods.slice MemorySwapMax=0
+  [[ "$(cat "${KUBEPODS_CGROUP}/memory.swap.max")" == 0 ]] || { echo "kubepods.slice swap limit did not apply" >&2; exit 1; }
+  note "CHANGED set kubepods.slice MemorySwapMax=0"
 fi
 
 # k3s renders config.toml from the template when k3s-agent starts.
