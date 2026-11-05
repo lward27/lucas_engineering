@@ -17,8 +17,22 @@ metadata:
 {{ include "campus-lab.slotGuardrails" (dict "root" $ "namespace" $ns) }}
 {{- end }}
 ---
+# The Campus control plane namespace. Admin-owned so that the controller and
+# terminal identities exist before the Campus API is deployed into it.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.campusApi.namespace }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
 # The identity the Campus controller runs as. It owns nothing outside the
-# slots and can only read the qualified RuntimeClass cluster-wide.
+# slots and can only read the qualified RuntimeClass cluster-wide. Its token
+# is projected only into the Campus API container.
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -26,6 +40,30 @@ metadata:
   namespace: {{ .Values.controller.serviceAccount.namespace }}
   labels:
     {{- include "campus-lab.labels" . | nindent 4 }}
+automountServiceAccountToken: false
+---
+# The identity of Campus browser terminals. It holds only the per-slot
+# pharness-campus-terminal Role and nothing cluster-wide.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.terminal.serviceAccount.name }}
+  namespace: {{ .Values.terminal.serviceAccount.namespace }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+automountServiceAccountToken: false
+---
+# Filled in by the token controller; no credential is stored in Git.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.terminal.tokenSecretName }}
+  namespace: {{ .Values.terminal.serviceAccount.namespace }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/service-account.name: {{ .Values.terminal.serviceAccount.name }}
+type: kubernetes.io/service-account-token
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole

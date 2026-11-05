@@ -43,13 +43,33 @@ slots:
     # admits nothing else.
     secrets: "2"
 
+# Namespace of the Campus control plane (LUC-137): the Campus API with its
+# in-process lab reconciler, broker listener and browser terminals, deployed
+# apart from the operator PHarness in namespace pharness. The controller and
+# terminal identities live here; the Campus API Pods use them.
+campusApi:
+  namespace: campus-poc
+
 controller:
   # Identity the PHarness Campus controller runs as.
   serviceAccount:
     name: pharness-campus-controller
-    namespace: pharness
+    namespace: campus-poc
   # Value of pharness.dev/campus-controller on every session resource.
   name: pharness-campus-controller
+
+# Identity PHarness uses for Campus browser terminals (LUC-134). It is kept
+# apart from the controller so the controller itself never gains pods/exec,
+# and terminal access can be withdrawn by deleting this binding alone.
+terminal:
+  serviceAccount:
+    name: pharness-campus-terminal
+    namespace: campus-poc
+  # A ServiceAccount token Secret for the terminal identity. The Campus API
+  # Pod runs as the controller, and a Pod can only project its own
+  # ServiceAccount's token, so the terminal credential is delivered as this
+  # Secret, mounted read-only into the API container only.
+  tokenSecretName: pharness-campus-terminal-token
 
 admission:
   policyName: pharness-campus-lab-session-guard
@@ -68,9 +88,9 @@ admission:
 # ClusterIP, so they need no DNS; the slot policy admits only this port of
 # these Pods.
 broker:
-  namespace: pharness
+  namespace: campus-poc
   podLabels:
-    app: pharness-api
+    app: pharness-campus-api
   port: 4790
 
 # The Campus egress proxy (LUC-130): the only way out of a lab slot. Session
