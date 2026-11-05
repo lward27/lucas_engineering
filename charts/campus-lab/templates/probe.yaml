@@ -1,0 +1,17 @@
+{{- if .Values.probe.namespace }}
+{{ include "campus-lab.slotGuardrails" (dict "root" $ "namespace" .Values.probe.namespace) }}
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: {{ .Values.admission.policyName }}-probe
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+spec:
+  policyName: {{ .Values.admission.policyName }}
+  validationActions: [Deny]
+  matchResources:
+    namespaceSelector:
+      matchLabels:
+        {{ .Values.probe.label.key }}: {{ .Values.probe.label.value | quote }}
+{{- end }}

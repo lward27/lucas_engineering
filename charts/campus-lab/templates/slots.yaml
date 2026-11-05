@@ -1,0 +1,58 @@
+{{- if not .Values.probe.namespace }}
+{{- range $index := until (int .Values.slots.count) }}
+{{- $ns := include "campus-lab.slotName" (dict "root" $ "index" (add1 $index)) }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ $ns }}
+  labels:
+    {{- include "campus-lab.labels" $ | nindent 4 }}
+    {{ $.Values.slots.labLabel.key }}: {{ $.Values.slots.labLabel.value | quote }}
+    {{ $.Values.slots.slotLabelKey }}: {{ $ns }}
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+{{ include "campus-lab.slotGuardrails" (dict "root" $ "namespace" $ns) }}
+{{- end }}
+---
+# The identity the Campus controller runs as. It owns nothing outside the
+# slots and can only read the qualified RuntimeClass cluster-wide.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.controller.serviceAccount.name }}
+  namespace: {{ .Values.controller.serviceAccount.namespace }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pharness-campus-controller-runtime
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+rules:
+  # Read-only, and only the qualified RuntimeClass: the controller refuses a
+  # launch when it is missing or differs from the expected handler and pool.
+  - apiGroups: ["node.k8s.io"]
+    resources: ["runtimeclasses"]
+    resourceNames: [{{ .Values.runtime.className | quote }}]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: pharness-campus-controller-runtime
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: pharness-campus-controller-runtime
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Values.controller.serviceAccount.name }}
+    namespace: {{ .Values.controller.serviceAccount.namespace }}
+{{- end }}

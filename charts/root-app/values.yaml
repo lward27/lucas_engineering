@@ -3,6 +3,9 @@ apps:
     enabled: true
   pharness:
     enabled: true
+  campus-lab:
+    # LUC-125: Campus lab slots, gVisor RuntimeClass and session admission guard.
+    enabled: true
   argo-cd:
     enabled: true
   homepage:
