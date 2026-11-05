@@ -1,0 +1,90 @@
+# Test identity provider for the PHarness Campus proof of concept (LUC-137).
+# Synthetic users only; no real student data. Everything is re-imported from
+# templates/realm.yaml on every start (the database is an emptyDir), so the
+# realm in Git is the whole truth. User ids are fixed, which keeps each
+# user's OIDC subject stable across restarts.
+
+namespace: campus-idp
+
+image: quay.io/keycloak/keycloak:26.8.2@sha256:3879c623248408de29a5303178b5816c77e8dfef3890c361f8c0bbeaa979ba3b
+
+# Public origin of Keycloak. Browsers reach it through the Cloudflare tunnel
+# and Traefik; the Campus API reaches the same name in-cluster (a hostAlias
+# to the pinned Service IP below), so the issuer is identical for both.
+hostname: campus-idp.lucas.engineering
+realm: campus
+
+service:
+  name: keycloak
+  # Pinned so the Campus API can name it without DNS.
+  clusterIP: 10.43.130.32
+  # Keycloak's own TLS port, for the Campus API's token and JWKS calls.
+  httpsPort: 443
+  # Plain HTTP for Traefik only; the tunnel terminates TLS at Cloudflare.
+  httpPort: 8080
+
+# cert-manager certificate for the hostname (DNS-01, so it is issued
+# without any public route). Keycloak serves it on its HTTPS port.
+tls:
+  secretName: campus-idp-tls
+  clusterIssuer: letsencrypt-prod
+
+# Out-of-band Secrets (never in Git); see
+# planning/operations/campus-poc-deployment.md in the PHarness repository.
+#   keycloak-bootstrap-admin: username, password
+#   campus-realm-secrets: client-secret, and <username>-password per user
+secrets:
+  bootstrapAdmin: keycloak-bootstrap-admin
+  realm: campus-realm-secrets
+
+# The confidential client the Campus API uses (authorization code + PKCE).
+client:
+  id: pharness-campus
+  redirectUri: https://campus.lucas.engineering/api/campus/auth/callback
+
+# Synthetic users. The Campus API derives no role from the IdP: the tenant
+# administrator is the API's bootstrap admin (issuer|id), and instructors and
+# students are course members the administrator adds through the API.
+users:
+  - username: campus-admin
+    id: 3a039679-77a7-4e38-a134-55da25580176
+    firstName: Campus
+    lastName: Administrator
+    email: campus-admin@campus-poc.example
+  - username: instructor1
+    id: 7478093a-d871-408b-95ea-17c3e4456225
+    firstName: Instructor
+    lastName: One
+    email: instructor1@campus-poc.example
+  - username: student1
+    id: 309722b2-84a5-42e9-b674-cc4682e676cb
+    firstName: Student
+    lastName: One
+    email: student1@campus-poc.example
+  - username: student2
+    id: beb261e7-b3a8-4921-914c-af207433476b
+    firstName: Student
+    lastName: Two
+    email: student2@campus-poc.example
+
+# Who may connect. Traefik for browsers, the Campus API for back-channel calls.
+ingressFrom:
+  traefikNamespace: traefik
+  campusApi:
+    namespace: campus-poc
+    podLabels:
+      app: pharness-campus-api
+
+# Forwarded headers are trusted only from the Pod network (Traefik).
+trustedProxies: 10.42.0.0/16
+
+# The public route. Off until the Cloudflare tunnel hostname is added; only
+# the campus realm and static resources are routed, never /admin or the
+# master realm.
+ingress:
+  enabled: false
+  className: traefik
+
+resources:
+  requests: { cpu: 100m, memory: 512Mi, ephemeral-storage: 256Mi }
+  limits: { cpu: "1", memory: 1Gi, ephemeral-storage: 1Gi }
