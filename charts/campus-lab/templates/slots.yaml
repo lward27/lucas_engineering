@@ -27,6 +27,17 @@ metadata:
   labels:
     {{- include "campus-lab.labels" . | nindent 4 }}
 ---
+# The identity of Campus browser terminals. It holds only the per-slot
+# pharness-campus-terminal Role and nothing cluster-wide.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.terminal.serviceAccount.name }}
+  namespace: {{ .Values.terminal.serviceAccount.namespace }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+automountServiceAccountToken: false
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:

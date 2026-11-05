@@ -45,6 +45,14 @@ controller:
   # Value of pharness.dev/campus-controller on every session resource.
   name: pharness-campus-controller
 
+# Identity PHarness uses for Campus browser terminals (LUC-134). It is kept
+# apart from the controller so the controller itself never gains pods/exec,
+# and terminal access can be withdrawn by deleting this binding alone.
+terminal:
+  serviceAccount:
+    name: pharness-campus-terminal
+    namespace: pharness
+
 admission:
   policyName: pharness-campus-lab-session-guard
   maxActiveDeadlineSeconds: 14400
