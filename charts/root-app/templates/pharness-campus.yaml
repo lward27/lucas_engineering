@@ -1,0 +1,25 @@
+{{- if (index .Values.apps "pharness-campus").enabled }}
+# LUC-137: the PHarness Campus proof of concept, in campus-poc (created by
+# campus-lab). Same release images as the pharness application; the chart
+# and its pins live in the PHarness repository.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pharness-campus
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/lward27/pharness.git
+    path: deploy/helm/pharness-campus
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: campus-poc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+{{- end }}
