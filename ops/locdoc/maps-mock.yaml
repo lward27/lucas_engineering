@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: oms-maps-mock, namespace: locdoc}
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: oms-maps-mock}}
+  template:
+    metadata:
+      labels: {app: oms-maps-mock, app.kubernetes.io/part-of: oms}
+    spec:
+      automountServiceAccountToken: false
+      securityContext: {runAsNonRoot: true, runAsUser: 10001, runAsGroup: 10001, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: mock
+          image: python:3.12-alpine
+          command: [python, -u, /app/server.py]
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe: {httpGet: {path: /health, port: http}, periodSeconds: 5}
+          resources:
+            requests: {cpu: 25m, memory: 64Mi}
+            limits: {memory: 128Mi}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          volumeMounts: [{name: code, mountPath: /app, readOnly: true}]
+      volumes:
+        - name: code
+          configMap: {name: oms-maps-mock}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: oms-maps-mock, namespace: locdoc}
+spec:
+  selector: {app: oms-maps-mock}
+  ports: [{name: http, port: 8080, targetPort: http}]

@@ -1,4 +1,6 @@
 apps:
+  locdoc:
+    enabled: true
   agentic-platform:
     enabled: true
   pharness:

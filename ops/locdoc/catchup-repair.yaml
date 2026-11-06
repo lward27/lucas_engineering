@@ -1,0 +1,164 @@
+apiVersion: v1
+data:
+  repair.sql: |
+    ALTER TABLE "opening" ADD COLUMN     "sync_id" VARCHAR(36),
+    ALTER COLUMN "voltage" SET DATA TYPE TEXT,
+    ALTER COLUMN "current" SET DATA TYPE TEXT,
+    ALTER COLUMN "cardReaderStyle" SET DATA TYPE TEXT,
+    ALTER COLUMN "EACStrikes" SET DATA TYPE TEXT,
+    ALTER COLUMN "EACReaders" SET DATA TYPE TEXT,
+    ALTER COLUMN "cardReaderCondition" SET DATA TYPE TEXT,
+    ALTER COLUMN "interiorPhoto" SET DATA TYPE TEXT,
+    ALTER COLUMN "exteriorPhoto" SET DATA TYPE TEXT,
+    ALTER COLUMN "doorEdgePhoto" SET DATA TYPE TEXT,
+    ALTER COLUMN "frameEdgePhoto" SET DATA TYPE TEXT;
+
+    -- AlterTable
+    ALTER TABLE "product" ADD COLUMN     "sync_id" VARCHAR(36),
+    ALTER COLUMN "productDescription" SET DATA TYPE TEXT;
+
+    -- AlterTable
+    ALTER TABLE "purchase_order_detail" ADD COLUMN     "sync_id" VARCHAR(36);
+
+    -- AlterTable
+    ALTER TABLE "service" ADD COLUMN     "sync_id" VARCHAR(36),
+    ALTER COLUMN "serviceDescription" SET DATA TYPE TEXT;
+
+    -- AlterTable
+    ALTER TABLE "service_call" ADD COLUMN     "sync_id" VARCHAR(36);
+
+    -- AlterTable
+    ALTER TABLE "subscription" ADD COLUMN     "sync_id" VARCHAR(36);
+
+    -- AlterTable
+    ALTER TABLE "subscription_line_item" ADD COLUMN     "sync_id" VARCHAR(36);
+
+    -- AlterTable
+    ALTER TABLE "subscription_plan" ADD COLUMN     "sync_id" VARCHAR(36),
+    ALTER COLUMN "subscriptionPlanDescription" SET DATA TYPE TEXT;
+
+    -- AlterTable
+    ALTER TABLE "supplier" ADD COLUMN     "sync_id" VARCHAR(36);
+
+    -- AlterTable
+    ALTER TABLE "sys_print_order" ADD COLUMN     "device_id" VARCHAR(36);
+
+    -- AlterTable
+    ALTER TABLE "system" ADD COLUMN     "sync_id" VARCHAR(36);
+
+    -- AlterTable
+    ALTER TABLE "task" ADD COLUMN     "sync_id" VARCHAR(36),
+    ADD COLUMN     "taskGenerationType" VARCHAR(45);
+
+    -- AlterTable
+    ALTER TABLE "work_order" DROP COLUMN "quotedFirstViewedDate",
+    ADD COLUMN     "quoteApprovedBy_id" VARCHAR(36),
+    ADD COLUMN     "quoteFirstViewedDate" TIMESTAMP(3),
+    ADD COLUMN     "sync_id" VARCHAR(36),
+    ADD COLUMN     "workORderNextFollowUpDate" TIMESTAMP(3);
+
+    -- CreateIndex
+    CREATE INDEX "after_hours_pay_technician_id_idx" ON "after_hours_pay"("technician_id");
+
+    -- CreateIndex
+    CREATE INDEX "after_hours_pay_branch_id_idx" ON "after_hours_pay"("branch_id");
+
+    -- CreateIndex
+    CREATE INDEX "after_hours_pay_contact_id_idx" ON "after_hours_pay"("contact_id");
+
+    -- CreateIndex
+    CREATE INDEX "attribute_tag_attributeTagCategory_id_idx" ON "attribute_tag"("attributeTagCategory_id");
+
+    -- CreateIndex
+    CREATE INDEX "audit_inventoryRecord_id_idx" ON "audit"("inventoryRecord_id");
+
+    -- CreateIndex
+    CREATE INDEX "audit_branch_id_idx" ON "audit"("branch_id");
+
+    -- CreateIndex
+    CREATE INDEX "audit_provider_id_idx" ON "audit"("provider_id");
+
+    -- CreateIndex
+    CREATE INDEX "billed_hours_technician_id_idx" ON "billed_hours"("technician_id");
+
+    -- CreateIndex
+    CREATE INDEX "billed_hours_branch_id_idx" ON "billed_hours"("branch_id");
+
+    -- CreateIndex
+    CREATE INDEX "billed_hours_provider_id_idx" ON "billed_hours"("provider_id");
+
+    -- CreateIndex
+    CREATE INDEX "billing_record_address_id_idx" ON "billing_record"("address_id");
+
+    -- CreateIndex
+    CREATE INDEX "billing_record_branch_id_idx" ON "billing_record"("branch_id");
+
+    -- CreateIndex
+    CREATE INDEX "billing_record_contact_id_idx" ON "billing_record"("contact_id");
+
+    -- CreateIndex
+    CREATE INDEX "billing_record_customer_id_idx" ON "billing_record"("customer_id");
+
+    -- CreateIndex
+    CREATE INDEX "billing_record_provider_id_idx" ON "billing_record"("provider_id");
+
+    -- CreateIndex
+    CREATE INDEX "branch_branchManager_id_idx" ON "branch"("branchManager_id");
+
+    -- CreateIndex
+    CREATE INDEX "branch_warehouse_id_idx" ON "branch"("warehouse_id");
+
+    -- CreateIndex
+    CREATE INDEX "conversation_provider_id_idx" ON "conversation"("provider_id");
+
+    -- CreateIndex
+    CREATE INDEX "credit_memo_branch_id_idx" ON "credit_memo"("branch_id");
+
+    -- CreateIndex
+    CREATE INDEX "credit_memo_line_branch_id_idx" ON "credit_memo_line"("branch_id");
+
+    -- CreateIndex
+    CREATE INDEX "credit_memo_line_provider_id_idx" ON "credit_memo_line"("provider_id");
+
+    -- CreateIndex
+    CREATE INDEX "credit_memo_line_service_id_idx" ON "credit_memo_line"("service_id");
+
+    -- CreateIndex
+    CREATE INDEX "customer_payment_contact_contact_id_idx" ON "customer_payment_contact"("contact_id");
+
+    -- CreateIndex
+    CREATE INDEX "dashboard_provider_id_idx" ON "dashboard"("provider_id");
+
+    -- CreateIndex
+    CREATE INDEX "department_branch_id_idx" ON "department"("branch_id");
+
+    -- CreateIndex
+    CREATE INDEX "department_contact_id_idx" ON "department"("contact_id");
+
+    -- CreateIndex
+    CREATE INDEX "department_provider_id_idx" ON "department"("provider_id");
+
+    -- CreateIndex
+    CREATE INDEX "device_branch_id_idx" ON "device"("branch_id");
+
+    -- CreateIndex
+    CREATE INDEX "device_provider_id_idx" ON "device"("provider_id");
+
+    -- CreateIndex
+    CREATE INDEX "opening_updatedBy_idx" ON "opening"("updatedBy");
+
+    -- CreateIndex
+    CREATE UNIQUE INDEX "payment_stripePaymentId_workOrder_id_key" ON "payment"("stripePaymentId", "workOrder_id");
+
+    -- CreateIndex
+    CREATE UNIQUE INDEX "sys_print_item_doorNumber_provider_id_key" ON "sys_print_item"("doorNumber", "provider_id");
+
+    -- AddForeignKey
+    ALTER TABLE "sys_print_order" ADD CONSTRAINT "sys_print_order_device_id_fkey" FOREIGN KEY ("device_id") REFERENCES "device"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+    -- AddForeignKey
+    ALTER TABLE "work_order" ADD CONSTRAINT "work_order_quoteApprovedBy_id_fkey" FOREIGN KEY ("quoteApprovedBy_id") REFERENCES "contact"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+kind: ConfigMap
+metadata:
+  name: oms-catchup-repair
+  namespace: locdoc
