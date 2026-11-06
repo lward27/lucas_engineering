@@ -105,7 +105,7 @@ egress:
   # pharness-runtime released from Pharness main (pin with
   # scripts/campus-egress-release-pin.sh); it carries the
   # campus_egress_proxy execution kind of pharness-worker.
-  image: registry.lucas.engineering/pharness-runtime@sha256:e97fce9dee21dba666df94663b0b6499aabe3d990960fb2d0cad5e6b9a088728
+  image: registry.lucas.engineering/pharness-runtime@sha256:2c0f0cd1c9b12ebeed83d913a1b9df75866c9e6a08035de3367c5d168bb74f00
   # Pinned so the provider can name it without DNS.
   clusterIP: 10.43.130.30
   port: 3128
