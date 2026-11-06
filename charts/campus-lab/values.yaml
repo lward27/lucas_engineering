@@ -102,9 +102,10 @@ egress:
   enabled: true
   namespace: campus-egress
   name: campus-egress-proxy
-  # pharness-runtime built from the LUC-130 branch; it carries the
+  # pharness-runtime released from Pharness main (pin with
+  # scripts/campus-egress-release-pin.sh); it carries the
   # campus_egress_proxy execution kind of pharness-worker.
-  image: registry.lucas.engineering/pharness-runtime@sha256:2851f3b7d590c3317e7e660bf97460317e2e05c014fca60bbc813916e8c89ad1
+  image: registry.lucas.engineering/pharness-runtime@sha256:e97fce9dee21dba666df94663b0b6499aabe3d990960fb2d0cad5e6b9a088728
   # Pinned so the provider can name it without DNS.
   clusterIP: 10.43.130.30
   port: 3128
