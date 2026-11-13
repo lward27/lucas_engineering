@@ -1,0 +1,271 @@
+{{- if and .Values.egress.enabled (not .Values.probe.namespace) }}
+{{- $egress := .Values.egress -}}
+{{- $slots := list -}}
+{{- range $index := until (int .Values.slots.count) }}
+{{- $slots = append $slots (include "campus-lab.slotName" (dict "root" $ "index" (add1 $index))) -}}
+{{- end }}
+# The Campus egress proxy (LUC-130). Lab slots are default-deny; a session
+# whose policy approves egress may open TCP connections to this proxy and
+# nothing else outside its slot. The proxy accepts only CONNECT to an
+# approved host on 443 from a running, egress-labelled session Pod whose
+# approved-hosts annotation names that host, resolves the host itself and
+# refuses any non-public answer, verifies the upstream certificate, then
+# terminates the session's TLS with a certificate from the Campus egress CA
+# and checks every HTTP request (methods, git upload-pack only, no upgrades).
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ $egress.namespace }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
+# Its token reads Pods in the slots, nothing else (see the slot Roles).
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ $egress.name }}
+  namespace: {{ $egress.namespace }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+automountServiceAccountToken: false
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ $egress.name }}-selfsigned
+  namespace: {{ $egress.namespace }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+spec:
+  selfSigned: {}
+---
+# Session Pods trust only this CA (SSL_CERT_FILE and friends point at it),
+# and every name it certifies is served by this proxy alone. Its key never
+# leaves this namespace.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ $egress.name }}-ca
+  namespace: {{ $egress.namespace }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+spec:
+  secretName: {{ $egress.name }}-ca
+  commonName: PHarness Campus egress CA
+  isCA: true
+  duration: 87600h
+  renewBefore: 8760h
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Never
+  issuerRef:
+    name: {{ $egress.name }}-selfsigned
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ $egress.name }}-ca
+  namespace: {{ $egress.namespace }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+spec:
+  ca:
+    secretName: {{ $egress.name }}-ca
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ $egress.name }}-tls
+  namespace: {{ $egress.namespace }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+spec:
+  secretName: {{ $egress.name }}-tls
+  commonName: {{ first $egress.hosts }}
+  dnsNames:
+    {{- toYaml $egress.hosts | nindent 4 }}
+  usages:
+    - digital signature
+    - server auth
+  # The proxy reloads its key pair every five minutes.
+  duration: 2160h
+  renewBefore: 720h
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Always
+  issuerRef:
+    name: {{ $egress.name }}-ca
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $egress.name }}
+  namespace: {{ $egress.namespace }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  clusterIP: {{ $egress.clusterIP }}
+  selector:
+    app: {{ $egress.name }}
+  ports:
+    - name: connect
+      protocol: TCP
+      port: {{ $egress.port }}
+      targetPort: connect
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $egress.name }}
+  namespace: {{ $egress.namespace }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+    app: {{ $egress.name }}
+spec:
+  replicas: {{ $egress.replicas }}
+  selector:
+    matchLabels:
+      app: {{ $egress.name }}
+  template:
+    metadata:
+      labels:
+        {{- include "campus-lab.labels" . | nindent 8 }}
+        app: {{ $egress.name }}
+    spec:
+      serviceAccountName: {{ $egress.name }}
+      # Only the proxy container gets the token, read-only and short-lived.
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        # The key pair and token are mounted 0440; the group makes them
+        # readable to the proxy user only.
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: proxy
+          image: {{ $egress.image | quote }}
+          imagePullPolicy: IfNotPresent
+          command: ["/usr/local/bin/pharness-worker"]
+          ports:
+            - name: connect
+              containerPort: {{ $egress.port }}
+          env:
+            - name: PHARNESS_EXECUTION_KIND
+              value: campus_egress_proxy
+            - name: PHARNESS_CAMPUS_EGRESS_SLOT_NAMESPACES_JSON
+              value: {{ toJson $slots | quote }}
+            - name: PHARNESS_CAMPUS_EGRESS_CONTROLLER
+              value: {{ .Values.controller.name | quote }}
+            - name: PHARNESS_CAMPUS_EGRESS_BIND
+              value: "0.0.0.0:{{ $egress.port }}"
+            - name: PHARNESS_CAMPUS_EGRESS_TLS_DIR
+              value: /etc/campus-egress/tls
+            - name: RUST_LOG
+              value: info
+          readinessProbe:
+            tcpSocket: { port: connect }
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket: { port: connect }
+            periodSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            privileged: false
+            capabilities: { drop: ["ALL"] }
+          resources:
+            {{- toYaml $egress.resources | nindent 12 }}
+          volumeMounts:
+            - name: tls
+              mountPath: /etc/campus-egress/tls
+              readOnly: true
+            - name: kube-api-access
+              mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+              readOnly: true
+      volumes:
+        - name: tls
+          secret:
+            secretName: {{ $egress.name }}-tls
+            defaultMode: 0440
+            items:
+              - { key: tls.crt, path: tls.crt }
+              - { key: tls.key, path: tls.key }
+        - name: kube-api-access
+          projected:
+            defaultMode: 0440
+            sources:
+              - serviceAccountToken:
+                  path: token
+                  expirationSeconds: 3600
+              - configMap:
+                  name: kube-root-ca.crt
+                  items:
+                    - { key: ca.crt, path: ca.crt }
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ $egress.name }}
+  namespace: {{ $egress.namespace }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ $egress.name }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Only egress-labelled Pods in lab slots. Explicit namespace selectors:
+    # the K3s policy controller is unreliable with implicit ones.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              {{ .Values.slots.labLabel.key }}: {{ .Values.slots.labLabel.value | quote }}
+          podSelector:
+            matchLabels:
+              {{ $egress.podLabel.key }}: {{ $egress.podLabel.value | quote }}
+      ports:
+        - protocol: TCP
+          port: {{ $egress.port }}
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - { protocol: UDP, port: 53 }
+        - { protocol: TCP, port: 53 }
+    - to:
+        - ipBlock:
+            cidr: {{ $egress.apiServer.cidr }}
+      ports:
+        - protocol: TCP
+          port: {{ $egress.apiServer.port }}
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              {{- toYaml $egress.deniedCidrs | nindent 14 }}
+      ports:
+        - { protocol: TCP, port: 443 }
+{{- end }}

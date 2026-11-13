@@ -1,0 +1,36 @@
+# Temporary host-ops workload for ops/campus-lab-gvisor/run-on-node.sh.
+# run-on-node.sh substitutes __NODE__ and deletes the namespace on exit.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: campus-lab-hostops
+  labels:
+    pod-security.kubernetes.io/enforce: privileged
+    pharness.dev/purpose: campus-lab-gvisor-hostops
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: campus-lab-hostops
+  namespace: campus-lab-hostops
+  labels:
+    pharness.dev/purpose: campus-lab-gvisor-hostops
+spec:
+  nodeName: __NODE__
+  hostPID: true
+  automountServiceAccountToken: false
+  enableServiceLinks: false
+  restartPolicy: Never
+  terminationGracePeriodSeconds: 1
+  activeDeadlineSeconds: 1800
+  tolerations:
+    - operator: Exists
+  containers:
+    - name: ops
+      image: docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+      command: ["sleep", "1800"]
+      securityContext:
+        privileged: true
+      resources:
+        requests: {cpu: 10m, memory: 16Mi}
+        limits: {cpu: 500m, memory: 128Mi}

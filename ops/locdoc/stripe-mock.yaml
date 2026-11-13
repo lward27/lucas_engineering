@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: oms-stripe-mock, namespace: locdoc}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: oms-stripe-mock}
+  template:
+    metadata:
+      labels: {app: oms-stripe-mock, app.kubernetes.io/part-of: oms}
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: stripe-mock
+          image: stripe/stripe-mock@sha256:ff32647993847be491e68533e2881c90434fa8d5df40246ee5f7d41253422081
+          ports: [{name: http, containerPort: 12111}]
+          readinessProbe: {tcpSocket: {port: http}, periodSeconds: 5}
+          livenessProbe: {tcpSocket: {port: http}, initialDelaySeconds: 15, periodSeconds: 20}
+          resources:
+            requests: {cpu: 50m, memory: 128Mi}
+            limits: {memory: 512Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+            seccompProfile: {type: RuntimeDefault}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: oms-stripe-mock, namespace: locdoc}
+spec:
+  selector: {app: oms-stripe-mock}
+  ports: [{name: http, port: 12111, targetPort: http}]

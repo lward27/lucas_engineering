@@ -1,0 +1,246 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.namespace }}
+  labels:
+    {{- include "campus-idp.labels" . | nindent 4 }}
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: keycloak
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "campus-idp.labels" . | nindent 4 }}
+automountServiceAccountToken: false
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.tls.secretName }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "campus-idp.labels" . | nindent 4 }}
+spec:
+  secretName: {{ .Values.tls.secretName }}
+  dnsNames:
+    - {{ .Values.hostname }}
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Always
+  issuerRef:
+    name: {{ .Values.tls.clusterIssuer }}
+    kind: ClusterIssuer
+    group: cert-manager.io
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.service.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "campus-idp.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  clusterIP: {{ .Values.service.clusterIP }}
+  selector:
+    app: keycloak
+  ports:
+    - name: https
+      protocol: TCP
+      port: {{ .Values.service.httpsPort }}
+      targetPort: https
+    - name: http
+      protocol: TCP
+      port: {{ .Values.service.httpPort }}
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "campus-idp.labels" . | nindent 4 }}
+    app: keycloak
+spec:
+  replicas: 1
+  # One in-memory realm per Pod: two Pods would disagree on keys and sessions.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        {{- include "campus-idp.labels" . | nindent 8 }}
+        app: keycloak
+      annotations:
+        checksum/realm: {{ include (print $.Template.BasePath "/realm.yaml") . | sha256sum }}
+    spec:
+      serviceAccountName: keycloak
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        # The TLS key is mounted 0440; the group makes it readable to Keycloak.
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: keycloak
+          image: {{ .Values.image | quote }}
+          imagePullPolicy: IfNotPresent
+          args: ["start", "--import-realm"]
+          env:
+            - name: KC_HOSTNAME
+              value: "https://{{ .Values.hostname }}"
+            - name: KC_HTTP_ENABLED
+              value: "true"
+            - name: KC_HTTP_PORT
+              value: "8080"
+            - name: KC_HTTPS_PORT
+              value: "8443"
+            - name: KC_HTTPS_CERTIFICATE_FILE
+              value: /etc/keycloak/tls/tls.crt
+            - name: KC_HTTPS_CERTIFICATE_KEY_FILE
+              value: /etc/keycloak/tls/tls.key
+            - name: KC_PROXY_HEADERS
+              value: xforwarded
+            - name: KC_PROXY_TRUSTED_ADDRESSES
+              value: {{ .Values.trustedProxies | quote }}
+            - name: KC_HEALTH_ENABLED
+              value: "true"
+            - name: KC_DB
+              value: dev-file
+            - name: KC_CACHE
+              value: local
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.bootstrapAdmin }}
+                  key: username
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.bootstrapAdmin }}
+                  key: password
+            - name: CAMPUS_OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.realm }}
+                  key: client-secret
+            {{- range .Values.users }}
+            - name: {{ include "campus-idp.userEnv" .username }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.secrets.realm }}
+                  key: {{ .username }}-password
+            {{- end }}
+          ports:
+            - name: https
+              containerPort: 8443
+            - name: http
+              containerPort: 8080
+            - name: management
+              containerPort: 9000
+          startupProbe:
+            httpGet:
+              path: /health/started
+              port: management
+              scheme: HTTPS
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: management
+              scheme: HTTPS
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: management
+              scheme: HTTPS
+            periodSeconds: 20
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            # Keycloak re-augments its Quarkus build under /opt/keycloak/lib on
+            # start, so the root filesystem stays writable; nothing else in
+            # it is used.
+            readOnlyRootFilesystem: false
+            capabilities: { drop: ["ALL"] }
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /opt/keycloak/data
+            - name: realm
+              mountPath: /opt/keycloak/data/import
+              readOnly: true
+            - name: tls
+              mountPath: /etc/keycloak/tls
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: data
+          emptyDir: { sizeLimit: 256Mi }
+        - name: tmp
+          emptyDir: { sizeLimit: 256Mi }
+        - name: realm
+          configMap:
+            name: keycloak-realm
+        - name: tls
+          secret:
+            secretName: {{ .Values.tls.secretName }}
+            defaultMode: 0440
+            items:
+              - { key: tls.crt, path: tls.crt }
+              - { key: tls.key, path: tls.key }
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: keycloak
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "campus-idp.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: keycloak
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Browsers, through the tunnel and Traefik.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Values.ingressFrom.traefikNamespace }}
+      ports:
+        - protocol: TCP
+          port: 8080
+    # The Campus API's token exchange and JWKS fetch, over TLS.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Values.ingressFrom.campusApi.namespace }}
+          podSelector:
+            matchLabels:
+              {{- toYaml .Values.ingressFrom.campusApi.podLabels | nindent 14 }}
+      ports:
+        - protocol: TCP
+          port: 8443
+  # Keycloak calls nothing: no federation, no email, no external IdP.
+  egress: []

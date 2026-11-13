@@ -1,7 +1,19 @@
 apps:
+  locdoc:
+    enabled: true
   agentic-platform:
     enabled: true
   pharness:
+    enabled: true
+  campus-lab:
+    # LUC-125: Campus lab slots, gVisor RuntimeClass and session admission guard.
+    enabled: true
+  campus-idp:
+    # LUC-137: synthetic Keycloak test identity provider for the Campus PoC.
+    enabled: true
+  pharness-campus:
+    # LUC-137: the Campus PoC API and page. Needs a PHarness release that
+    # contains deploy/helm/pharness-campus and the Kubernetes lab provider.
     enabled: true
   argo-cd:
     enabled: true
