@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aws-emulator
+  labels: &labels
+    app.kubernetes.io/name: aws-emulator
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/part-of: aws-development
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: aws-emulator
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels: *labels
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: emulator
+          image: {{ .Values.image | quote }}
+          imagePullPolicy: IfNotPresent
+          args: [--bind, 0.0.0.0, --port, "9297", --auth, "on", --telemetry, "off"]
+          # Explicitly override image ENTRYPOINT arguments so runtime policy
+          # stays visible and reviewable in Kubernetes.
+          command: [aws-emulator]
+          env:
+            - {name: HOME, value: /home/emulator}
+          ports:
+            - {name: aws-https, containerPort: 9297}
+          startupProbe:
+            httpGet: {path: /__admin/health, port: aws-https, scheme: HTTPS}
+            periodSeconds: 3
+            timeoutSeconds: 3
+            failureThreshold: 40
+          readinessProbe:
+            httpGet: {path: /__admin/health, port: aws-https, scheme: HTTPS}
+            periodSeconds: 5
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet: {path: /__admin/health, port: aws-https, scheme: HTTPS}
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - {name: home, mountPath: /home/emulator}
+            - {name: tmp, mountPath: /tmp}
+      volumes:
+        - name: home
+          emptyDir: {sizeLimit: 128Mi}
+        - name: tmp
+          emptyDir: {sizeLimit: 128Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aws-emulator
+  labels:
+    app.kubernetes.io/name: aws-emulator
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: aws-emulator
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  ports:
+    - {name: aws-https, port: 9297, targetPort: aws-https}

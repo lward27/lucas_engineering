@@ -1,0 +1,12 @@
+{
+  "image": "registry.lucas.engineering/aws-emulator@sha256:6497913df2c1846c879498ff8b69403de9fcce929ec83cd7d7a6db011df403b3",
+  "tag": "1.0.385-20261115",
+  "digest": "sha256:6497913df2c1846c879498ff8b69403de9fcce929ec83cd7d7a6db011df403b3",
+  "platform": "linux/amd64",
+  "labels": {
+    "org.opencontainers.image.revision": "813af480bf7f16d5418b64e4f5644a74a7da11c5",
+    "org.opencontainers.image.source": "https://github.com/aws/aws-emulator",
+    "org.opencontainers.image.title": "AWS Emulator",
+    "org.opencontainers.image.version": "1.0.385"
+  }
+}

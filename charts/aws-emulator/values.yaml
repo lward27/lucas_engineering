@@ -1,0 +1,11 @@
+# Built from AWS's signature-verified package; see ops/aws-emulator/image/IMAGE.json.
+image: registry.lucas.engineering/aws-emulator@sha256:6497913df2c1846c879498ff8b69403de9fcce929ec83cd7d7a6db011df403b3
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+    ephemeral-storage: 100Mi
+  limits:
+    cpu: "2"
+    memory: 2Gi
+    ephemeral-storage: 512Mi

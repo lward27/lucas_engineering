@@ -1,0 +1,13 @@
+{
+  "package_url": "https://downloads.aws.com/aws-emulator/packages/aws-emulator/LTS/aws-emulator-1.0.385-1-x86_64.rpm",
+  "package_sha256": "2b2b5031e559d74c7a4154b11056be3a57716a177cd796cf058eebd91a6870d7",
+  "detached_signature_sha256": "ba6f4ab5f06c135913d81d2e58a9ecc2e541b1761925401b02f2d47a44581fca",
+  "aws_signing_key_fingerprint": "98BCF336A3BE53B734E967C52E5BF49BD940F624",
+  "verification": "Good detached signature; fingerprint compared with AWS Linux installation documentation",
+  "binary_version": "1.0.385",
+  "release_date": "2026.11.14",
+  "upstream_commit": "813af480bf7f16d5418b64e4f5644a74a7da11c5",
+  "base_image": "public.ecr.aws/amazonlinux/amazonlinux:2023-minimal@sha256:158a9044f9dc0777f098b76c8b54346f6ed4560b9a6a416dec7a5ba3bc483af4",
+  "builder": "docker buildx rancher-desktop; explicit linux/amd64",
+  "binary_verification": "aws-emulator --version, network disabled, read-only filesystem, non-root UID 1000"
+}
