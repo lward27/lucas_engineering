@@ -23,3 +23,6 @@ await connect({DB_SSL_MODE:'disable'},/pg_hba|rejects connection|no encryption/i
 await connect({});
 Object.assign(process.env,original);
 console.log(JSON.stringify({database_tls:'verified',invalid_ca:'rejected',wrong_hostname:'rejected',plaintext:'rejected',healthy_after_negative_tests:true}));
+
+// Prisma wraps an externally owned pg.Pool; end this bounded CLI after checks.
+process.exit(0);

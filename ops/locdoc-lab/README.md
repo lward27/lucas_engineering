@@ -248,3 +248,33 @@ and anonymous data volume after the run:
 That validates real MySQL TLS behavior, not RDS provisioning, migrations or
 application business queries against a MySQL schema. The two live OMS labs
 continue using their existing PostgreSQL databases and synthetic data.
+
+## Acceptance record
+
+[VALIDATION-20261116.json](VALIDATION-20261116.json) binds the successful release
+to exact GitOps, source, Pod and image identities. Both labs passed document
+reads (including HEAD/range and anonymous/cross-tenant denial), verified database
+TLS and three rejection cases, browser login/home rendering without uncaught
+errors/API 5xx, and the UID/read-only-root/writable-scratch contract. Both CAs
+are independent. The original `locdoc` remained healthy with its prior image.
+
+The focused application tests and TypeScript/MCP builds pass. Two full-suite
+AI catalog/generated-document tests also fail unchanged on the upstream
+baseline. The application PR's external Snyk check could not run because the
+organization exhausted its private-test allowance; this is not a security scan
+pass. Real RDS/ECS/ALB/IAM behavior, production migrations/customer sharing and
+cryptographically verified image provenance remain separate release work.
+
+The initial observation above predates a subsequent image-hygiene cleanup:
+TypeScript had preserved an existing commented test Stripe credential. Source
+and release compiler comments were cleaned up, both database variants were
+rebuilt, and `RELEASE.json` now pins the replacement artifacts. The credential
+owner should revoke the old test key if it is still active; repository/image
+history was not purged and no credential was exercised or rotated here.
+
+`verify-image.py TASKRUN --expected-source FULL_SHA --provider postgres` reuses
+the maintained operator registry TLS reader. It verifies manifest/config hashes,
+platform, UID and source labels, then reads the bounded compiled-code layer to
+check the private route exists and no inline Stripe credential remains. The
+old artifact is rejected by this check. This is a scoped credential hygiene
+check, not a vulnerability scan or signed provenance.
