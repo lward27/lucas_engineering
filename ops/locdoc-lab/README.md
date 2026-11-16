@@ -40,12 +40,12 @@ Then choose one environment:
 ./ops/locdoc-lab/lab.py terraform localstack apply
 
 ./ops/locdoc-lab/lab.py terraform aws-emulator init
-./ops/locdoc-lab/lab.py terraform aws-emulator plan
-./ops/locdoc-lab/lab.py terraform aws-emulator apply
+./ops/locdoc-lab/lab.py terraform aws-emulator plan -parallelism=1
+./ops/locdoc-lab/lab.py terraform aws-emulator apply -parallelism=1
 ```
 
 Edit `terraform/modules/locdoc-oms-aws` to develop resources once and exercise
-both roots under `terraform/environments/locdoc/`. The module currently defines:
+both roots under `terraform/environments/locdoc/`. The shared application module defines:
 
 - The OMS document bucket, public-access block, versioning and AES256 encryption.
 - Secrets Manager metadata for `oms/precisely/system`, matching the application.
@@ -58,10 +58,28 @@ examples in `ops/localstack/terraform` and `ops/aws-emulator/terraform`.
 
 Each root pins AWS provider **6.20.0** for emulator compatibility and uses local,
 Git-ignored state. Keep that state while iterating. Do not use these roots or
-states to deploy into AWS. A later AWS root can call the same resource module
-with real provider configuration, credentials and a separate state backend.
+states to deploy into AWS. The separate AWS root calls the same modules with an account allowlist and
+a separate S3 backend; it does not launch an ECS service by default. See
+[the Terraform runbook](../../terraform/README.md) for module boundaries,
+capability coverage, offline tests and AWS prerequisites.
 The helper isolates the workstation AWS profile; AWS Emulator credentials and
 its CA are retrieved without printing or persisting credentials locally.
+
+## Validate the application integration
+
+After a Terraform apply, run the bounded synthetic smoke test:
+
+```bash
+./ops/locdoc-lab/lab.py smoke localstack
+./ops/locdoc-lab/lab.py smoke aws-emulator
+```
+
+It uses the running application's AWS client factories, writes/reads/heads and
+removes a unique synthetic object version, describes the integration secret,
+checks health and dev login, verifies private object access and rejects
+anonymous/other-provider reads. It is restricted to the two lab namespaces,
+bucket allowlist and development configuration. It prints no credentials or
+session cookies. This is an explicit live test; offline CI does not run it.
 
 ## Open OMS
 
@@ -135,7 +153,10 @@ integration, not a production gateway.
 These emulators do not prove production IAM enforcement, networking, managed
 compute, backups, failover or Cognito behavior. The labs retain development
 login and local PostgreSQL; S3 and Secrets Manager are the AWS dependencies
-covered by this initial module. Run targeted AWS validation before release.
+used by OMS in these labs. The roots also exercise shared IAM, log-group and
+network-topology APIs without changing the Kubernetes application network or
+database. NAT, managed compute and AWS database resources are tested as mocked
+plans only. Run targeted AWS validation before release.
 
 ## Source and image maintenance
 

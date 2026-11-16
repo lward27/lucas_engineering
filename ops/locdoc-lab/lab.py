@@ -117,15 +117,22 @@ npm run seed:synthetic -- --allow-target=oms_test
     print(f'{ns}: guarded synthetic fixtures initialized')
 
 
+def smoke(ns):
+    kubectl(ns, 'exec', '-i', 'deployment/oms', '-c', 'oms', '--',
+            'node', '--input-type=module', input=(ROOT/'ops/locdoc-lab/oms-smoke.mjs').read_text(),
+            timeout=120)
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('action',choices=['prepare','terraform','seed','forward'])
+    p.add_argument('action',choices=['prepare','terraform','seed','forward','smoke'])
     p.add_argument('environment',choices=NAMES)
     p.add_argument('args',nargs=argparse.REMAINDER)
     a=p.parse_args(); args=a.args[1:] if a.args[:1]==['--'] else a.args
     if a.action=='prepare':prepare(a.environment)
     elif a.action=='terraform':return terraform(a.environment,args)
     elif a.action=='seed':seed(a.environment)
+    elif a.action=='smoke':smoke(a.environment)
     else:
         port='8081' if a.environment=='localstack' else '8082'
         kubectl(a.environment,'port-forward','--address','127.0.0.1','service/oms',port+':8080')
