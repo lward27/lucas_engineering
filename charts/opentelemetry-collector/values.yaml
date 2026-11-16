@@ -2,6 +2,7 @@ opentelemetry-collector:
   mode: deployment
   image:
     repository: otel/opentelemetry-collector-contrib
+    digest: sha256:7f22d2a6748110ffb6a59bc0df448bccbf501cdb667d610ede4c61d3863d5849
   ingress:
     enabled: true
     ingressClassName: traefik
