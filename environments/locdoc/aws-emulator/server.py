@@ -88,4 +88,5 @@ class Proxy(BaseHTTPRequestHandler):
     do_GET = do_HEAD = do_POST = do_PUT = do_DELETE = do_PATCH = forward
 
 
-ThreadingHTTPServer(('127.0.0.1', 19097), Proxy).serve_forever()
+if __name__ == '__main__':
+    ThreadingHTTPServer(('127.0.0.1', 19097), Proxy).serve_forever()

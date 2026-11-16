@@ -1,0 +1,19 @@
+name: LocDoc emulator labs
+on:
+  pull_request:
+    paths: ['environments/locdoc/**', 'ops/locdoc-lab/**', '.github/workflows/locdoc-labs.yaml']
+  push:
+    branches: [main]
+    paths: ['environments/locdoc/**', 'ops/locdoc-lab/**', '.github/workflows/locdoc-labs.yaml']
+permissions:
+  contents: read
+jobs:
+  tls-adapter:
+    name: TLS adapter regression tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s ops/locdoc-lab/tests -v
