@@ -123,9 +123,15 @@ def smoke(ns):
             timeout=120)
 
 
+def database_smoke(ns):
+    address = kubectl(ns, 'get', 'service', 'oms-postgres', '-o', 'jsonpath={.spec.clusterIP}', capture_output=True).stdout
+    kubectl(ns, 'exec', '-i', 'deployment/oms', '-c', 'oms', '--', 'env', 'OMS_TEST_DB_IP='+address,
+            'node', '--input-type=module', input=(ROOT/'ops/locdoc-lab/database-smoke.mjs').read_text(), timeout=120)
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('action',choices=['prepare','terraform','seed','forward','smoke'])
+    p.add_argument('action',choices=['prepare','terraform','seed','forward','smoke','database-smoke'])
     p.add_argument('environment',choices=NAMES)
     p.add_argument('args',nargs=argparse.REMAINDER)
     a=p.parse_args(); args=a.args[1:] if a.args[:1]==['--'] else a.args
@@ -133,6 +139,7 @@ def main():
     elif a.action=='terraform':return terraform(a.environment,args)
     elif a.action=='seed':seed(a.environment)
     elif a.action=='smoke':smoke(a.environment)
+    elif a.action=='database-smoke':database_smoke(a.environment)
     else:
         port='8081' if a.environment=='localstack' else '8082'
         kubectl(a.environment,'port-forward','--address','127.0.0.1','service/oms',port+':8080')

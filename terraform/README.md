@@ -155,24 +155,29 @@ Plan a separate user-rotation process. Do not supply a master credential as the
 application secret. Existing resources/data need an explicit import and
 migration design before using this root for an existing production account.
 
-### Application/image prerequisites
+### Application/image release status and launch prerequisites
 
-- Production upload code currently constructs public S3 URLs. Implement signed
-  or authenticated private downloads, including tenant authorization. Keep the
-  bucket private; lab `/api/mock-objects/` routing is a development integration.
-- The MySQL adapter currently omits TLS options. Wire verified RDS TLS into that
-  adapter before selecting MySQL for a running service. PostgreSQL bootstrap
-  uses `sslmode=verify-full` and an RDS CA bundle at
-  `/etc/ssl/certs/rds-ca.pem`; bake and maintain that bundle in the release image.
-- Build the Prisma client for the chosen database. The current lab image came
-  from a modified worktree and is not a reproducible production release.
-- Provide owned writable bind-mount directories for UID/GID `1000:1000` at
+- The application branch in [OMS PR 78](https://github.com/Daniel-Maloney/LocDoc_OMS3/pull/78)
+  implements production-capable `/api/documents/` reads, tenant/staff checks and
+  legacy URL compatibility. The pinned lab image exercises this route against
+  both emulators. Keep the bucket private. Review any external/customer sharing
+  separately; this endpoint intentionally requires provider staff permissions.
+- Both adapters now use verified CA/hostname TLS. The production image includes
+  the checksum-pinned RDS CA bundle at `/etc/ssl/certs/rds-ca.pem`. The homelabs
+  use their independent CAs; real RDS TLS and certificate rotation still require
+  AWS nonproduction verification. Migration tooling has a separate TLS path.
+- `Dockerfile.production` builds an explicit Prisma provider from a clean
+  committed source and lockfiles, with pinned Node images and OCI source labels.
+  The current release is recorded in `ops/locdoc-lab/RELEASE.json`. Approve the
+  source release, choose the database variant and promote a verified digest to
+  ECR before enabling the AWS service. No Elastic Beanstalk cutover is implied.
+- The new Dockerfile provides owned writable bind-mount directories for UID/GID `1000:1000` at
   `/app/uploads`, `/app/dist/logs` and `/tmp` in the image, using matching Docker
   `VOLUME` directives and ownership. Fargate empty mounts otherwise default to
   root ownership; see [AWS bind-mount guidance](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/bind-mount-examples.html).
   These are ephemeral scratch directories; documents must live in S3.
-- Emit operational logs to stdout/stderr so `awslogs` receives them; file-only
-  Winston logs on ephemeral storage are insufficient. Preserve `/api/health` on
+- The new runtime defaults Winston logging to stdout for `awslogs`; verify
+  delivery after AWS deployment. Preserve `/api/health` on
   port 8080 and build the SPA into the same image. Supply public browser build
   configuration (maps, Stripe publishable keys, licensed UI dependencies) at
   build time; runtime ECS variables do not rewrite Vite bundles.

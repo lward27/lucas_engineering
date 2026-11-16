@@ -3,7 +3,10 @@ kind: Kustomization
 resources:
 - ../../../ops/locdoc
 - egress.yaml
+- database-tls.yaml
 patches:
+- path: database-tls-patch.yaml
+- path: application-tls-patch.yaml
 - patch: |
     apiVersion: v1
     kind: PersistentVolumeClaim
@@ -160,6 +163,8 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 images:
+- name: registry.lucas.engineering/locdoc-oms
+  digest: sha256:4e4c49c0a9d101e5be487b653e90a59528e0588475d6620e188132755563a7c4
 - name: postgres
   newName: postgres
   digest: sha256:1a6ab3f5345eb6dbe04a1349529caabdb0ab09293a09590fad07b2246bfa4b54

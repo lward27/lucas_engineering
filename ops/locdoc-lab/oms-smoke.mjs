@@ -18,6 +18,8 @@ try {
   version = put.VersionId;
   const obj = await s3.send(new GetObjectCommand({Bucket: bucket, Key: key}));
   assert.equal(await obj.Body.transformToString(), payload);
+  const {buildS3Url} = await import('/app/dist/functions/uploadUtils.js');
+  assert.ok(buildS3Url(bucket, ['SDP','test.pdf']).url.startsWith('/api/documents/'));
   const head = await s3.send(new HeadObjectCommand({Bucket: bucket, Key: key}));
   assert.equal(head.ContentLength, Buffer.byteLength(payload));
   const secret = await createSecretsManagerClient().send(new DescribeSecretCommand({SecretId: 'oms/precisely/system'}));
@@ -37,13 +39,18 @@ try {
     for (const c of response.headers.getSetCookie()) cookies.set(c.slice(0, c.indexOf('=')), c.split(';')[0]);
     return [...cookies.values()].join('; ');
   }
-  const path = '/api/mock-objects/' + key.split('/').map(encodeURIComponent).join('/');
+  const path = '/api/documents/' + key.split('/').map(encodeURIComponent).join('/');
   const unauth = await fetch('http://127.0.0.1:8080'+path);
   assert.notEqual(unauth.status, 200);
   const cookie = await login(demo);
   const response = await fetch('http://127.0.0.1:8080'+path, {headers: {cookie}});
   assert.equal(response.status, 200, 'object route status');
   assert.equal(await response.text(), payload);
+  assert.match(response.headers.get('cache-control'), /no-store/);
+  const partial = await fetch('http://127.0.0.1:8080'+path,{headers:{cookie,range:'bytes=0-8'}});
+  assert.equal(partial.status,206);assert.equal(await partial.text(),payload.slice(0,9));
+  const metadata = await fetch('http://127.0.0.1:8080'+path,{method:'HEAD',headers:{cookie}});
+  assert.equal(metadata.status,200);assert.equal(Number(metadata.headers.get('content-length')),Buffer.byteLength(payload));
   const otherCookie = await login(other);
   const isolated = await fetch('http://127.0.0.1:8080'+path, {headers: {cookie: otherCookie}});
   assert.notEqual(isolated.status, 200);
