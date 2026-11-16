@@ -5,8 +5,6 @@ resources:
 - egress.yaml
 - database-tls.yaml
 patches:
-- path: database-tls-patch.yaml
-- path: application-tls-patch.yaml
 - patch: |
     apiVersion: v1
     kind: PersistentVolumeClaim
@@ -155,6 +153,8 @@ patches:
               capabilities:
                 drop:
                 - ALL
+- path: database-tls-patch.yaml
+- path: application-tls-patch.yaml
 configMapGenerator:
 - name: oms-aws-client
   files:

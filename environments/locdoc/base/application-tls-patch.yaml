@@ -19,6 +19,10 @@ spec:
         - name: database-ca
           mountPath: /database-tls
           readOnly: true
+        - name: runtime-tmp
+          mountPath: /tmp
+        securityContext:
+          readOnlyRootFilesystem: true
       volumes:
       - name: database-ca
         secret:
@@ -26,6 +30,9 @@ spec:
           items:
           - key: tls.crt
             path: ca.pem
+      - name: runtime-tmp
+        emptyDir:
+          sizeLimit: 256Mi
       initContainers:
       - name: database-fixtures
         image: postgres@sha256:1a6ab3f5345eb6dbe04a1349529caabdb0ab09293a09590fad07b2246bfa4b54
