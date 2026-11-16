@@ -7,9 +7,6 @@ import unittest
 ROOT=Path(__file__).resolve().parents[3]
 class ManifestTests(unittest.TestCase):
     def test_runtime_and_database_boundaries_in_both_overlays(self):
-        # kubectl can output the rendered Kubernetes objects as JSON via a local
-        # client dry-run without contacting any cluster. Its kustomize stdout
-        # is decoded by a tiny Go-independent yaml helper already used in CI.
         import yaml
         release=json.loads((ROOT/'ops/locdoc-lab/RELEASE.json').read_text())
         for namespace in ('localstack','aws-emulator'):
