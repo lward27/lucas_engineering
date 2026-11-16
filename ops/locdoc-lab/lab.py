@@ -117,15 +117,27 @@ npm run seed:synthetic -- --allow-target=oms_test
     print(f'{ns}: guarded synthetic fixtures initialized')
 
 
+def ready_oms_pod(ns):
+    deployment = json.loads(kubectl(ns, 'get', 'deployment', 'oms', '-o', 'json', capture_output=True).stdout)
+    expected = next(c['image'] for c in deployment['spec']['template']['spec']['containers'] if c['name']=='oms')
+    pods = json.loads(kubectl(ns, 'get', 'pods', '-l', 'app=oms', '-o', 'json', capture_output=True).stdout)['items']
+    ready = [pod for pod in pods if not pod['metadata'].get('deletionTimestamp')
+             and any(c['type']=='Ready' and c['status']=='True' for c in pod.get('status',{}).get('conditions',[]))
+             and any(c['name']=='oms' and c['image']==expected for c in pod['spec']['containers'])]
+    if len(ready)!=1:
+        raise RuntimeError('Wait for exactly one Ready OMS Pod using the desired image before validation')
+    return ready[0]['metadata']['name']
+
+
 def smoke(ns):
-    kubectl(ns, 'exec', '-i', 'deployment/oms', '-c', 'oms', '--',
+    kubectl(ns, 'exec', '-i', ready_oms_pod(ns), '-c', 'oms', '--',
             'node', '--input-type=module', input=(ROOT/'ops/locdoc-lab/oms-smoke.mjs').read_text(),
             timeout=120)
 
 
 def database_smoke(ns):
     address = kubectl(ns, 'get', 'service', 'oms-postgres', '-o', 'jsonpath={.spec.clusterIP}', capture_output=True).stdout
-    kubectl(ns, 'exec', '-i', 'deployment/oms', '-c', 'oms', '--', 'env', 'OMS_TEST_DB_IP='+address,
+    kubectl(ns, 'exec', '-i', ready_oms_pod(ns), '-c', 'oms', '--', 'env', 'OMS_TEST_DB_IP='+address,
             'node', '--input-type=module', input=(ROOT/'ops/locdoc-lab/database-smoke.mjs').read_text(), timeout=120)
 
 
@@ -142,7 +154,7 @@ def main():
     elif a.action=='database-smoke':database_smoke(a.environment)
     else:
         port='8081' if a.environment=='localstack' else '8082'
-        kubectl(a.environment,'port-forward','--address','127.0.0.1','service/oms',port+':8080')
+        kubectl(a.environment,'port-forward','--address','127.0.0.1','pod/'+ready_oms_pod(a.environment),port+':8080')
     return 0
 
 

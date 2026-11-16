@@ -265,10 +265,11 @@ organization exhausted its private-test allowance; this is not a security scan
 pass. Real RDS/ECS/ALB/IAM behavior, production migrations/customer sharing and
 cryptographically verified image provenance remain separate release work.
 
-The initial observation above predates a subsequent image-hygiene cleanup:
+The initial rollout was followed by an image-hygiene cleanup:
 TypeScript had preserved an existing commented test Stripe credential. Source
 and release compiler comments were cleaned up, both database variants were
-rebuilt, and `RELEASE.json` now pins the replacement artifacts. The credential
+rebuilt, and `RELEASE.json` pins the replacement artifacts. The current
+acceptance record above covers those replacement Pods and digests. The credential
 owner should revoke the old test key if it is still active; repository/image
 history was not purged and no credential was exercised or rotated here.
 
@@ -278,3 +279,9 @@ platform, UID and source labels, then reads the bounded compiled-code layer to
 check the private route exists and no inline Stripe credential remains. The
 old artifact is rejected by this check. This is a scoped credential hygiene
 check, not a vulnerability scan or signed provenance.
+
+The smoke/forward helpers wait for a single Ready, non-terminating Pod whose
+image matches the Deployment's desired image. They refuse to attach to an old
+image during a rollout. The database smoke process exits explicitly after all
+assertions because its test clients wrap externally owned PostgreSQL pools;
+this termination affects only the bounded CLI, not the application process.
