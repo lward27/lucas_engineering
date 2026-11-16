@@ -68,7 +68,9 @@ class Proxy(BaseHTTPRequestHandler):
             if len(data) > MAX_BODY:
                 self.send_error(502)
                 return
-            self.send_response(response.status)
+            # Preserve the upstream Date exactly once. Duplicating it causes
+            # JavaScript AWS SDK clock-skew correction to produce an invalid date.
+            self.send_response_only(response.status)
             for key, value in response.getheaders():
                 if key.lower() not in ['transfer-encoding', 'connection', 'content-length']:
                     self.send_header(key, value)
