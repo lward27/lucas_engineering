@@ -264,3 +264,17 @@ baseline. The application PR's external Snyk check could not run because the
 organization exhausted its private-test allowance; this is not a security scan
 pass. Real RDS/ECS/ALB/IAM behavior, production migrations/customer sharing and
 cryptographically verified image provenance remain separate release work.
+
+The initial observation above predates a subsequent image-hygiene cleanup:
+TypeScript had preserved an existing commented test Stripe credential. Source
+and release compiler comments were cleaned up, both database variants were
+rebuilt, and `RELEASE.json` now pins the replacement artifacts. The credential
+owner should revoke the old test key if it is still active; repository/image
+history was not purged and no credential was exercised or rotated here.
+
+`verify-image.py TASKRUN --expected-source FULL_SHA --provider postgres` reuses
+the maintained operator registry TLS reader. It verifies manifest/config hashes,
+platform, UID and source labels, then reads the bounded compiled-code layer to
+check the private route exists and no inline Stripe credential remains. The
+old artifact is rejected by this check. This is a scoped credential hygiene
+check, not a vulnerability scan or signed provenance.

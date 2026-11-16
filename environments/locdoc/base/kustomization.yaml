@@ -164,7 +164,7 @@ generatorOptions:
   disableNameSuffixHash: true
 images:
 - name: registry.lucas.engineering/locdoc-oms
-  digest: sha256:4e4c49c0a9d101e5be487b653e90a59528e0588475d6620e188132755563a7c4
+  digest: sha256:cbada6a44984400ea1db27e721050a724d2453f269db4f35eed4d11149d1da75
 - name: postgres
   newName: postgres
   digest: sha256:1a6ab3f5345eb6dbe04a1349529caabdb0ab09293a09590fad07b2246bfa4b54

@@ -66,5 +66,6 @@
     "sbom_signatures_attested_provenance": "not established"
   },
   "production_aws_effects": [],
-  "original_locdoc": "Synced/Healthy; deployment path and image unchanged"
+  "original_locdoc": "Synced/Healthy; deployment path and image unchanged",
+  "artifact_hygiene_followup": "This initial functional/TLS observation predates removal of a legacy test credential comment. Its old image failed the compiled-route credential verifier and is superseded by RELEASE.json."
 }

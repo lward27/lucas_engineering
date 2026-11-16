@@ -47,5 +47,5 @@ spec:
           readOnly: true
     metadata:
       annotations:
-        locdoc/source-revision: 9f52fe03781f11943b9c7f3bb945b43dd641a64b
-        locdoc/image-digest: sha256:4e4c49c0a9d101e5be487b653e90a59528e0588475d6620e188132755563a7c4
+        locdoc/source-revision: fe3bab32b5dc1980533900c8e6c855bb3aba0c67
+        locdoc/image-digest: sha256:cbada6a44984400ea1db27e721050a724d2453f269db4f35eed4d11149d1da75
