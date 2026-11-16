@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: rag-service
-        image: registry.lucas.engineering/rag_service:latest
+        image: registry.lucas.engineering/rag_service@sha256:d0b1800d52b51fc5bba4b903ebedf8e971f6ebe6594c258f44b1c1be964e4e0d
         imagePullPolicy: Always
         env:
         - name: RAG_QDRANT_URL
