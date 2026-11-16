@@ -1,0 +1,70 @@
+{
+  "observed_at_utc": "2026-11-16T21:22:19.317350+00:00",
+  "source_commit": "9f52fe03781f11943b9c7f3bb945b43dd641a64b",
+  "image": "registry.lucas.engineering/locdoc-oms@sha256:4e4c49c0a9d101e5be487b653e90a59528e0588475d6620e188132755563a7c4",
+  "gitops_revision": "b12d436b13e841bc0d1bf3c01d4e59d967bbaaf9",
+  "namespaces": {
+    "localstack": {
+      "argo": "Synced/Healthy",
+      "pod": "oms-78dd9b9756-hdffs",
+      "pod_uid": "0b780ee8-d936-484a-9c56-9566f245cd7f",
+      "image_id": "registry.lucas.engineering/locdoc-oms@sha256:4e4c49c0a9d101e5be487b653e90a59528e0588475d6620e188132755563a7c4",
+      "ready_since_utc": "2026-11-16T21:16:44Z",
+      "observed_ready_seconds": 335,
+      "restarts": 0,
+      "ready_endpoint": true,
+      "certificates": {
+        "oms-db-ca": {
+          "ready": true,
+          "expires_utc": "2027-11-16T21:10:37Z"
+        },
+        "oms-db-server": {
+          "ready": true,
+          "expires_utc": "2027-02-14T21:10:38Z"
+        }
+      },
+      "document_smoke": "passed: storage client, HEAD/range, private GET, health/login, anonymous and cross-provider denial",
+      "database_smoke": "passed: verified session, bad CA, wrong hostname, plaintext denial and recovery",
+      "browser_smoke": "passed: SPA, synthetic contact login, home route, no uncaught errors or API 5xx",
+      "runtime_contract": "passed: Node 22.23.5, UID 1000, EROFS root, writable scratch directories"
+    },
+    "aws-emulator": {
+      "argo": "Synced/Healthy",
+      "pod": "oms-5f5f5795d9-zhdk8",
+      "pod_uid": "ecf32a75-c878-4b19-b1bf-dee0b1c01a3b",
+      "image_id": "registry.lucas.engineering/locdoc-oms@sha256:4e4c49c0a9d101e5be487b653e90a59528e0588475d6620e188132755563a7c4",
+      "ready_since_utc": "2026-11-16T21:16:45Z",
+      "observed_ready_seconds": 334,
+      "restarts": 0,
+      "ready_endpoint": true,
+      "certificates": {
+        "oms-db-ca": {
+          "ready": true,
+          "expires_utc": "2027-11-16T21:10:37Z"
+        },
+        "oms-db-server": {
+          "ready": true,
+          "expires_utc": "2027-02-14T21:10:38Z"
+        }
+      },
+      "document_smoke": "passed: storage client, HEAD/range, private GET, health/login, anonymous and cross-provider denial",
+      "database_smoke": "passed: verified session, bad CA, wrong hostname, plaintext denial and recovery",
+      "browser_smoke": "passed: SPA, synthetic contact login, home route, no uncaught errors or API 5xx",
+      "runtime_contract": "passed: Node 22.23.5, UID 1000, EROFS root, writable scratch directories"
+    }
+  },
+  "validation": {
+    "focused_application_tests": 58,
+    "backend_typecheck": "passed",
+    "mcp_compile": "passed",
+    "real_mysql_tls_positive_and_negative": "passed",
+    "preexisting_upstream_test_failures": [
+      "AI entity catalog count",
+      "generated MCP accessible-tables documentation"
+    ],
+    "snyk": "Not run: organization private-test allowance exhausted",
+    "sbom_signatures_attested_provenance": "not established"
+  },
+  "production_aws_effects": [],
+  "original_locdoc": "Synced/Healthy; deployment path and image unchanged"
+}

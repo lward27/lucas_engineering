@@ -248,3 +248,19 @@ and anonymous data volume after the run:
 That validates real MySQL TLS behavior, not RDS provisioning, migrations or
 application business queries against a MySQL schema. The two live OMS labs
 continue using their existing PostgreSQL databases and synthetic data.
+
+## Acceptance record
+
+[VALIDATION-20261116.json](VALIDATION-20261116.json) binds the successful release
+to exact GitOps, source, Pod and image identities. Both labs passed document
+reads (including HEAD/range and anonymous/cross-tenant denial), verified database
+TLS and three rejection cases, browser login/home rendering without uncaught
+errors/API 5xx, and the UID/read-only-root/writable-scratch contract. Both CAs
+are independent. The original `locdoc` remained healthy with its prior image.
+
+The focused application tests and TypeScript/MCP builds pass. Two full-suite
+AI catalog/generated-document tests also fail unchanged on the upstream
+baseline. The application PR's external Snyk check could not run because the
+organization exhausted its private-test allowance; this is not a security scan
+pass. Real RDS/ECS/ALB/IAM behavior, production migrations/customer sharing and
+cryptographically verified image provenance remain separate release work.
