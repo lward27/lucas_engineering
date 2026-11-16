@@ -39,6 +39,7 @@ patches:
                 - import urllib.request; urllib.request.urlopen("http://127.0.0.1:19097/__admin/health",
                   timeout=3)
               periodSeconds: 10
+              timeoutSeconds: 5
             resources:
               requests:
                 cpu: 25m
