@@ -163,11 +163,88 @@ plans only. Run targeted AWS validation before release.
 `environments/locdoc/base` composes the existing `ops/locdoc` manifests and removes
 its MinIO resources. The two overlays supply endpoints and the AWS TLS adapter.
 Dependencies are pinned to the images already running in the original lab.
-The OMS image was built from a local source worktree with additional changes;
-its upstream commit alone does not reproduce it. Preserve that image/worktree
-until a separate application source release is authorized.
+The current application release is recorded in `RELEASE.json`: a clean remote
+OMS commit, the successful BuildKit TaskRun, and the verified Linux/amd64 image
+digest. It uses `Dockerfile.production` and lockfile installs from
+[the application change](https://github.com/Daniel-Maloney/LocDoc_OMS3/pull/78).
+The original `locdoc` namespace and historical initialization Job image retain
+the earlier image; this release updates only the two emulator-backed OMS apps.
+The new runtime image deliberately has no migration/seed toolchain. The old
+bootstrap image is retained only for previously initialized lab resources;
+provisioning a fresh latest-schema lab needs a separate migration-tool release,
+not running synthetic seeds in the production runtime.
 
 For an emulator update, change its chart image digest through a reviewed GitOps
 change and repeat the recovery steps above. Removing an Argo application is not
 a database backup. Deleting namespaces, PVCs, secrets or emulated resources needs
 an explicit data-disposition decision; none is part of normal development.
+
+## Verified database TLS
+
+Each lab owns a separate cert-manager CA, issuer and PostgreSQL server
+certificate. OMS mounts only the public CA certificate. PostgreSQL mounts its
+private server key read-only as root-owned/group-readable mode 0440 for its
+existing GID 999; no root init container or CA private key is given to OMS.
+`pg_hba.conf` allows password-authenticated TLS network connections and rejects
+plaintext. Local socket access remains available for the existing operator
+helpers. The fixture readiness init container uses the pinned PostgreSQL CLI
+with CA/hostname verification; it no longer needs tools inside the app image.
+
+```bash
+./ops/locdoc-lab/lab.py database-smoke localstack
+./ops/locdoc-lab/lab.py database-smoke aws-emulator
+```
+
+The test checks the running session's `pg_stat_ssl`, rejects the image's RDS CA
+against the private lab certificate, rejects the Service IP's hostname mismatch,
+and confirms the server rejects a plaintext connection. It reconnects with the
+correct settings after the negative checks. It performs read-only SQL queries.
+
+Server certificates renew 15 days before their 90-day expiry; the lab CA renews
+30 days before its annual expiry. Projected Secrets update files, but PostgreSQL
+needs an operator-authorized `pg_reload_conf()` after a server certificate
+renewal, or a reviewed GitOps rollout. Monitor Certificate readiness/expiry;
+this change does not install an automatic restart/reload controller. For a CA
+rotation, maintain overlapping trust and validate it before retiring the old
+CA. These private certificates do not test RDS's trust chain or rotation.
+
+## Rebuild a release
+
+The existing `remote-buildkit` Task is used without the public-only clone Task.
+`build-image.py` verifies a clean worktree and exact remote branch SHA, archives
+that commit, verifies the archive checksum in a dedicated staging Pod, then
+starts the existing Task against a PVC on the dedicated build node. It passes
+the exact source SHA and timestamp as build arguments; no Git credentials enter
+the cluster. Default mode is a server-side dry-run preview; `--execute` creates
+the named resources within an already authorized build task.
+
+```bash
+./ops/locdoc-lab/build-image.py /path/to/clean/oms \
+  --branch codex/oms-aws-prerequisites --revision FULL_COMMIT_SHA \
+  --provider postgres --execute
+```
+
+Run names, archive hash and image repository are recorded under ignored
+`.runtime/` before mutation. Never replay an uncertain operation; inspect its
+TaskRun first. `--attempt` gives a known failed attempt a new identity. Source
+PVCs/run records are retained for audit; cleanup needs a scoped disposition.
+The first staging attempt for this release bound its local-path PVC to the
+wrong node and never executed a build. The successful attempt explicitly placed
+both staging and TaskRun on `workload=build`; it is the only PostgreSQL artifact
+used by the release. Do not fetch registry-authentication step logs. Verify the
+returned manifest/config hashes, OCI source/revision, platform and UID before
+pinning the digest through GitOps. SBOM, signing, vulnerability scanning and
+cryptographically verified provenance are not supplied by these labels.
+
+The optional disposable local MySQL handshake test uses fixed synthetic
+credentials, generated one-day test certificates, the compiled TLS helper and
+the pinned MySQL 8.4 fixture image. It removes only its own fixture container
+and anonymous data volume after the run:
+
+```bash
+./ops/locdoc-lab/mysql-tls-smoke.py /path/to/compiled/oms
+```
+
+That validates real MySQL TLS behavior, not RDS provisioning, migrations or
+application business queries against a MySQL schema. The two live OMS labs
+continue using their existing PostgreSQL databases and synthetic data.
