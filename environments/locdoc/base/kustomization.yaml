@@ -1,0 +1,168 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../../ops/locdoc
+- egress.yaml
+patches:
+- patch: |
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: oms-objects
+      namespace: locdoc
+    $patch: delete
+- patch: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: oms-object-store
+      namespace: locdoc
+    $patch: delete
+- patch: |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: oms-object-store
+      namespace: locdoc
+    $patch: delete
+- target:
+    kind: Deployment
+  patch: |
+    - op: add
+      path: /spec/template/metadata/labels/app.kubernetes.io~1part-of
+      value: oms
+    - op: add
+      path: /spec/template/spec/automountServiceAccountToken
+      value: false
+    - op: add
+      path: /spec/template/spec/securityContext
+      value:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+- patch: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: oms-postgres
+      namespace: locdoc
+    spec:
+      template:
+        spec:
+          securityContext:
+            runAsUser: 999
+            runAsGroup: 999
+            fsGroup: 999
+- patch: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: oms
+      namespace: locdoc
+    spec:
+      template:
+        spec:
+          initContainers:
+          - name: database-fixtures
+            image: registry.lucas.engineering/locdoc-oms@sha256:baa39304a4200595ff68280279a1daa1ccd50833e4649fb76da4346a1fc50d0d
+            command:
+            - sh
+            - -ec
+            - until psql "$DATABASE_URL" -tAc "SELECT 1 FROM provider LIMIT 1" >/dev/null
+              2>&1; do sleep 3; done
+            env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: oms-secrets
+                  key: database-url
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+          containers:
+          - name: oms
+            env:
+            - name: AWS_ACCESS_KEY_ID
+              value: ''
+            - name: AWS_SECRET_ACCESS_KEY
+              value: ''
+            - name: AWS_BUCKET_NAME
+              value: locdoc-oms-documents
+            - name: AWS_CONFIG_FILE
+              value: /aws-client/config
+            - name: AWS_SHARED_CREDENTIALS_FILE
+              value: /dev/null
+            - name: AWS_SDK_LOAD_CONFIG
+              value: 'true'
+            - name: AWS_EC2_METADATA_DISABLED
+              value: 'true'
+            - name: Demo
+              value: 'true'
+            volumeMounts:
+            - name: uploads
+              mountPath: /app/uploads
+            - name: logs
+              mountPath: /app/dist/logs
+            - name: aws-client
+              mountPath: /aws-client
+              readOnly: true
+            - name: aws-session
+              mountPath: /aws-session
+              readOnly: true
+          volumes:
+          - name: uploads
+            emptyDir:
+              sizeLimit: 512Mi
+          - name: logs
+            emptyDir:
+              sizeLimit: 256Mi
+          - name: aws-client
+            configMap:
+              name: oms-aws-client
+          - name: aws-session
+            secret:
+              secretName: oms-aws-session
+              defaultMode: 288
+- patch: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: oms-postgres
+      namespace: locdoc
+    spec:
+      template:
+        spec:
+          containers:
+          - name: postgres
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+configMapGenerator:
+- name: oms-aws-client
+  files:
+  - config
+  - credentials.cjs
+generatorOptions:
+  disableNameSuffixHash: true
+images:
+- name: postgres
+  newName: postgres
+  digest: sha256:1a6ab3f5345eb6dbe04a1349529caabdb0ab09293a09590fad07b2246bfa4b54
+- name: python
+  newName: python
+  digest: sha256:e064671ca452259bab50e8e2c7bd896e39e9a343bb06ca25234adf6fe18d0fc7
+- name: axllent/mailpit
+  digest: sha256:df6c2541907e1be6fac21f509927cf6ed771617a1f4b361ef66d97bd05593d2d

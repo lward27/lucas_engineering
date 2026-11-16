@@ -1,4 +1,12 @@
 apps:
+  localstack:
+    enabled: true
+  aws-emulator:
+    enabled: true
+  locdoc-localstack:
+    enabled: true
+  locdoc-aws-emulator:
+    enabled: true
   locdoc:
     enabled: true
   agentic-platform:

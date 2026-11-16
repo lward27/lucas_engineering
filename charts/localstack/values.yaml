@@ -1,0 +1,11 @@
+# Legacy Apache-licensed Community image; do not replace with latest.
+image: localstack/localstack:4.12.0@sha256:0df3a97da57de03a588c05d9b8f390f15c7033fc7c4512f94619d344bc3cd317
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: "2"
+    memory: 2Gi
+# Container-backed execution (Lambda/ECS/RDS) is deliberately excluded.
+services: s3,sqs,sns,dynamodb,iam,sts,kms,secretsmanager,ssm,events,logs,cloudwatch,apigateway,stepfunctions,ec2,route53
