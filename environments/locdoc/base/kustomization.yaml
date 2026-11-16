@@ -95,8 +95,10 @@ patches:
             env:
             - name: AWS_ACCESS_KEY_ID
               value: ''
+              valueFrom: null
             - name: AWS_SECRET_ACCESS_KEY
               value: ''
+              valueFrom: null
             - name: AWS_BUCKET_NAME
               value: locdoc-oms-documents
             - name: AWS_CONFIG_FILE
