@@ -1,6 +1,7 @@
 image:
-  repository: qdrant/qdrant
-  tag: v1.13.6
+  repository: docker.io/qdrant/qdrant
+  tag: v1.14.1
+  digest: sha256:419d72603f5346ee22ffc4606bdb7beb52fcb63077766fab678e6622ba247366
   pullPolicy: IfNotPresent
 
 resources:
