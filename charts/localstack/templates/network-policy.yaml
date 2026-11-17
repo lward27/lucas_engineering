@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: localstack-private
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: localstack
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    # Development clients in this namespace only. Local kubectl port-forward
+    # access is authenticated by Kubernetes, not by LocalStack's mock IAM.
+    - from:
+        - podSelector: {}
+      ports:
+        - {protocol: TCP, port: 4566}
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - {protocol: UDP, port: 53}
+        - {protocol: TCP, port: 53}
+    # Some emulated services download runtime dependencies on first use.
+    # Exclude private networks, link-local metadata, and loopback targets.
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16, 127.0.0.0/8]
+      ports:
+        - {protocol: TCP, port: 443}

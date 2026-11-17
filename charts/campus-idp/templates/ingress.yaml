@@ -1,0 +1,37 @@
+{{- if .Values.ingress.enabled }}
+# Public route through the Cloudflare tunnel. Only the campus realm and the
+# theme resources are routed; /admin and the master realm stay reachable
+# only by port-forward.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keycloak
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "campus-idp.labels" . | nindent 4 }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  tls:
+    - hosts:
+        - {{ .Values.hostname }}
+      # Issued by the Certificate in keycloak.yaml.
+      secretName: {{ .Values.tls.secretName }}
+  rules:
+    - host: {{ .Values.hostname }}
+      http:
+        paths:
+          - path: /realms/{{ .Values.realm }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.service.name }}
+                port:
+                  name: http
+          - path: /resources
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.service.name }}
+                port:
+                  name: http
+{{- end }}

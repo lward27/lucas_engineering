@@ -1,0 +1,26 @@
+{{- if (index .Values.apps "localstack").enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: localstack
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/lward27/lucas_engineering.git
+    path: charts/localstack
+    targetRevision: main
+    helm:
+      releaseName: localstack
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: localstack
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+{{- end }}

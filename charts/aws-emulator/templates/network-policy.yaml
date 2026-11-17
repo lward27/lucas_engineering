@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aws-emulator-private
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: aws-emulator
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector: {}
+      ports:
+        - {protocol: TCP, port: 9297}
+  # Egress is selected above with no allow rules: deny all outbound traffic.

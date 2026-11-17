@@ -1,0 +1,6 @@
+apiVersion: v2
+name: localstack
+description: Private, disposable LocalStack Community environment for Terraform development
+type: application
+version: 0.1.0
+appVersion: "4.12.0"

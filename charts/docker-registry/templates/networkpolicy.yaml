@@ -43,6 +43,10 @@ spec:
         # Temporary M1 build host on the Lucas VPN; the desktop is powered off.
         - ipBlock:
             cidr: 192.168.2.2/32
+        # Wired operator workstation (wardl-MS-S1-MAX) runs release
+        # verification; it reaches the cluster from this VLAN, not 50.0/24.
+        - ipBlock:
+            cidr: 192.168.10.71/32
         {{- range .Values.registryGateway.internalWriterNamespaces }}
         - namespaceSelector:
             matchLabels:

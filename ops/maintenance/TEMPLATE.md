@@ -9,7 +9,7 @@
 - Target: exact chart, application, node, or namespace
 - Current state/version: verified value and evidence link or command summary
 - Candidate/action: verified value and upstream source
-- Approval: standing-low-risk | human-required | human-approved (include approval reference)
+- Approval: delegated-maintenance | human-required | human-approved (include reference, concrete scope and conditions; delegated-maintenance uses the user's 2026-11-10 dev-cluster delegation in README.md)
 - Owner: unclaimed | worker name
 
 ## Why this matters
@@ -26,4 +26,4 @@ List preflight, render/diff, tests, backup or rollback revision, and post-deploy
 
 ## Work log
 
-Add dated evidence, PR and run links, decision, result, and any blocker. Never include secrets.
+Add dated evidence, PR and run links, delegated approval decision and exact scope, result, and any technical blocker. Preserve prior work logs and approval scopes; a new approval does not retroactively authorize a past action. Never include secrets.

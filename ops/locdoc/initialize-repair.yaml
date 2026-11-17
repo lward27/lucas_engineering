@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: oms-initialize-repair-2
+  namespace: locdoc
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: oms
+    spec:
+      automountServiceAccountToken: false
+      restartPolicy: Never
+      volumes:
+        - name: repair
+          configMap: {name: oms-catchup-repair}
+      containers:
+        - name: initialize
+          image: registry.lucas.engineering/locdoc-oms@sha256:9d6227a9e1ef0408550a67fba40060bbc7c231a4de38d145ad668b224143d8ad
+          command: [sh, -ec]
+          args:
+            - |
+              until pg_isready -h oms-postgres -U oms -d oms_test; do sleep 2; done
+              psql "$DATABASE_URL" -v ON_ERROR_STOP=1 --single-transaction -f /repair/repair.sql
+              npx prisma migrate resolve --applied 20261015120000_align_schema_catchup
+              npm run migrate:deploy:postgres
+              psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f prisma/triggers/postgres/install.sql
+              npm run seed:synthetic -- --allow-target=oms_test
+          volumeMounts:
+            - {name: repair, mountPath: /repair, readOnly: true}
+          env:
+            - {name: DATABASE_PROVIDER, value: postgres}
+            - {name: NODE_ENV, value: development}
+            - {name: ENV_TYPE, value: development}
+            - name: DATABASE_URL
+              valueFrom: {secretKeyRef: {name: oms-secrets, key: database-url}}
+          resources:
+            requests: {cpu: 100m, memory: 512Mi}
+            limits: {memory: 2Gi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}

@@ -1,0 +1,75 @@
+# Imported on every start with --import-realm. Keycloak substitutes ${...}
+# from the container environment, so secrets stay in the Secret.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-realm
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "campus-idp.labels" . | nindent 4 }}
+data:
+  campus-realm.json: |
+    {
+      "realm": {{ .Values.realm | quote }},
+      "enabled": true,
+      "displayName": "PHarness Campus (synthetic test identities)",
+      "sslRequired": "external",
+      "registrationAllowed": false,
+      "resetPasswordAllowed": false,
+      "rememberMe": false,
+      "verifyEmail": false,
+      "loginWithEmailAllowed": true,
+      "duplicateEmailsAllowed": false,
+      "editUsernameAllowed": false,
+      "bruteForceProtected": true,
+      "permanentLockout": false,
+      "failureFactor": 10,
+      "accessTokenLifespan": 300,
+      "ssoSessionIdleTimeout": 1800,
+      "ssoSessionMaxLifespan": 28800,
+      "clients": [
+        {
+          "clientId": {{ .Values.client.id | quote }},
+          "name": "PHarness Campus",
+          "enabled": true,
+          "protocol": "openid-connect",
+          "publicClient": false,
+          "clientAuthenticatorType": "client-secret",
+          "secret": "${CAMPUS_OIDC_CLIENT_SECRET}",
+          "standardFlowEnabled": true,
+          "implicitFlowEnabled": false,
+          "directAccessGrantsEnabled": false,
+          "serviceAccountsEnabled": false,
+          "consentRequired": false,
+          "frontchannelLogout": false,
+          "fullScopeAllowed": false,
+          "redirectUris": [{{ .Values.client.redirectUri | quote }}],
+          "webOrigins": [],
+          "attributes": {
+            "pkce.code.challenge.method": "S256"
+          }
+        }
+      ],
+      "users": [
+        {{- range $index, $user := .Values.users }}
+        {{- if $index }},{{ end }}
+        {
+          "id": {{ $user.id | quote }},
+          "username": {{ $user.username | quote }},
+          "email": {{ $user.email | quote }},
+          "emailVerified": true,
+          "firstName": {{ $user.firstName | quote }},
+          "lastName": {{ $user.lastName | quote }},
+          "enabled": true,
+          "requiredActions": [],
+          "credentials": [
+            {
+              "type": "password",
+              "value": "${ {{- include "campus-idp.userEnv" $user.username -}} }",
+              "temporary": false
+            }
+          ]
+        }
+        {{- end }}
+      ]
+    }

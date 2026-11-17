@@ -1,0 +1,6 @@
+apiVersion: v2
+name: campus-idp
+description: Synthetic Keycloak test identity provider for the PHarness Campus proof of concept
+type: application
+version: 0.1.0
+appVersion: "26.8.2"

@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata: {name: oms-mock-seclock-seed, namespace: locdoc}
+spec:
+  backoffLimit: 1
+  template:
+    metadata:
+      labels: {app.kubernetes.io/part-of: oms}
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      containers:
+        - name: seed
+          image: postgres:16
+          command: [sh, -ec]
+          args:
+            - |
+              until pg_isready -h oms-postgres -U oms -d oms_test; do sleep 2; done
+              psql -h oms-postgres -U oms -d oms_test -v ON_ERROR_STOP=1 -f /seed/seed.sql
+          env:
+            - name: PGPASSWORD
+              valueFrom: {secretKeyRef: {name: oms-secrets, key: postgres-password}}
+          volumeMounts: [{name: seed, mountPath: /seed, readOnly: true}]
+          resources:
+            requests: {cpu: 25m, memory: 64Mi}
+            limits: {memory: 256Mi}
+          securityContext: {allowPrivilegeEscalation: false, capabilities: {drop: [ALL]}}
+      volumes:
+        - name: seed
+          configMap: {name: oms-mock-seclock-seed}

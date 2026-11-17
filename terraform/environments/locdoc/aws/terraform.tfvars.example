@@ -1,0 +1,13 @@
+# Illustrative only: confirm engine availability and the Prisma image build before use.
+account_id = "111122223333"
+region = "us-east-1"
+environment = "production"
+availability_zones = ["us-east-1a", "us-east-1b"]
+domain_name = "oms.example.com"
+hosted_zone_id = "Z_REPLACE_ME"
+database_engine = "postgres"
+database_engine_version = "17.6"
+database_parameter_group_family = "postgres17"
+# Set only after image, database bootstrap, secret values and app prerequisites are ready.
+service_enabled = false
+# image_digest = "sha256:<verified ECR image digest>"

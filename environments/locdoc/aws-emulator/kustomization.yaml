@@ -1,0 +1,69 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: aws-emulator
+resources:
+- ../base
+patches:
+- patch: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: oms
+      namespace: locdoc
+    spec:
+      template:
+        spec:
+          containers:
+          - name: oms
+            env:
+            - name: AWS_ENDPOINT_URL_S3
+              value: http://127.0.0.1:19097
+            - name: AWS_ENDPOINT_URL
+              value: http://127.0.0.1:19097
+            - name: AWS_BUCKET_NAME
+              value: locdoc-oms-aws-emulator-documents
+          - name: emulator-tls
+            image: python@sha256:e064671ca452259bab50e8e2c7bd896e39e9a343bb06ca25234adf6fe18d0fc7
+            command:
+            - python
+            - -B
+            - /proxy/server.py
+            env:
+            - name: PYTHONUNBUFFERED
+              value: '1'
+            readinessProbe:
+              exec:
+                command:
+                - python
+                - -c
+                - import urllib.request; urllib.request.urlopen("http://127.0.0.1:19097/__admin/health",
+                  timeout=3)
+              periodSeconds: 10
+              timeoutSeconds: 5
+            resources:
+              requests:
+                cpu: 25m
+                memory: 32Mi
+              limits:
+                memory: 256Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                - ALL
+            volumeMounts:
+            - name: proxy-code
+              mountPath: /proxy
+              readOnly: true
+            - name: aws-session
+              mountPath: /aws-session
+              readOnly: true
+          volumes:
+          - name: proxy-code
+            configMap:
+              name: oms-emulator-proxy
+configMapGenerator:
+- name: oms-emulator-proxy
+  files:
+  - server.py

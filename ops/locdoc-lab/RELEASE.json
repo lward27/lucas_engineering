@@ -1,0 +1,30 @@
+{
+  "source_commit": "fe3bab32b5dc1980533900c8e6c855bb3aba0c67",
+  "source_archive_sha256": "65645b9790e7da0462a35f5c4f9b240e967375b445868c7344b408e4c53b79ae",
+  "taskrun": "oms-postgres-fe3bab32b5dc-a1",
+  "image": "registry.lucas.engineering/locdoc-oms@sha256:cbada6a44984400ea1db27e721050a724d2453f269db4f35eed4d11149d1da75",
+  "platform": "linux/amd64",
+  "user": "1000:1000",
+  "labels": {
+    "engineering.locdoc.database-provider": "postgres",
+    "org.opencontainers.image.revision": "fe3bab32b5dc1980533900c8e6c855bb3aba0c67",
+    "org.opencontainers.image.source": "https://github.com/Daniel-Maloney/LocDoc_OMS3"
+  },
+  "compiled_route_credential_check": "passed",
+  "build_variants": {
+    "postgres": {
+      "taskrun": "oms-postgres-fe3bab32b5dc-a1",
+      "image": "registry.lucas.engineering/locdoc-oms@sha256:cbada6a44984400ea1db27e721050a724d2453f269db4f35eed4d11149d1da75",
+      "platform": "linux/amd64",
+      "user": "1000:1000",
+      "compiled_route_credential_check": "passed"
+    },
+    "mysql": {
+      "taskrun": "oms-mysql-fe3bab32b5dc-a1",
+      "image": "registry.lucas.engineering/locdoc-oms@sha256:b6795ccf426b3b765ddf1d204308a7a2e744b3fd66606d9a973b7930c55bb8e0",
+      "platform": "linux/amd64",
+      "user": "1000:1000",
+      "compiled_route_credential_check": "passed"
+    }
+  }
+}
