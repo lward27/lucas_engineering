@@ -1,0 +1,14 @@
+title = "Lucas Engineering secret scanning"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "generic-api-key"
+
+[[rules.allowlists]]
+description = "AWS's published public GPG signing fingerprint, not a credential"
+condition = "AND"
+paths = ['''^ops/aws-emulator/(README\.md|image/PACKAGE\.json)$''']
+regexTarget = "secret"
+regexes = ['''^98BCF336A3BE53B734E967C52E5BF49BD940F624$''']

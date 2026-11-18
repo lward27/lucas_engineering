@@ -1,0 +1,16 @@
+{{- if not .Values.probe.namespace }}
+apiVersion: node.k8s.io/v1
+kind: RuntimeClass
+metadata:
+  name: {{ .Values.runtime.className }}
+  labels:
+    {{- include "campus-lab.labels" . | nindent 4 }}
+handler: {{ .Values.runtime.handler }}
+overhead:
+  podFixed:
+    cpu: {{ .Values.runtime.overhead.cpu | quote }}
+    memory: {{ .Values.runtime.overhead.memory | quote }}
+scheduling:
+  nodeSelector:
+    {{ .Values.runtime.nodeLabel.key }}: {{ .Values.runtime.nodeLabel.value | quote }}
+{{- end }}

@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: localstack
+  labels: &labels
+    app.kubernetes.io/name: localstack
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/part-of: locdoc-development
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: localstack
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels: *labels
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: localstack
+          image: {{ .Values.image | quote }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - {name: SERVICES, value: {{ .Values.services | quote }}}
+            - {name: GATEWAY_LISTEN, value: "0.0.0.0:4566"}
+            - {name: LOCALSTACK_HOST, value: "localstack.localstack.svc.cluster.local:4566"}
+            # The AWS provider requires the conventional /account/queue URL.
+            - {name: SQS_ENDPOINT_STRATEGY, value: "off"}
+            - {name: PERSISTENCE, value: "0"}
+            - {name: DISABLE_EVENTS, value: "1"}
+            - {name: DEBUG, value: "0"}
+            - {name: AWS_DEFAULT_REGION, value: us-east-1}
+          ports:
+            - {name: aws, containerPort: 4566}
+          startupProbe:
+            httpGet: {path: /_localstack/health, port: aws}
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet: {path: /_localstack/health, port: aws}
+            periodSeconds: 5
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet: {path: /_localstack/health, port: aws}
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - {name: data, mountPath: /var/lib/localstack}
+            - {name: tmp, mountPath: /tmp}
+      volumes:
+        - name: data
+          emptyDir: {sizeLimit: 5Gi}
+        - name: tmp
+          emptyDir: {sizeLimit: 2Gi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: localstack
+  labels:
+    app.kubernetes.io/name: localstack
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: localstack
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  ports:
+    - {name: aws, port: 4566, targetPort: aws}

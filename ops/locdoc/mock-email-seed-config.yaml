@@ -1,0 +1,23 @@
+apiVersion: v1
+data:
+  seed.sql: |
+    -- Synthetic providers only; the SMTP endpoint captures messages in-cluster.
+    BEGIN;
+    DO $$
+    BEGIN
+      IF current_database() <> 'oms_test' OR
+         (SELECT count(*) FROM provider WHERE (id = '5eed0a00-0000-4000-8000-000000000001' AND "providerName" = 'Demo Provider') OR (id = '5eed0b00-0000-4000-8000-000000000001' AND "providerName" = 'Synthetic Isolation Provider')) <> 2 THEN
+        RAISE EXCEPTION 'Refusing to seed mock email accounts outside the synthetic database';
+      END IF;
+    END $$;
+    INSERT INTO email_account (id, service, host, port, secure, "user", pass, email, type, provider_id)
+    SELECT gen_random_uuid()::text, 'smtp', 'oms-mailpit', 1025, false, 'fixture', 'fixture', 'oms-demo@example.invalid', e.type::"EmailType", p.id
+    FROM provider p
+    CROSS JOIN (VALUES ('Accounting'), ('Alert'), ('Support'), ('Sales')) AS e(type)
+    WHERE p.id IN ('5eed0a00-0000-4000-8000-000000000001', '5eed0b00-0000-4000-8000-000000000001')
+    ON CONFLICT (type, provider_id) DO UPDATE SET service = EXCLUDED.service, host = EXCLUDED.host, port = EXCLUDED.port, secure = EXCLUDED.secure, "user" = EXCLUDED."user", pass = EXCLUDED.pass, email = EXCLUDED.email;
+    COMMIT;
+kind: ConfigMap
+metadata:
+  name: oms-mock-email-seed
+  namespace: locdoc

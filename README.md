@@ -6,3 +6,5 @@ For development against the existing cluster, start with [the maintained operato
 [LEA retirement considerations](docs/operations/ASTRA-LEA-RETIREMENT-ASSESSMENT.md) describe the separate Talos cluster and the decisions needed before reclaiming it.
 
 [Application retirement record](docs/operations/ASTRA-APPLICATION-RETIREMENT.md) documents the 2026-09-06 removal of Odoo, Clawspace/OpenClaw, Epheros, Uptime Kuma and Code Server. Their initially retained storage and databases were subsequently [purged with owner authorization](docs/operations/ASTRA-RETIRED-DATA-PURGE.md).
+
+[LocDoc OMS Terraform labs](ops/locdoc-lab/README.md) provide isolated OMS instances backed by LocalStack and AWS Emulator, reconciled through Argo CD, with shared Terraform modules and separate development states.
