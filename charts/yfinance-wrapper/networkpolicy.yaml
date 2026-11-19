@@ -9,8 +9,8 @@ spec:
   policyTypes: [Ingress]
   ingress:
     # Scraper jobs, the frontend nginx (/api/yfinance/), pharness-api's
-    # read-only release probes, and the operator-run market backfill Job
-    # (ops/finance-backfill).
+    # read-only release probes, the operator-run market backfill Job
+    # (ops/finance-backfill), and the finance advance worker.
     - from:
         - podSelector:
             matchLabels:
@@ -27,6 +27,9 @@ spec:
         - podSelector:
             matchLabels:
               app.kubernetes.io/name: finance-market-backfill
+        - podSelector:
+            matchLabels:
+              app: finance-app-database-advance-worker
       ports:
         - protocol: TCP
           port: 8000
