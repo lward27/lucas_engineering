@@ -1,0 +1,39 @@
+name: LocDoc emulator labs
+on:
+  pull_request:
+    paths: ['environments/locdoc/**', 'ops/locdoc-lab/**', 'terraform/**', '.github/workflows/locdoc-labs.yaml']
+  push:
+    branches: [main]
+    paths: ['environments/locdoc/**', 'ops/locdoc-lab/**', 'terraform/**', '.github/workflows/locdoc-labs.yaml']
+permissions:
+  contents: read
+jobs:
+  tls-adapter:
+    name: TLS adapter regression tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: python3 -m pip install --disable-pip-version-check PyYAML==6.0.3
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s ops/locdoc-lab/tests -v
+
+  terraform:
+    name: Terraform schema and mocked AWS plans
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install verified Terraform 1.13.5
+        shell: bash
+        run: |
+          curl --fail --silent --show-error --location --output /tmp/terraform.zip https://releases.hashicorp.com/terraform/1.13.5/terraform_1.13.5_linux_amd64.zip
+          echo '0dbe3fcc268eb670801af6a6456799d1ae26e72e73797f6c6167e18aafd1fd9a  /tmp/terraform.zip' | sha256sum --check --strict
+          unzip -q /tmp/terraform.zip -d /tmp/terraform-bin
+          echo '/tmp/terraform-bin' >> "$GITHUB_PATH"
+      - run: python3 -m pip install --disable-pip-version-check PyYAML==6.0.3
+      - name: Validate modules, roots and runtime contract
+        run: ./ops/locdoc-lab/check-terraform.sh

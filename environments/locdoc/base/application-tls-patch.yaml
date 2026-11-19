@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oms
+  namespace: locdoc
+spec:
+  template:
+    spec:
+      containers:
+      - name: oms
+        env:
+        - name: DB_SSL_MODE
+          value: verify-full
+        - name: DB_SSL_ROOT_CERT
+          value: /database-tls/ca.pem
+        - name: NODE_OPTIONS
+          value: --max-old-space-size=1536
+        volumeMounts:
+        - name: database-ca
+          mountPath: /database-tls
+          readOnly: true
+        - name: runtime-tmp
+          mountPath: /tmp
+        securityContext:
+          readOnlyRootFilesystem: true
+      volumes:
+      - name: database-ca
+        secret:
+          secretName: oms-db-ca
+          items:
+          - key: tls.crt
+            path: ca.pem
+      - name: runtime-tmp
+        emptyDir:
+          sizeLimit: 256Mi
+      initContainers:
+      - name: database-fixtures
+        image: postgres@sha256:1a6ab3f5345eb6dbe04a1349529caabdb0ab09293a09590fad07b2246bfa4b54
+        env:
+        - name: PGSSLMODE
+          value: verify-full
+        - name: PGSSLROOTCERT
+          value: /database-tls/ca.pem
+        volumeMounts:
+        - name: database-ca
+          mountPath: /database-tls
+          readOnly: true
+    metadata:
+      annotations:
+        locdoc/source-revision: fe3bab32b5dc1980533900c8e6c855bb3aba0c67
+        locdoc/image-digest: sha256:cbada6a44984400ea1db27e721050a724d2453f269db4f35eed4d11149d1da75

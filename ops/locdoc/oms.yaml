@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oms
+  namespace: locdoc
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: oms}
+  template:
+    metadata:
+      labels:
+        app: oms
+        app.kubernetes.io/part-of: oms
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: oms
+          image: registry.lucas.engineering/locdoc-oms@sha256:baa39304a4200595ff68280279a1daa1ccd50833e4649fb76da4346a1fc50d0d
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env: &omsEnv
+            - {name: DATABASE_PROVIDER, value: postgres}
+            - {name: NODE_ENV, value: development}
+            - {name: ENV_TYPE, value: development}
+            - {name: DEV, value: "true"}
+            - {name: PORT, value: "8080"}
+            - {name: OMS_MOCK_S3, value: "true"}
+            - {name: OMS_MOCK_STRIPE, value: "true"}
+            - {name: OMS_MOCK_SECLOCK, value: "true"}
+            - {name: OMS_MOCK_MAPS, value: "true"}
+            - {name: AWS_REGION, value: us-east-1}
+            - {name: AWS_BUCKET_NAME, value: oms-local}
+            - {name: AWS_ENDPOINT_URL_S3, value: "http://oms-object-store:9000"}
+            - {name: AWS_ACCESS_KEY_ID, value: locdoc-mock}
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom: {secretKeyRef: {name: oms-secrets, key: postgres-password}}
+            - name: DATABASE_URL
+              valueFrom: {secretKeyRef: {name: oms-secrets, key: database-url}}
+            - name: TOKEN_SECRET
+              valueFrom: {secretKeyRef: {name: oms-secrets, key: token-secret}}
+            - name: REFRESH_TOKEN_SECRET
+              valueFrom: {secretKeyRef: {name: oms-secrets, key: refresh-secret}}
+          readinessProbe:
+            httpGet: {path: /api/health, port: 8080}
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /api/health, port: 8080}
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          resources:
+            requests: {cpu: 100m, memory: 512Mi}
+            limits: {memory: 2Gi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: oms
+  namespace: locdoc
+spec:
+  selector: {app: oms}
+  ports:
+    - port: 8080
+      targetPort: 8080

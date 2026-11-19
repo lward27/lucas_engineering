@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: oms-initialize
+  namespace: locdoc
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: oms
+    spec:
+      automountServiceAccountToken: false
+      restartPolicy: Never
+      containers:
+        - name: initialize
+          image: registry.lucas.engineering/locdoc-oms@sha256:baa39304a4200595ff68280279a1daa1ccd50833e4649fb76da4346a1fc50d0d
+          command: [sh, -ec]
+          args:
+            - |
+              npm run migrate:deploy:postgres
+              psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f prisma/triggers/postgres/install.sql
+              npm run seed:synthetic -- --allow-target=oms_test
+          env:
+            - {name: DATABASE_PROVIDER, value: postgres}
+            - {name: NODE_ENV, value: development}
+            - {name: ENV_TYPE, value: development}
+            - name: DATABASE_URL
+              valueFrom: {secretKeyRef: {name: oms-secrets, key: database-url}}
+          resources:
+            requests: {cpu: 100m, memory: 512Mi}
+            limits: {memory: 2Gi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}

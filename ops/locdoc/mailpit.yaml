@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: oms-mailpit, namespace: locdoc}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: oms-mailpit}
+  template:
+    metadata:
+      labels: {app: oms-mailpit, app.kubernetes.io/part-of: oms}
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: mailpit
+          image: axllent/mailpit:v1.27.4
+          env:
+            - {name: MP_SMTP_AUTH_ACCEPT_ANY, value: 'true'}
+            - {name: MP_SMTP_AUTH_ALLOW_INSECURE, value: 'true'}
+          ports:
+            - {name: smtp, containerPort: 1025}
+            - {name: web, containerPort: 8025}
+          readinessProbe: {httpGet: {path: /, port: web}, periodSeconds: 5}
+          resources:
+            requests: {cpu: 25m, memory: 64Mi}
+            limits: {memory: 256Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+            seccompProfile: {type: RuntimeDefault}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: oms-mailpit, namespace: locdoc}
+spec:
+  selector: {app: oms-mailpit}
+  ports:
+    - {name: smtp, port: 1025, targetPort: smtp}
+    - {name: web, port: 8025, targetPort: web}
