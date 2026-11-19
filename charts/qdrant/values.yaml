@@ -14,6 +14,8 @@ resources:
 
 service:
   type: ClusterIP
+  selector:
+    app: qdrant
   httpPort: 6333
   grpcPort: 6334
 
