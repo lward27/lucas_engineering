@@ -1,6 +1,7 @@
 image:
   repository: timescale/timescaledb
-  tag: latest-pg17
+  tag: "2.32.1-pg17@sha256:e49b646d5accd64a9c9f672f314093cfb10476316b45a873d237cdf9ef0fe087"
+  bootstrapTag: latest-pg17
   pullPolicy: IfNotPresent
 
 auth:
