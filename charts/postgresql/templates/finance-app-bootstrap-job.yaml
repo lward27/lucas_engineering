@@ -9,7 +9,7 @@ spec:
       restartPolicy: OnFailure
       containers:
       - name: bootstrap-finance-db
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: "{{ .Values.image.repository }}:{{ .Values.image.bootstrapTag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
         - name: POSTGRES_PASSWORD
