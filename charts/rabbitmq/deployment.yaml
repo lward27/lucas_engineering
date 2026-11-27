@@ -22,6 +22,22 @@ spec:
       storage: 5Gi
   storageClassName: local-path
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rabbitmq-data-next
+  namespace: apps-prod
+  labels:
+    app: rabbitmq
+    maintenance.lucas.engineering/ticket: LUC-18
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: local-path
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
