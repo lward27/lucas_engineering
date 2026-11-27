@@ -60,7 +60,7 @@ spec:
       hostname: rabbitmq-5f585b6477-k4r66
       containers:
       - name: rabbitmq
-        image: docker.io/library/rabbitmq:4.2.9-management@sha256:a3afd4d8dcae7d2baccc92500da74516057ed3babb7d37cf405715bb7c798660
+        image: docker.io/library/rabbitmq:4.4.1-management@sha256:1c70aa901955dff9c3c86975cf77a9498a6e3448336a2e049dde888b44f9b977
         imagePullPolicy: IfNotPresent
         env:
         - name: RABBITMQ_DEFAULT_USER
